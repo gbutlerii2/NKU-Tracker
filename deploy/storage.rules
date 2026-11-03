@@ -1,0 +1,88 @@
+rules_version = '2';
+
+// North Kitsap United Tracker — Cloud Storage rules.
+//
+// One bucket folder is in use: fliers/{eventId}/{file}. Roles are read from
+// the same /users/{email} documents the Firestore rules use, so changing
+// someone's roles or operations changes what they can upload with no other step.
+//
+//   events/, fliers/   need Events read / write (or Admin)
+//   docs/              needs Documents read / write (or Admin)
+//   everyone signed in reads
+//
+// Paste into Firebase console → Storage → Rules → Publish.
+
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    function bootstrapAdmin() {
+      return signedIn() && myEmail() in [
+        'gerry@gb2solutions.net',
+        'gerandkar@gmail.com'
+      ];
+    }
+
+    // Password plus texted code required, on an account an admin has added.
+    function signedIn() {
+      return request.auth != null && request.auth.token.email != null
+        && request.auth.token.firebase.get('sign_in_second_factor', null) == 'phone';
+    }
+    function member() {
+      return bootstrapAdmin() || activeUser();
+    }
+    function myEmail() {
+      return request.auth.token.email.lower();
+    }
+    function myPath() {
+      return /databases/(default)/documents/users/$(myEmail());
+    }
+    function hasProfile() {
+      return signedIn() && firestore.exists(myPath());
+    }
+    function me() {
+      return firestore.get(myPath()).data;
+    }
+    function activeUser() {
+      return hasProfile() && me().active != false;
+    }
+    function hasPerms() {
+      return me().get('perms', null) != null;
+    }
+    function canWrite(sec) {
+      return bootstrapAdmin() || (activeUser() && (hasPerms()
+        ? (me().perms.get('admin', 'none') == 'write' || me().perms.get(sec, 'none') == 'write')
+        : me().get('role', '') in ['Admin', 'Entry User']));
+    }
+
+    // Event documents — fliers, guides, permits, photos. Images only after the
+    // app's own downscale; everything else up to 20 MB.
+    match /events/{eventId}/{file} {
+      allow read: if member();
+      allow write: if canWrite('events')
+        && (request.resource == null || request.resource.size < 20 * 1024 * 1024);
+    }
+
+    // Documents section — ad hoc uploads: general files, fliers, ideas, forms,
+    // contracts. Images pass through the app's downscale first; 20 MB ceiling.
+    match /docs/{file} {
+      allow read: if member();
+      allow write: if canWrite('documents')
+        && (request.resource == null || request.resource.size < 20 * 1024 * 1024);
+    }
+
+    // Event fliers. Images only, 8 MB ceiling — the app downscales to about
+    // 1600px wide before uploading, so a real flier lands far under that.
+    match /fliers/{eventId}/{file} {
+      allow read: if member();
+      allow write: if canWrite('events')
+        && (request.resource == null ||
+            (request.resource.size < 8 * 1024 * 1024
+             && request.resource.contentType.matches('image/.*')));
+    }
+
+    // Nothing else is served from the bucket.
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

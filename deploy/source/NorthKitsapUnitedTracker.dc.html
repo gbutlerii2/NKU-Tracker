@@ -1,0 +1,2183 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/modernist-4d9033cd-c6b0-4387-a942-ba9610f9c5cd/styles.css">
+<script src="_ds/modernist-4d9033cd-c6b0-4387-a942-ba9610f9c5cd/_ds_bundle.js"></script>
+<style>
+:root{
+--color-bg:#ffffff;--color-surface:#f6f2e7;--color-text:#1e2a20;
+--color-accent:#2e6b3e;--color-accent-2:#8a7440;
+--color-divider:color-mix(in srgb,#1e2a20 30%,transparent);
+--color-accent-100:#e9f0ea;--color-accent-200:#d3e1d7;--color-accent-300:#a9c5b1;
+--color-accent-400:#6fa07d;--color-accent-500:#3c8450;--color-accent-600:#245634;
+--color-accent-700:#1b4127;--color-accent-800:#14301d;--color-accent-900:#0d2013;
+--color-accent-2-100:#f4ecd9;--color-accent-2-200:#e7d9b8;--color-accent-2-300:#d9c9a3;
+--color-accent-2-500:#a98f52;--color-accent-2-700:#6f5c30;--color-accent-2-800:#524323;
+--color-neutral-100:#faf7f0;--color-neutral-200:#efe9dc;--color-neutral-300:#ded5c2;
+--color-neutral-400:#c5b99f;--color-neutral-500:#a3977e;--color-neutral-800:#3c4a3f;--color-neutral-900:#1e2a20;
+}
+body{margin:0;background:#e7dfcc;font-family:var(--font-body)}
+.nkt-scroll::-webkit-scrollbar{width:9px;height:9px}
+.nkt-scroll::-webkit-scrollbar-thumb{background:color-mix(in srgb,#201e1d 22%,transparent)}
+.nkt-scroll::-webkit-scrollbar-track{background:transparent}
+.nkt-row{display:flex;align-items:center;gap:10px;width:100%;border:0;border-bottom:1px solid var(--color-divider);background:transparent;cursor:pointer;font-family:var(--font-body);text-align:left;color:var(--color-text)}
+.nkt-row:hover{background:color-mix(in srgb,#201e1d 5%,transparent)}
+.nkt-row:active{background:color-mix(in srgb,#201e1d 10%,transparent)}
+.nkt-nav{display:flex;align-items:center;gap:10px;width:100%;border:0;background:transparent;cursor:pointer;font-family:var(--font-body);text-align:left;color:var(--color-text)}
+.nkt-nav:hover{background:rgba(30,42,32,.10)}
+.nkt-tap:active{opacity:.62}
+@keyframes nktIn{from{opacity:0;transform:translateX(14px)}to{opacity:1;transform:none}}
+@keyframes nktUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+@keyframes nktFade{from{opacity:0}to{opacity:1}}
+@keyframes nktDrawer{from{transform:translateX(-100%)}to{transform:none}}
+@media print{
+ body *{visibility:hidden!important}
+ #nkt-report-modal,#nkt-report-modal *{visibility:visible!important}
+ #nkt-report-modal{position:fixed!important;inset:0!important;padding:0!important;background:#fff!important}
+ .nkt-noprint{display:none!important}
+ @page{size:landscape;margin:12mm}
+}
+</style>
+</helmet>
+
+<template id="__bundler_thumbnail" data-bg-color="#2e6b3e">
+<svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+<rect width="1200" height="800" fill="#2e6b3e"></rect>
+<rect x="330" y="230" width="540" height="340" fill="#ffffff"></rect>
+<rect x="330" y="230" width="150" height="340" fill="#d9c9a3"></rect>
+<rect x="354" y="266" width="102" height="16" fill="#2e6b3e"></rect>
+<rect x="354" y="304" width="78" height="10" fill="#8b8578"></rect>
+<rect x="354" y="330" width="90" height="10" fill="#8b8578"></rect>
+<rect x="354" y="356" width="70" height="10" fill="#8b8578"></rect>
+<rect x="510" y="266" width="300" height="20" fill="#1e2a20"></rect>
+<rect x="510" y="316" width="300" height="26" fill="#2e6b3e"></rect>
+<rect x="510" y="354" width="190" height="26" fill="#c9a227"></rect>
+<rect x="510" y="392" width="104" height="26" fill="#b3261e"></rect>
+<rect x="510" y="452" width="330" height="4" fill="#1e2a20"></rect>
+<rect x="510" y="482" width="240" height="10" fill="#ded5c2"></rect>
+<rect x="510" y="506" width="290" height="10" fill="#ded5c2"></rect>
+</svg>
+</template>
+
+<div style="min-height:100vh;display:flex;flex-direction:column;align-items:center;gap:24px;padding:36px 24px 64px;background:#e7dfcc">
+
+<div style="width:100%;max-width:1280px;display:flex;align-items:flex-end;gap:22px;border-bottom:2px solid var(--color-divider);padding-bottom:14px;flex-wrap:wrap">
+<img src="https://rotaryknk.org/images/nku/NKU-800x378.png" alt="North Kitsap United" style="height:48px;width:auto;flex:none">
+<div style="flex:1;min-width:220px">
+<div style="font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--color-accent)">Application mockup · v0.1</div>
+<div style="font-family:var(--font-heading);font-weight:800;font-size:29px;letter-spacing:-.02em;line-height:1.1">NorthKitsapUnitedTracker</div>
+</div>
+<div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end">
+<div style="display:flex;gap:0;border:1px solid var(--color-divider)">
+<button class="nkt-tap" onClick="{{ onDesktop }}" style="{{ desktopBtnStyle }}">Desktop</button>
+<button class="nkt-tap" onClick="{{ onMobile }}" style="{{ mobileBtnStyle }}">Mobile</button>
+</div>
+<div style="font-size:11px;color:color-mix(in srgb,var(--color-text) 55%,transparent)">Same app state, both renderings</div>
+</div>
+</div>
+
+<div style="{{ deviceStyle }}">
+<div style="{{ shellStyle }}">
+
+<sc-if value="{{ isDesktop }}" hint-placeholder-val="{{ true }}">
+<div style="flex:none;width:212px;background:#d9c9a3;color:#4a473f;display:flex;flex-direction:column">
+<div style="padding:16px 16px 14px;border-bottom:2px solid rgba(30,42,32,.25)">
+<img src="https://rotaryknk.org/images/nku/NKU-800x378.png" alt="North Kitsap United" style="width:118px;height:auto">
+<div style="font-size:9px;letter-spacing:.16em;text-transform:uppercase;margin-top:10px;color:#6b675e">NKU Tracker</div>
+</div>
+<div class="nkt-scroll" style="flex:1;overflow-y:auto;padding:6px 0">
+<sc-for list="{{ navItems }}" as="n" hint-placeholder-count="8">
+<button class="nkt-nav" onClick="{{ n.go }}" style="{{ n.style }}">
+<span style="flex:none;width:22px;font-family:var(--font-heading);font-weight:800;font-size:10px;letter-spacing:.06em;opacity:.7">{{ n.num }}</span>
+<span style="flex:1;font-size:13.5px">{{ n.label }}</span>
+<span style="flex:none;font-size:11px;opacity:.7">{{ n.count }}</span>
+</button>
+</sc-for>
+</div>
+<div style="padding:12px 16px 14px;border-top:2px solid rgba(30,42,32,.25);font-size:10px;line-height:1.5;color:#6b675e">
+<div style="display:flex;align-items:center;gap:6px"><span style="width:6px;height:6px;background:var(--color-accent);flex:none"></span>Realtime DB connected</div>
+<div style="margin-top:4px;word-break:break-all">northkitsapunited-default-rtdb.firebaseio.com</div>
+</div>
+</div>
+</sc-if>
+
+<div style="flex:1;min-width:0;display:flex;flex-direction:column;background:var(--color-bg)">
+
+<sc-if value="{{ isMobile }}" hint-placeholder-val="{{ false }}">
+<div style="flex:none;display:flex;align-items:center;justify-content:space-between;padding:8px 18px 4px;font-size:12px;font-weight:600">
+<span>9:41</span>
+<span style="letter-spacing:.14em;opacity:.6">LTE ▮</span>
+</div>
+</sc-if>
+
+<div style="flex:none;display:flex;align-items:center;gap:12px;padding:11px 16px;border-bottom:2px solid var(--color-divider)">
+<sc-if value="{{ showBackBtn }}" hint-placeholder-val="{{ false }}">
+<button class="nkt-tap" onClick="{{ onLeftNav }}" style="width:32px;height:32px;flex:none;display:grid;place-items:center;border:1px solid var(--color-divider);background:transparent;cursor:pointer;padding:0;font-family:var(--font-heading);font-weight:800;font-size:14px">{{ leftNavGlyph }}</button>
+</sc-if>
+<div style="flex:1;min-width:0">
+<div style="font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--color-accent)">{{ headerKicker }}</div>
+<div style="font-family:var(--font-heading);font-weight:800;font-size:20px;line-height:1.15;letter-spacing:-.015em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ headerTitle }}</div>
+</div>
+<sc-if value="{{ showSearch }}" hint-placeholder-val="{{ true }}">
+<input class="input" value="{{ query }}" onChange="{{ onQuery }}" placeholder="{{ searchPlaceholder }}" style="{{ searchStyle }}">
+</sc-if>
+<sc-if value="{{ showAdd }}" hint-placeholder-val="{{ true }}">
+<button class="nkt-tap btn btn-primary" onClick="{{ onAdd }}" style="flex:none;height:34px;padding:0 14px;font-size:13px">{{ addLabel }}</button>
+</sc-if>
+</div>
+
+<div style="{{ panesStyle }}">
+
+<div class="nkt-scroll" style="{{ listPaneStyle }}">
+
+<sc-if value="{{ isOverview }}" hint-placeholder-val="{{ false }}">
+<div style="animation:nktFade .2s ease">
+<div style="display:grid;grid-template-columns:{{ overviewCols }};gap:2px;background:var(--color-divider);border-bottom:2px solid var(--color-divider)">
+<sc-for list="{{ kpis }}" as="k" hint-placeholder-count="4">
+<div style="background:var(--color-bg);padding:16px 16px 18px">
+<div style="font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:color-mix(in srgb,var(--color-text) 55%,transparent)">{{ k.label }}</div>
+<div style="font-family:var(--font-heading);font-weight:800;font-size:30px;line-height:1;letter-spacing:-.03em;margin-top:7px">{{ k.value }}</div>
+<div style="font-size:11px;margin-top:5px;color:{{ k.noteColor }}">{{ k.note }}</div>
+</div>
+</sc-for>
+</div>
+<div style="padding:18px 18px 8px">
+<div style="display:flex;align-items:baseline;justify-content:space-between">
+<div style="font-family:var(--font-heading);font-weight:800;font-size:15px;text-transform:uppercase;letter-spacing:.03em">Campaign against build cost</div>
+<div style="font-size:11px;color:color-mix(in srgb,var(--color-text) 55%,transparent)">{{ raisedPct }}% of program budget received</div>
+</div>
+<div style="display:flex;height:26px;margin-top:10px;border:1px solid var(--color-divider)">
+<div style="{{ barReceived }}"></div>
+<div style="{{ barPledged }}"></div>
+<div style="flex:1;background:#b3261e"></div>
+</div>
+<div style="display:flex;gap:18px;margin-top:8px;font-size:11px">
+<span style="display:flex;align-items:center;gap:6px"><span style="width:12px;height:10px;background:#2e6b3e"></span>Received {{ raisedLabel }}</span>
+<span style="display:flex;align-items:center;gap:6px"><span style="width:12px;height:10px;background:#c9a227"></span>Pledged {{ pledgedLabel }}</span>
+<span style="display:flex;align-items:center;gap:6px"><span style="width:12px;height:10px;background:#b3261e"></span>Unfunded {{ gapLabel }}</span>
+</div>
+</div>
+<div style="display:grid;grid-template-columns:{{ overviewLowerCols }};gap:2px;background:var(--color-divider);border-top:2px solid var(--color-divider);margin-top:14px">
+<div style="background:var(--color-bg);padding:14px 16px 18px">
+<div style="font-family:var(--font-heading);font-weight:800;font-size:13px;text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px">Needs attention</div>
+<sc-for list="{{ attention }}" as="a" hint-placeholder-count="4">
+<button class="nkt-row" onClick="{{ a.open }}" style="padding:9px 0">
+<span style="flex:none;width:5px;height:26px;background:{{ a.mark }}"></span>
+<span style="flex:1;min-width:0">
+<span style="display:block;font-size:13px;font-weight:600">{{ a.title }}</span>
+<span style="display:block;font-size:11px;color:color-mix(in srgb,var(--color-text) 58%,transparent)">{{ a.sub }}</span>
+</span>
+<span style="flex:none;font-family:var(--font-heading);font-weight:800;font-size:12.5px">{{ a.value }}</span>
+</button>
+</sc-for>
+</div>
+<div style="background:var(--color-bg);padding:14px 16px 18px">
+<div style="font-family:var(--font-heading);font-weight:800;font-size:13px;text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px">Recent activity</div>
+<sc-for list="{{ activity }}" as="a" hint-placeholder-count="5">
+<div style="display:flex;gap:10px;padding:8px 0;border-bottom:1px solid color-mix(in srgb,var(--color-text) 12%,transparent)">
+<div style="flex:none;width:52px;font-size:10.5px;letter-spacing:.04em;color:color-mix(in srgb,var(--color-text) 50%,transparent);padding-top:2px">{{ a.when }}</div>
+<div style="flex:1;font-size:12.5px;text-wrap:pretty">{{ a.text }}</div>
+</div>
+</sc-for>
+</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isList }}" hint-placeholder-val="{{ true }}">
+<div style="animation:nktFade .16s ease">
+<div style="display:flex;border-bottom:2px solid var(--color-divider)">
+<sc-for list="{{ summary }}" as="s" hint-placeholder-count="3">
+<div style="flex:1;padding:11px 14px;border-right:1px solid var(--color-divider)">
+<div style="font-family:var(--font-heading);font-weight:800;font-size:17px;line-height:1.1;letter-spacing:-.01em">{{ s.value }}</div>
+<div style="font-size:9.5px;letter-spacing:.09em;text-transform:uppercase;margin-top:3px;color:color-mix(in srgb,var(--color-text) 55%,transparent)">{{ s.label }}</div>
+</div>
+</sc-for>
+</div>
+<div class="nkt-scroll" style="display:flex;gap:6px;padding:10px 14px;overflow-x:auto;border-bottom:1px solid var(--color-divider)">
+<sc-for list="{{ filters }}" as="f" hint-placeholder-count="4">
+<button class="nkt-tap" onClick="{{ f.on }}" style="{{ f.style }}">{{ f.label }}</button>
+</sc-for>
+</div>
+<sc-if value="{{ showSort }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;align-items:center;gap:6px;padding:9px 16px;border-bottom:1px solid var(--color-divider);flex-wrap:wrap">
+<span style="font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:color-mix(in srgb,var(--color-text) 55%,transparent)">Sort</span>
+<sc-for list="{{ sorts }}" as="o" hint-placeholder-count="2">
+<button class="nkt-tap" onClick="{{ o.on }}" style="{{ o.style }}">{{ o.label }}</button>
+</sc-for>
+</div>
+</sc-if>
+<sc-if value="{{ showAmountFilter }}" hint-placeholder-val="{{ false }}">
+<div style="padding:11px 16px 13px;border-bottom:1px solid var(--color-divider)">
+<div style="display:flex;justify-content:space-between;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:color-mix(in srgb,var(--color-text) 58%,transparent)">
+<span>{{ amountFilterLabel }}</span><span>{{ amountFilterValue }}</span>
+</div>
+<input type="range" min="0" max="{{ amountMax }}" step="{{ amountStep }}" value="{{ amountMin }}" onChange="{{ onAmountMin }}" style="width:100%;margin-top:7px;accent-color:var(--color-accent)">
+</div>
+</sc-if>
+<sc-for list="{{ rows }}" as="r" hint-placeholder-count="9">
+<button class="nkt-row" onClick="{{ r.open }}" style="{{ r.style }}">
+<span style="flex:1;min-width:0">
+<span style="display:block;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--color-accent)">{{ r.kicker }}</span>
+<span style="display:block;font-family:var(--font-heading);font-weight:800;font-size:15px;line-height:1.25;margin-top:2px">{{ r.title }}</span>
+<span style="display:block;font-size:12px;margin-top:3px;color:color-mix(in srgb,var(--color-text) 62%,transparent)">{{ r.sub }}</span>
+</span>
+<span style="flex:none;display:flex;flex-direction:column;align-items:flex-end;gap:6px;padding-left:12px">
+<span style="font-family:var(--font-heading);font-weight:800;font-size:14px;white-space:nowrap">{{ r.value }}</span>
+<span style="{{ r.tagStyle }}">{{ r.tag }}</span>
+</span>
+</button>
+</sc-for>
+<sc-if value="{{ rowsEmpty }}" hint-placeholder-val="{{ false }}">
+<div style="padding:44px 20px;text-align:center;font-size:13px;color:color-mix(in srgb,var(--color-text) 50%,transparent)">No records match this filter.</div>
+</sc-if>
+<div style="padding:14px 16px 28px;font-size:11px;color:color-mix(in srgb,var(--color-text) 45%,transparent)">{{ listFooter }}</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isAdmin }}" hint-placeholder-val="{{ false }}">
+<div style="animation:nktFade .16s ease">
+<div style="display:flex;border-bottom:2px solid var(--color-divider)">
+<sc-for list="{{ adminTabs }}" as="t" hint-placeholder-count="2">
+<button class="nkt-tap" onClick="{{ t.on }}" style="{{ t.style }}">{{ t.label }}</button>
+</sc-for>
+</div>
+<sc-if value="{{ adminIsUsers }}" hint-placeholder-val="{{ true }}">
+<sc-for list="{{ users }}" as="u" hint-placeholder-count="5">
+<div style="{{ u.rowStyle }}">
+<sc-if value="{{ u.viewing }}" hint-placeholder-val="{{ true }}">
+<div style="display:flex;align-items:center;gap:12px">
+<div style="flex:none;width:34px;height:34px;display:grid;place-items:center;background:var(--color-neutral-200);font-family:var(--font-heading);font-weight:800;font-size:12px">{{ u.initials }}</div>
+<div style="flex:1;min-width:0">
+<div style="font-size:13.5px;font-weight:600">{{ u.name }}</div>
+<div style="font-size:11.5px;color:color-mix(in srgb,var(--color-text) 58%,transparent)">{{ u.email }} · {{ u.access }}</div>
+</div>
+<span style="{{ u.tagStyle }}">{{ u.role }}</span>
+<sc-if value="{{ u.inactive }}" hint-placeholder-val="{{ false }}">
+<span class="tag tag-neutral">Inactive</span>
+</sc-if>
+<div style="display:flex;gap:6px;flex:none">
+<button class="nkt-tap" onClick="{{ u.edit }}" style="height:28px;padding:0 10px;border:1px solid var(--color-divider);background:transparent;cursor:pointer;font-size:11.5px">Edit</button>
+<button class="nkt-tap" onClick="{{ u.toggle }}" style="height:28px;padding:0 10px;border:1px solid var(--color-divider);background:transparent;cursor:pointer;font-size:11.5px">{{ u.toggleLabel }}</button>
+<button class="nkt-tap" onClick="{{ u.remove }}" style="height:28px;width:28px;padding:0;border:1px solid var(--color-divider);background:transparent;cursor:pointer;font-size:11.5px;color:var(--color-accent-700)">✕</button>
+</div>
+</div>
+</sc-if>
+<sc-if value="{{ u.editing }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap">
+<div class="field" style="flex:1;min-width:130px"><label>Name</label><input class="input" value="{{ u.name }}" onChange="{{ u.onName }}" style="height:34px;min-height:34px"></div>
+<div class="field" style="flex:1.3;min-width:150px"><label>Email</label><input class="input" value="{{ u.email }}" onChange="{{ u.onEmail }}" style="height:34px;min-height:34px"></div>
+<div class="field" style="flex:1.1;min-width:150px"><label>Role</label>
+<select class="input" value="{{ u.role }}" onChange="{{ u.onRole }}" style="height:34px">
+<sc-for list="{{ roleNames }}" as="o" hint-placeholder-count="4"><option value="{{ o }}">{{ o }}</option></sc-for>
+</select>
+</div>
+<button class="btn btn-primary nkt-tap" onClick="{{ u.done }}" style="height:34px;padding:0 14px">Done</button>
+</div>
+</sc-if>
+</div>
+</sc-for>
+<div style="padding:16px;max-width:480px">
+<button class="btn btn-primary btn-block nkt-tap" onClick="{{ onAddUser }}" style="height:42px">+ Invite user</button>
+<div style="font-size:11px;margin-top:10px;color:color-mix(in srgb,var(--color-text) 52%,transparent);text-wrap:pretty">Roles set section access and whether a user can see donor giving amounts. Accounts authenticate against the project's Firebase Realtime Database.</div>
+</div>
+</sc-if>
+<sc-if value="{{ adminIsReset }}" hint-placeholder-val="{{ false }}">
+<div style="padding:18px 18px 26px;max-width:620px;display:flex;flex-direction:column;gap:14px">
+<div style="border:2px solid #b3261e;padding:14px 16px;display:flex;flex-direction:column;gap:10px">
+<div style="font-family:var(--font-heading);font-weight:800;font-size:15px;color:#b3261e;letter-spacing:-.01em">Clear records and start fresh</div>
+<div style="font-size:12.5px;line-height:1.6;color:color-mix(in srgb,var(--color-text) 72%,transparent);text-wrap:pretty">Deletes the selected records from the database. Your data fields, select choices, managed lists (companies, locations) and user accounts are reference configuration and are kept.</div>
+<div style="display:flex;flex-direction:column;gap:7px;padding-top:2px">
+<sc-for list="{{ resetTargets }}" as="t" hint-placeholder-count="5">
+<label class="nkt-tap" style="display:flex;align-items:center;gap:9px;font-size:13px;cursor:pointer">
+<input type="checkbox" checked="{{ t.on }}" onChange="{{ t.toggle }}" style="width:15px;height:15px;accent-color:#b3261e;cursor:pointer">
+<span style="flex:1">{{ t.label }}</span>
+<span style="font-size:11.5px;color:color-mix(in srgb,var(--color-text) 55%,transparent)">{{ t.count }}</span>
+</label>
+</sc-for>
+</div>
+<sc-if value="{{ resetArmed }}" hint-placeholder-val="{{ false }}">
+<div style="border-top:1px solid var(--color-divider);padding-top:11px;display:flex;flex-direction:column;gap:9px">
+<div style="font-size:12.5px;font-weight:600">Type DELETE to confirm — this cannot be undone.</div>
+<div style="display:flex;gap:8px">
+<input class="input" value="{{ resetConfirm }}" onChange="{{ onResetConfirm }}" placeholder="DELETE" style="flex:none;width:150px;height:36px">
+<button class="btn btn-primary nkt-tap" onClick="{{ onResetRun }}" style="height:36px;padding:0 16px;background:#b3261e">Delete records</button>
+<button class="btn btn-secondary nkt-tap" onClick="{{ onResetCancel }}" style="height:36px;padding:0 14px">Cancel</button>
+</div>
+</div>
+</sc-if>
+<sc-if value="{{ resetIdle }}" hint-placeholder-val="{{ true }}">
+<button class="btn btn-secondary nkt-tap" onClick="{{ onResetArm }}" style="height:38px;padding:0 16px;align-self:flex-start;border-color:#b3261e;color:#b3261e">Clear selected records…</button>
+</sc-if>
+</div>
+<sc-if value="{{ resetDone }}" hint-placeholder-val="{{ false }}">
+<div style="border:1px solid var(--color-accent-300);background:var(--color-accent-100);padding:11px 14px;font-size:12.5px;color:var(--color-accent-800)">{{ resetDoneMsg }}</div>
+</sc-if>
+<div style="font-size:11.5px;line-height:1.6;color:color-mix(in srgb,var(--color-text) 55%,transparent);text-wrap:pretty">In the live build this issues a delete against the matching paths in the Firebase Realtime Database. In this mockup it clears the in-memory sample data so you can see the empty state.</div>
+</div>
+</sc-if>
+<sc-if value="{{ adminIsFields }}" hint-placeholder-val="{{ false }}">
+<div class="nkt-scroll" style="display:flex;gap:6px;padding:11px 14px;overflow-x:auto;border-bottom:1px solid var(--color-divider)">
+<sc-for list="{{ schemaTabs }}" as="t" hint-placeholder-count="5">
+<button class="nkt-tap" onClick="{{ t.on }}" style="{{ t.style }}">{{ t.label }}</button>
+</sc-for>
+</div>
+<div style="{{ fieldEditorStyle }}">
+<div style="min-width:0">
+<sc-for list="{{ schemaFields }}" as="f" hint-placeholder-count="8">
+<div style="border-bottom:1px solid var(--color-divider)">
+<div style="display:flex;align-items:center;gap:10px;padding:10px 16px">
+<div style="flex:1;min-width:0">
+<div style="font-size:13px;font-weight:600">{{ f.label }}</div>
+<div style="font-size:11px;color:color-mix(in srgb,var(--color-text) 55%,transparent)">{{ f.meta }}</div>
+</div>
+<label class="nkt-tap" style="flex:none;display:flex;align-items:center;gap:6px;font-size:11.5px;cursor:pointer;padding:0 4px">
+<input type="checkbox" checked="{{ f.required }}" onChange="{{ f.toggleRequired }}" style="width:15px;height:15px;accent-color:#2e6b3e;cursor:pointer">
+Required
+</label>
+<sc-if value="{{ f.isSelect }}" hint-placeholder-val="{{ false }}">
+<button class="nkt-tap" onClick="{{ f.toggleOptions }}" style="flex:none;height:28px;padding:0 10px;border:1px solid var(--color-divider);background:transparent;cursor:pointer;font-size:11.5px">{{ f.optionsLabel }}</button>
+</sc-if>
+<button class="nkt-tap" onClick="{{ f.up }}" style="flex:none;width:28px;height:28px;border:1px solid var(--color-divider);background:transparent;cursor:pointer;font-size:12px;padding:0">↑</button>
+<button class="nkt-tap" onClick="{{ f.remove }}" style="flex:none;width:28px;height:28px;border:1px solid var(--color-divider);background:transparent;cursor:pointer;font-size:12px;padding:0;color:var(--color-accent-700)">✕</button>
+</div>
+<sc-if value="{{ f.optionsOpen }}" hint-placeholder-val="{{ false }}">
+<div style="padding:2px 16px 14px 16px;background:var(--color-neutral-100)">
+<sc-for list="{{ f.options }}" as="o" hint-placeholder-count="4">
+<div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid color-mix(in srgb,var(--color-text) 10%,transparent)">
+<input class="input" value="{{ o.label }}" onChange="{{ o.onRename }}" style="flex:1;height:30px;min-height:30px;font-size:12.5px">
+<button class="nkt-tap" onClick="{{ o.remove }}" style="flex:none;width:26px;height:26px;border:1px solid var(--color-divider);background:transparent;cursor:pointer;font-size:11px;padding:0;color:var(--color-accent-700)">✕</button>
+</div>
+</sc-for>
+<div style="display:flex;gap:6px;margin-top:9px">
+<input class="input" value="{{ f.newOption }}" onChange="{{ f.onNewOption }}" placeholder="New choice" style="flex:1;height:30px;min-height:30px;font-size:12.5px">
+<button class="btn btn-secondary nkt-tap" onClick="{{ f.addOption }}" style="height:30px;padding:0 11px;font-size:12px">Add choice</button>
+</div>
+</div>
+</sc-if>
+</div>
+</sc-for>
+</div>
+<div style="{{ fieldAddStyle }}">
+<div style="font-family:var(--font-heading);font-weight:800;font-size:13px;text-transform:uppercase;letter-spacing:.04em">Add a field to {{ schemaTargetLabel }}</div>
+<div class="field"><label>Field label</label><input class="input" value="{{ newFieldLabel }}" onChange="{{ onNewFieldLabel }}" placeholder="e.g. Matching employer"></div>
+<div class="field"><label>Type</label>
+<select class="input" value="{{ newFieldType }}" onChange="{{ onNewFieldType }}" style="height:36px">
+<sc-for list="{{ fieldTypes }}" as="o" hint-placeholder-count="7"><option value="{{ o }}">{{ o }}</option></sc-for>
+</select>
+</div>
+<button class="btn btn-primary btn-block nkt-tap" onClick="{{ onAddField }}" style="height:40px">Add field</button>
+<div style="font-size:11px;color:color-mix(in srgb,var(--color-text) 52%,transparent);text-wrap:pretty">Fields added here appear immediately in that section's entry form and record detail. Try it, then open Donors → New.</div>
+</div>
+</div>
+</sc-if>
+</div>
+</sc-if>
+
+<sc-if value="{{ isCalendar }}" hint-placeholder-val="{{ false }}">
+<div style="animation:nktFade .16s ease">
+<div style="display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:2px solid var(--color-divider);flex-wrap:wrap">
+<button class="nkt-tap" onClick="{{ onCalPrev }}" style="width:32px;height:32px;border:1px solid var(--color-divider);background:transparent;cursor:pointer;font-size:13px;padding:0">←</button>
+<button class="nkt-tap" onClick="{{ onCalNext }}" style="width:32px;height:32px;border:1px solid var(--color-divider);background:transparent;cursor:pointer;font-size:13px;padding:0">→</button>
+<div style="font-family:var(--font-heading);font-weight:800;font-size:18px;letter-spacing:-.01em;flex:1;min-width:130px">{{ calTitle }}</div>
+<div style="display:flex;border:1px solid var(--color-divider)">
+<button class="nkt-tap" onClick="{{ onCalMonth }}" style="{{ calMonthStyle }}">Month</button>
+<button class="nkt-tap" onClick="{{ onCalWeek }}" style="{{ calWeekStyle }}">Week</button>
+</div>
+<button class="btn btn-ghost nkt-tap" onClick="{{ onCalToday }}" style="font-size:12px">Today</button>
+</div>
+<div style="display:grid;grid-template-columns:repeat(7,minmax(0,1fr));border-bottom:1px solid var(--color-divider)">
+<sc-for list="{{ weekdayNames }}" as="w" hint-placeholder-count="7">
+<div style="padding:7px 8px;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:color-mix(in srgb,var(--color-text) 55%,transparent);border-right:1px solid var(--color-divider)">{{ w }}</div>
+</sc-for>
+</div>
+<div style="display:grid;grid-template-columns:repeat(7,minmax(0,1fr));background:var(--color-divider);gap:1px">
+<sc-for list="{{ calDays }}" as="d" hint-placeholder-count="35">
+<div style="{{ d.style }}">
+<div style="display:flex;align-items:center;justify-content:space-between">
+<span style="{{ d.numStyle }}">{{ d.num }}</span>
+<sc-if value="{{ d.hasMore }}" hint-placeholder-val="{{ false }}">
+<span style="font-size:9px;color:color-mix(in srgb,var(--color-text) 50%,transparent)">{{ d.moreLabel }}</span>
+</sc-if>
+</div>
+<div style="display:flex;flex-direction:column;gap:2px;margin-top:4px">
+<sc-for list="{{ d.events }}" as="e" hint-placeholder-count="2">
+<button class="nkt-tap" onClick="{{ e.open }}" style="{{ e.style }}">{{ e.label }}</button>
+</sc-for>
+</div>
+</div>
+</sc-for>
+</div>
+<div style="display:flex;gap:16px;padding:12px 16px 22px;font-size:11px;flex-wrap:wrap">
+<span style="display:flex;align-items:center;gap:6px"><span style="width:11px;height:11px;background:var(--color-accent)"></span>Task due / start</span>
+<span style="display:flex;align-items:center;gap:6px"><span style="width:11px;height:11px;background:#c9a227"></span>Donor follow-up reminder</span>
+<span style="display:flex;align-items:center;gap:6px"><span style="width:11px;height:11px;background:#2f2f2f"></span>Phase milestone</span>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isCertificate }}" hint-placeholder-val="{{ false }}">
+<div style="padding:22px;display:flex;flex-direction:column;align-items:center;gap:16px;animation:nktFade .18s ease">
+<div style="display:flex;gap:8px;align-self:flex-start">
+<button class="btn btn-primary nkt-tap" onClick="{{ onPrintCert }}" style="height:36px;padding:0 14px">Print certificate</button>
+<button class="btn btn-secondary nkt-tap" onClick="{{ onCloseCert }}" style="height:36px;padding:0 14px">Back to transaction</button>
+</div>
+<div style="width:700px;max-width:100%;aspect-ratio:11/8.5;background:#fffdf7;border:2px solid var(--color-accent-700);box-shadow:var(--shadow-md);padding:16px">
+<div style="width:100%;height:100%;border:1px solid var(--color-accent-300);padding:30px 44px;display:flex;flex-direction:column;align-items:center;text-align:center">
+<img src="https://rotaryknk.org/images/nku/NKU-800x378.png" alt="North Kitsap United" style="width:150px;height:auto">
+<div style="font-family:var(--font-heading);font-weight:800;font-size:11px;letter-spacing:.34em;text-transform:uppercase;color:var(--color-accent-700);margin-top:16px">Certificate of Appreciation</div>
+<div style="width:64px;height:2px;background:var(--color-accent);margin:14px 0 18px"></div>
+<div style="font-size:12.5px;letter-spacing:.04em;color:#4a473f">Presented with gratitude to</div>
+<div style="font-family:var(--font-heading);font-weight:800;font-size:36px;line-height:1.1;letter-spacing:-.02em;margin:10px 0 6px;color:var(--color-accent-800)">{{ certName }}</div>
+<div style="font-size:12.5px;color:#4a473f">in recognition of a generous contribution of</div>
+<div style="font-family:var(--font-heading);font-weight:800;font-size:28px;letter-spacing:-.01em;margin:8px 0 4px">{{ certAmount }}</div>
+<div style="font-size:12px;color:#6b675e">received {{ certDate }}</div>
+<div style="font-size:12.5px;line-height:1.65;max-width:460px;margin-top:18px;text-wrap:pretty;color:#3a4a3d">Your generosity builds more than a structure. It funds the phases, the crews and the work that will serve North Kitsap for generations. On behalf of every family this project will reach, thank you.</div>
+<div style="flex:1"></div>
+<div style="display:flex;align-items:flex-end;justify-content:space-between;width:100%;gap:30px;margin-top:22px">
+<div style="flex:1;text-align:left">
+<div style="height:30px"></div>
+<div style="border-top:1px solid #4a473f;padding-top:5px;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#6b675e">Kingston Rotary</div>
+</div>
+<div style="flex:1;text-align:left">
+<div style="height:30px"></div>
+<div style="border-top:1px solid #4a473f;padding-top:5px;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#6b675e">NKU Board · {{ certRef }}</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isReports }}" hint-placeholder-val="{{ false }}">
+<div style="animation:nktFade .16s ease">
+<div style="{{ reportsGridStyle }}">
+
+<div onClick="{{ onOpen_line }}" style="background:var(--color-bg);padding:16px 18px 20px;cursor:zoom-in" title="Click to expand">
+<div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px">
+<div style="font-family:var(--font-heading);font-weight:800;font-size:15px;letter-spacing:-.01em">Donations vs. task cost</div>
+<div style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--color-accent)">Expand</div>
+</div>
+<div style="font-size:11px;margin:2px 0 14px;color:color-mix(in srgb,var(--color-text) 55%,transparent)">Cumulative dollars by month, program to date</div>
+<div style="position:relative;width:100%">
+<svg viewBox="0 0 960 420" style="width:100%;height:auto;display:block">
+<sc-for list="{{ yTicks }}" as="t" hint-placeholder-count="7">
+<line x1="96" y1="{{ t.y }}" x2="944" y2="{{ t.y }}" stroke="#2f3a31" stroke-opacity=".13" stroke-width="1"></line>
+</sc-for>
+<line x1="96" y1="372" x2="944" y2="372" stroke="#2f3a31" stroke-width="2"></line>
+<line x1="96" y1="24" x2="96" y2="372" stroke="#2f3a31" stroke-width="2"></line>
+<polyline points="{{ costPoints }}" fill="none" stroke="#2f3a31" stroke-width="3" stroke-dasharray="7 6"></polyline>
+<polyline points="{{ donationPoints }}" fill="none" stroke="#2e6b3e" stroke-width="4"></polyline>
+</svg>
+<sc-for list="{{ yTicks }}" as="t" hint-placeholder-count="7">
+<div style="{{ t.style }}">{{ t.label }}</div>
+</sc-for>
+<sc-for list="{{ monthTicks }}" as="m" hint-placeholder-count="12">
+<div style="{{ m.style }}">{{ m.label }}</div>
+</sc-for>
+</div>
+<div style="display:flex;gap:16px;margin-top:10px;font-size:11px;flex-wrap:wrap">
+<span style="display:flex;align-items:center;gap:6px"><span style="width:14px;height:3px;background:#2e6b3e"></span>Donations received</span>
+<span style="display:flex;align-items:center;gap:6px"><span style="width:14px;border-top:2px dashed #2f3a31"></span>Task cost committed</span>
+</div>
+</div>
+
+<div onClick="{{ onOpen_day }}" style="background:var(--color-bg);padding:16px 18px 20px;cursor:zoom-in" title="Click to expand">
+<div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px">
+<div style="font-family:var(--font-heading);font-weight:800;font-size:15px;letter-spacing:-.01em">Daily giving vs. payments due</div>
+<div style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--color-accent)">Expand</div>
+</div>
+<div style="font-size:11px;margin:2px 0 14px;color:color-mix(in srgb,var(--color-text) 55%,transparent)">{{ dayMonthLabel }} — one bar pair per day</div>
+<div style="position:relative;width:100%">
+<svg viewBox="0 0 960 420" style="width:100%;height:auto;display:block">
+<sc-for list="{{ dayYTicks }}" as="t" hint-placeholder-count="6">
+<line x1="96" y1="{{ t.y }}" x2="944" y2="{{ t.y }}" stroke="#2f3a31" stroke-opacity=".13" stroke-width="1"></line>
+</sc-for>
+<line x1="96" y1="372" x2="944" y2="372" stroke="#2f3a31" stroke-width="2"></line>
+<line x1="96" y1="24" x2="96" y2="372" stroke="#2f3a31" stroke-width="2"></line>
+<sc-for list="{{ dayBars }}" as="b" hint-placeholder-count="30">
+<rect x="{{ b.x }}" y="{{ b.y }}" width="{{ b.w }}" height="{{ b.h }}" fill="{{ b.fill }}"></rect>
+</sc-for>
+</svg>
+<sc-for list="{{ dayYTicks }}" as="t" hint-placeholder-count="6">
+<div style="{{ t.style }}">{{ t.label }}</div>
+</sc-for>
+<sc-for list="{{ dayTicks }}" as="d" hint-placeholder-count="10">
+<div style="{{ d.style }}">{{ d.label }}</div>
+</sc-for>
+</div>
+<div style="display:flex;gap:16px;margin-top:10px;font-size:11px;flex-wrap:wrap">
+<span style="display:flex;align-items:center;gap:6px"><span style="width:12px;height:10px;background:#2e6b3e"></span>Donations received that day</span>
+<span style="display:flex;align-items:center;gap:6px"><span style="width:12px;height:10px;background:#c9a227"></span>Task payments due that day</span>
+</div>
+</div>
+
+<div onClick="{{ onOpen_lane }}" style="background:var(--color-bg);padding:16px 18px 20px;cursor:zoom-in" title="Click to expand">
+<div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px">
+<div style="font-family:var(--font-heading);font-weight:800;font-size:15px;letter-spacing:-.01em">Phase swim lanes</div>
+<div style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--color-accent)">Expand</div>
+</div>
+<div style="font-size:11px;margin:2px 0 14px;color:color-mix(in srgb,var(--color-text) 55%,transparent)">Each phase as a bar across the quarters it spans</div>
+<div style="position:relative;width:100%">
+<svg viewBox="0 0 960 460" style="width:100%;height:auto;display:block">
+<sc-for list="{{ laneCols }}" as="c" hint-placeholder-count="16">
+<line x1="{{ c.x }}" y1="30" x2="{{ c.x }}" y2="410" stroke="#2f3a31" stroke-opacity=".13" stroke-width="1"></line>
+</sc-for>
+<line x1="196" y1="410" x2="944" y2="410" stroke="#2f3a31" stroke-width="2"></line>
+<sc-for list="{{ lanes }}" as="l" hint-placeholder-count="11">
+<rect x="196" y="{{ l.ry }}" width="748" height="{{ l.rh }}" fill="{{ l.band }}"></rect>
+<rect x="{{ l.x }}" y="{{ l.y }}" width="{{ l.w }}" height="{{ l.h }}" fill="{{ l.fill }}"></rect>
+</sc-for>
+</svg>
+<sc-for list="{{ laneCols }}" as="c" hint-placeholder-count="16">
+<div style="{{ c.style }}">{{ c.label }}</div>
+</sc-for>
+<sc-for list="{{ lanes }}" as="l" hint-placeholder-count="11">
+<div style="{{ l.nameStyle }}">{{ l.name }}</div>
+<div style="{{ l.innerStyle }}">{{ l.inner }}</div>
+</sc-for>
+</div>
+<div style="display:flex;gap:16px;margin-top:10px;font-size:11px;flex-wrap:wrap">
+<span style="display:flex;align-items:center;gap:6px"><span style="width:12px;height:10px;background:#2e6b3e"></span>Complete</span>
+<span style="display:flex;align-items:center;gap:6px"><span style="width:12px;height:10px;background:#c9a227"></span>In progress</span>
+<span style="display:flex;align-items:center;gap:6px"><span style="width:12px;height:10px;background:#b3261e"></span>Blocked</span>
+<span style="display:flex;align-items:center;gap:6px"><span style="width:12px;height:10px;background:#8a8f89"></span>Not started</span>
+</div>
+</div>
+
+<div onClick="{{ onOpen_gap }}" style="background:var(--color-bg);padding:16px 18px 20px;cursor:zoom-in" title="Click to expand">
+<div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px">
+<div style="font-family:var(--font-heading);font-weight:800;font-size:15px;letter-spacing:-.01em">Funding gap by phase</div>
+<div style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--color-accent)">Expand</div>
+</div>
+<div style="font-size:11px;margin:2px 0 14px;color:color-mix(in srgb,var(--color-text) 55%,transparent)">Allocated donations against phase budget</div>
+<div style="display:flex;flex-direction:column;gap:9px">
+<sc-for list="{{ gapRows }}" as="g" hint-placeholder-count="6">
+<div>
+<div style="display:flex;justify-content:space-between;font-size:11.5px;margin-bottom:3px">
+<span style="font-weight:600">{{ g.name }}</span>
+<span style="color:color-mix(in srgb,var(--color-text) 58%,transparent)">{{ g.note }}</span>
+</div>
+<div style="display:flex;height:12px;background:var(--color-neutral-300)"><div style="{{ g.barStyle }}"></div></div>
+</div>
+</sc-for>
+</div>
+</div>
+
+<div onClick="{{ onOpen_pledge }}" style="background:var(--color-bg);padding:16px 18px 20px;cursor:zoom-in" title="Click to expand">
+<div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px">
+<div style="font-family:var(--font-heading);font-weight:800;font-size:15px;letter-spacing:-.01em">Pledged vs. completed</div>
+<div style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--color-accent)">Expand</div>
+</div>
+<div style="font-size:11px;margin:2px 0 14px;color:color-mix(in srgb,var(--color-text) 55%,transparent)">All donor transactions by status</div>
+<div style="display:flex;height:30px;border:1px solid var(--color-divider)">
+<div style="{{ pledgeBarA }}"></div>
+<div style="{{ pledgeBarB }}"></div>
+</div>
+<div style="display:flex;gap:2px;margin-top:14px;background:var(--color-divider)">
+<sc-for list="{{ statusStats }}" as="s" hint-placeholder-count="3">
+<div style="flex:1;background:var(--color-bg);padding:10px 12px">
+<div style="font-family:var(--font-heading);font-weight:800;font-size:19px;letter-spacing:-.02em">{{ s.value }}</div>
+<div style="font-size:10px;letter-spacing:.09em;text-transform:uppercase;margin-top:2px;color:color-mix(in srgb,var(--color-text) 55%,transparent)">{{ s.label }}</div>
+</div>
+</sc-for>
+</div>
+</div>
+
+<div onClick="{{ onOpen_top }}" style="background:var(--color-bg);padding:16px 18px 20px;cursor:zoom-in" title="Click to expand">
+<div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px">
+<div style="font-family:var(--font-heading);font-weight:800;font-size:15px;letter-spacing:-.01em">Top donors</div>
+<div style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--color-accent)">Expand</div>
+</div>
+<div style="font-size:11px;margin:2px 0 14px;color:color-mix(in srgb,var(--color-text) 55%,transparent)">By total received</div>
+<sc-for list="{{ topDonors }}" as="d" hint-placeholder-count="6">
+<div class="nkt-row" style="padding:8px 0">
+<span style="flex:none;width:18px;font-family:var(--font-heading);font-weight:800;font-size:11px;opacity:.5">{{ d.rank }}</span>
+<span style="flex:1;min-width:0">
+<span style="display:block;font-size:13px;font-weight:600">{{ d.name }}</span>
+<span style="display:block;height:6px;background:#2e6b3e;margin-top:4px;width:{{ d.pct }}%"></span>
+</span>
+<span style="flex:none;font-family:var(--font-heading);font-weight:800;font-size:13px">{{ d.value }}</span>
+</div>
+</sc-for>
+</div>
+
+<div onClick="{{ onOpen_comp }}" style="background:var(--color-bg);padding:16px 18px 20px;cursor:zoom-in" title="Click to expand">
+<div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px">
+<div style="font-family:var(--font-heading);font-weight:800;font-size:15px;letter-spacing:-.01em">Phase completion</div>
+<div style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--color-accent)">Expand</div>
+</div>
+<div style="font-size:11px;margin:2px 0 14px;color:color-mix(in srgb,var(--color-text) 55%,transparent)">Tasks completed of tasks planned</div>
+<div style="display:flex;flex-direction:column;gap:9px">
+<sc-for list="{{ completionRows }}" as="c" hint-placeholder-count="6">
+<div style="display:flex;align-items:center;gap:10px">
+<div style="flex:none;width:104px;font-size:11.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ c.name }}</div>
+<div style="flex:1;height:12px;background:var(--color-neutral-300)"><div style="{{ c.barStyle }}"></div></div>
+<div style="flex:none;width:52px;text-align:right;font-size:11.5px">{{ c.label }}</div>
+</div>
+</sc-for>
+</div>
+</div>
+
+<div style="background:var(--color-bg);padding:16px 18px 20px">
+<div style="font-family:var(--font-heading);font-weight:800;font-size:15px;letter-spacing:-.01em">Export</div>
+<div style="font-size:11px;margin:2px 0 12px;color:color-mix(in srgb,var(--color-text) 55%,transparent)">Snapshot for the board packet</div>
+<div style="display:flex;flex-direction:column;gap:8px;max-width:280px">
+<button class="btn btn-secondary nkt-tap" style="height:38px;justify-content:flex-start">CSV — donors &amp; transactions</button>
+<button class="btn btn-secondary nkt-tap" style="height:38px;justify-content:flex-start">CSV — tasks &amp; committed cost</button>
+<button class="btn btn-primary nkt-tap" style="height:38px;justify-content:flex-start">PDF — one-page summary</button>
+</div>
+</div>
+
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ completeOpen }}" hint-placeholder-val="{{ false }}">
+<div style="position:absolute;inset:0;z-index:10;display:flex;align-items:center;justify-content:center;padding:26px;background:color-mix(in srgb,#1e2a20 55%,transparent);animation:nktFade .15s ease">
+<div style="width:100%;max-width:420px;background:var(--color-bg);border:2px solid var(--color-accent-700);box-shadow:var(--shadow-lg)">
+<div style="padding:13px 18px;background:#d9c9a3">
+<div style="font-family:var(--font-heading);font-weight:800;font-size:17px;letter-spacing:-.01em">Mark donation completed</div>
+<div style="font-size:11.5px;color:#5c5850">{{ completeWho }}</div>
+</div>
+<div style="padding:16px 18px;display:flex;flex-direction:column;gap:12px">
+<div class="field"><label>Final amount</label><input class="input" value="{{ completeAmount }}" onChange="{{ onCompleteAmount }}" placeholder="$0"></div>
+<div class="field"><label>Date received</label><input class="input" value="{{ completeDate }}" onChange="{{ onCompleteDate }}" placeholder="YYYY-MM-DD"></div>
+<div class="field"><label>Method</label>
+<select class="input" value="{{ completeMethod }}" onChange="{{ onCompleteMethod }}" style="height:36px">
+<sc-for list="{{ completeMethods }}" as="o" hint-placeholder-count="6"><option value="{{ o }}">{{ o }}</option></sc-for>
+</select>
+</div>
+<div style="display:flex;gap:8px;padding-top:4px">
+<button class="btn btn-primary nkt-tap" onClick="{{ onCompleteSave }}" style="height:40px;padding:0 18px">Mark completed</button>
+<button class="btn btn-secondary nkt-tap" onClick="{{ onCompleteCancel }}" style="height:40px;padding:0 16px">Cancel</button>
+</div>
+<div style="font-size:10.5px;color:color-mix(in srgb,var(--color-text) 50%,transparent)">A completion timestamp is written when you save.</div>
+</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ reportModalOpen }}" hint-placeholder-val="{{ false }}">
+<div id="nkt-report-modal" style="position:absolute;inset:0;z-index:9;display:flex;align-items:center;justify-content:center;padding:26px;background:color-mix(in srgb,#1e2a20 55%,transparent);animation:nktFade .15s ease">
+<div style="width:100%;max-width:1020px;max-height:100%;overflow-y:auto;background:var(--color-bg);border:2px solid var(--color-accent-700);box-shadow:var(--shadow-lg)">
+<div style="display:flex;align-items:center;gap:12px;padding:14px 20px;background:#d9c9a3">
+<div style="flex:1">
+<div style="font-family:var(--font-heading);font-weight:800;font-size:19px;letter-spacing:-.015em">{{ modalTitle }}</div>
+<div style="font-size:11.5px;color:#5c5850">{{ modalSub }}</div>
+</div>
+<div class="nkt-noprint" style="display:flex;gap:8px;flex:none">
+<button class="btn btn-secondary nkt-tap" onClick="{{ onExportPdf }}" style="height:34px;padding:0 14px">Export PDF</button>
+<sc-if value="{{ modalCanPng }}" hint-placeholder-val="{{ false }}">
+<button class="btn btn-secondary nkt-tap" onClick="{{ onExportPng }}" style="height:34px;padding:0 14px">Export image</button>
+</sc-if>
+<button class="btn btn-primary nkt-tap" onClick="{{ onCloseReport }}" style="height:34px;padding:0 14px">Close</button>
+</div>
+</div>
+<div style="padding:20px 22px 26px">
+<sc-if value="{{ modalIsLine }}" hint-placeholder-val="{{ false }}"><div style="position:relative;width:100%">
+<svg viewBox="0 0 960 420" style="width:100%;height:auto;display:block">
+<sc-for list="{{ yTicks }}" as="t" hint-placeholder-count="7">
+<line x1="96" y1="{{ t.y }}" x2="944" y2="{{ t.y }}" stroke="#2f3a31" stroke-opacity=".13" stroke-width="1"></line>
+</sc-for>
+<line x1="96" y1="372" x2="944" y2="372" stroke="#2f3a31" stroke-width="2"></line>
+<line x1="96" y1="24" x2="96" y2="372" stroke="#2f3a31" stroke-width="2"></line>
+<polyline points="{{ costPoints }}" fill="none" stroke="#2f3a31" stroke-width="3" stroke-dasharray="7 6"></polyline>
+<polyline points="{{ donationPoints }}" fill="none" stroke="#2e6b3e" stroke-width="4"></polyline>
+</svg>
+<sc-for list="{{ yTicks }}" as="t" hint-placeholder-count="7">
+<div style="{{ t.style }}">{{ t.label }}</div>
+</sc-for>
+<sc-for list="{{ monthTicks }}" as="m" hint-placeholder-count="12">
+<div style="{{ m.style }}">{{ m.label }}</div>
+</sc-for>
+</div>
+<div style="display:flex;gap:16px;margin-top:10px;font-size:11px;flex-wrap:wrap">
+<span style="display:flex;align-items:center;gap:6px"><span style="width:14px;height:3px;background:#2e6b3e"></span>Donations received</span>
+<span style="display:flex;align-items:center;gap:6px"><span style="width:14px;border-top:2px dashed #2f3a31"></span>Task cost committed</span>
+</div></sc-if>
+<sc-if value="{{ modalIsDay }}" hint-placeholder-val="{{ false }}"><div style="position:relative;width:100%">
+<svg viewBox="0 0 960 420" style="width:100%;height:auto;display:block">
+<sc-for list="{{ dayYTicks }}" as="t" hint-placeholder-count="6">
+<line x1="96" y1="{{ t.y }}" x2="944" y2="{{ t.y }}" stroke="#2f3a31" stroke-opacity=".13" stroke-width="1"></line>
+</sc-for>
+<line x1="96" y1="372" x2="944" y2="372" stroke="#2f3a31" stroke-width="2"></line>
+<line x1="96" y1="24" x2="96" y2="372" stroke="#2f3a31" stroke-width="2"></line>
+<sc-for list="{{ dayBars }}" as="b" hint-placeholder-count="30">
+<rect x="{{ b.x }}" y="{{ b.y }}" width="{{ b.w }}" height="{{ b.h }}" fill="{{ b.fill }}"></rect>
+</sc-for>
+</svg>
+<sc-for list="{{ dayYTicks }}" as="t" hint-placeholder-count="6">
+<div style="{{ t.style }}">{{ t.label }}</div>
+</sc-for>
+<sc-for list="{{ dayTicks }}" as="d" hint-placeholder-count="10">
+<div style="{{ d.style }}">{{ d.label }}</div>
+</sc-for>
+</div>
+<div style="display:flex;gap:16px;margin-top:10px;font-size:11px;flex-wrap:wrap">
+<span style="display:flex;align-items:center;gap:6px"><span style="width:12px;height:10px;background:#2e6b3e"></span>Donations received that day</span>
+<span style="display:flex;align-items:center;gap:6px"><span style="width:12px;height:10px;background:#c9a227"></span>Task payments due that day</span>
+</div></sc-if>
+<sc-if value="{{ modalIsLane }}" hint-placeholder-val="{{ false }}"><div style="position:relative;width:100%">
+<svg viewBox="0 0 960 460" style="width:100%;height:auto;display:block">
+<sc-for list="{{ laneCols }}" as="c" hint-placeholder-count="16">
+<line x1="{{ c.x }}" y1="30" x2="{{ c.x }}" y2="410" stroke="#2f3a31" stroke-opacity=".13" stroke-width="1"></line>
+</sc-for>
+<line x1="196" y1="410" x2="944" y2="410" stroke="#2f3a31" stroke-width="2"></line>
+<sc-for list="{{ lanes }}" as="l" hint-placeholder-count="11">
+<rect x="196" y="{{ l.ry }}" width="748" height="{{ l.rh }}" fill="{{ l.band }}"></rect>
+<rect x="{{ l.x }}" y="{{ l.y }}" width="{{ l.w }}" height="{{ l.h }}" fill="{{ l.fill }}"></rect>
+</sc-for>
+</svg>
+<sc-for list="{{ laneCols }}" as="c" hint-placeholder-count="16">
+<div style="{{ c.style }}">{{ c.label }}</div>
+</sc-for>
+<sc-for list="{{ lanes }}" as="l" hint-placeholder-count="11">
+<div style="{{ l.nameStyle }}">{{ l.name }}</div>
+<div style="{{ l.innerStyle }}">{{ l.inner }}</div>
+</sc-for>
+</div>
+<div style="display:flex;gap:16px;margin-top:10px;font-size:11px;flex-wrap:wrap">
+<span style="display:flex;align-items:center;gap:6px"><span style="width:12px;height:10px;background:#2e6b3e"></span>Complete</span>
+<span style="display:flex;align-items:center;gap:6px"><span style="width:12px;height:10px;background:#c9a227"></span>In progress</span>
+<span style="display:flex;align-items:center;gap:6px"><span style="width:12px;height:10px;background:#b3261e"></span>Blocked</span>
+<span style="display:flex;align-items:center;gap:6px"><span style="width:12px;height:10px;background:#8a8f89"></span>Not started</span>
+</div></sc-if>
+<sc-if value="{{ modalIsGap }}" hint-placeholder-val="{{ false }}"><div style="display:flex;flex-direction:column;gap:9px">
+<sc-for list="{{ gapRows }}" as="g" hint-placeholder-count="6">
+<div>
+<div style="display:flex;justify-content:space-between;font-size:11.5px;margin-bottom:3px">
+<span style="font-weight:600">{{ g.name }}</span>
+<span style="color:color-mix(in srgb,var(--color-text) 58%,transparent)">{{ g.note }}</span>
+</div>
+<div style="display:flex;height:12px;background:var(--color-neutral-300)"><div style="{{ g.barStyle }}"></div></div>
+</div>
+</sc-for>
+</div></sc-if>
+<sc-if value="{{ modalIsPledge }}" hint-placeholder-val="{{ false }}"><div style="display:flex;height:30px;border:1px solid var(--color-divider)">
+<div style="{{ pledgeBarA }}"></div>
+<div style="{{ pledgeBarB }}"></div>
+</div>
+<div style="display:flex;gap:2px;margin-top:14px;background:var(--color-divider)">
+<sc-for list="{{ statusStats }}" as="s" hint-placeholder-count="3">
+<div style="flex:1;background:var(--color-bg);padding:10px 12px">
+<div style="font-family:var(--font-heading);font-weight:800;font-size:19px;letter-spacing:-.02em">{{ s.value }}</div>
+<div style="font-size:10px;letter-spacing:.09em;text-transform:uppercase;margin-top:2px;color:color-mix(in srgb,var(--color-text) 55%,transparent)">{{ s.label }}</div>
+</div>
+</sc-for>
+</div></sc-if>
+<sc-if value="{{ modalIsTop }}" hint-placeholder-val="{{ false }}"><sc-for list="{{ topDonors }}" as="d" hint-placeholder-count="6">
+<div class="nkt-row" style="padding:8px 0">
+<span style="flex:none;width:18px;font-family:var(--font-heading);font-weight:800;font-size:11px;opacity:.5">{{ d.rank }}</span>
+<span style="flex:1;min-width:0">
+<span style="display:block;font-size:13px;font-weight:600">{{ d.name }}</span>
+<span style="display:block;height:6px;background:#2e6b3e;margin-top:4px;width:{{ d.pct }}%"></span>
+</span>
+<span style="flex:none;font-family:var(--font-heading);font-weight:800;font-size:13px">{{ d.value }}</span>
+</div>
+</sc-for></sc-if>
+<sc-if value="{{ modalIsComp }}" hint-placeholder-val="{{ false }}"><div style="display:flex;flex-direction:column;gap:9px">
+<sc-for list="{{ completionRows }}" as="c" hint-placeholder-count="6">
+<div style="display:flex;align-items:center;gap:10px">
+<div style="flex:none;width:104px;font-size:11.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ c.name }}</div>
+<div style="flex:1;height:12px;background:var(--color-neutral-300)"><div style="{{ c.barStyle }}"></div></div>
+<div style="flex:none;width:52px;text-align:right;font-size:11.5px">{{ c.label }}</div>
+</div>
+</sc-for>
+</div></sc-if>
+</div>
+</div>
+</div>
+</sc-if>
+
+</div>
+
+<div class="nkt-scroll" style="{{ detailPaneStyle }}">
+
+<sc-if value="{{ isDetail }}" hint-placeholder-val="{{ false }}">
+<div style="animation:nktIn .18s ease">
+<div style="{{ detailHeadStyle }}">
+<div style="font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--color-accent)">{{ detailKicker }}</div>
+<div style="font-family:var(--font-heading);font-weight:800;font-size:26px;line-height:1.1;letter-spacing:-.02em;margin-top:3px">{{ detailTitle }}</div>
+<div style="display:flex;align-items:center;gap:9px;margin-top:10px;flex-wrap:wrap">
+<span style="{{ detailTagStyle }}">{{ detailTag }}</span>
+<span style="font-size:12px;color:color-mix(in srgb,var(--color-text) 60%,transparent)">{{ detailSub }}</span>
+</div>
+<div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap">
+<button class="btn btn-primary nkt-tap" onClick="{{ onEdit }}" style="height:36px;padding:0 14px">Edit entry</button>
+<sc-if value="{{ showQuickComplete }}" hint-placeholder-val="{{ false }}">
+<button class="btn btn-primary nkt-tap" onClick="{{ onOpenComplete }}" style="height:36px;padding:0 14px;background:#1b4127">Completed</button>
+</sc-if>
+<sc-if value="{{ showLogContact }}" hint-placeholder-val="{{ false }}">
+<button class="btn btn-secondary nkt-tap" onClick="{{ onLogContact }}" style="height:36px;padding:0 14px">Log contact</button>
+</sc-if>
+<sc-if value="{{ showLogReminder }}" hint-placeholder-val="{{ false }}">
+<button class="btn btn-secondary nkt-tap" onClick="{{ onLogReminder }}" style="height:36px;padding:0 14px">Log reminder</button>
+</sc-if>
+<sc-if value="{{ showCertificate }}" hint-placeholder-val="{{ false }}">
+<button class="btn btn-secondary nkt-tap" onClick="{{ onCertificate }}" style="height:36px;padding:0 14px">Donor certificate</button>
+</sc-if>
+<button class="btn btn-ghost nkt-tap" onClick="{{ onBack }}" style="height:36px">Close</button>
+</div>
+<sc-if value="{{ logOpen }}" hint-placeholder-val="{{ false }}">
+<div style="margin-top:12px;border:1px solid var(--color-accent-300);background:var(--color-accent-100);padding:11px 12px;display:flex;flex-direction:column;gap:8px">
+<div style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--color-accent-800)">{{ logTitle }}</div>
+<div style="display:flex;gap:8px;flex-wrap:wrap">
+<input class="input" value="{{ logDate }}" onChange="{{ onLogDate }}" placeholder="YYYY-MM-DD" style="flex:none;width:130px;height:34px;min-height:34px">
+<input class="input" value="{{ logNote }}" onChange="{{ onLogNote }}" placeholder="{{ logPlaceholder }}" style="flex:1;min-width:150px;height:34px;min-height:34px">
+<button class="btn btn-primary nkt-tap" onClick="{{ onLogSave }}" style="height:34px;padding:0 14px">Save</button>
+<button class="btn btn-ghost nkt-tap" onClick="{{ onLogCancel }}" style="height:34px">Cancel</button>
+</div>
+</div>
+</sc-if>
+</div>
+<sc-if value="{{ hasDetailStats }}" hint-placeholder-val="{{ true }}">
+<div style="display:flex;border-bottom:2px solid var(--color-divider)">
+<sc-for list="{{ detailStats }}" as="s" hint-placeholder-count="3">
+<div style="flex:1;padding:11px 14px;border-right:1px solid var(--color-divider)">
+<div style="font-family:var(--font-heading);font-weight:800;font-size:16px;letter-spacing:-.01em">{{ s.value }}</div>
+<div style="font-size:9.5px;letter-spacing:.09em;text-transform:uppercase;margin-top:3px;color:color-mix(in srgb,var(--color-text) 55%,transparent)">{{ s.label }}</div>
+</div>
+</sc-for>
+</div>
+</sc-if>
+<div style="padding:6px 20px 2px">
+<sc-for list="{{ detailFields }}" as="f" hint-placeholder-count="10">
+<div style="display:flex;gap:14px;padding:8px 0;border-bottom:1px solid color-mix(in srgb,var(--color-text) 12%,transparent)">
+<div style="flex:none;width:132px;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;padding-top:3px;color:color-mix(in srgb,var(--color-text) 55%,transparent)">{{ f.label }}</div>
+<div style="flex:1;font-size:13.5px;text-wrap:pretty">{{ f.value }}</div>
+</div>
+</sc-for>
+</div>
+<sc-for list="{{ detailGroups }}" as="g" hint-placeholder-count="2">
+<div style="margin-top:14px;border-top:2px solid var(--color-divider)">
+<div style="display:flex;align-items:baseline;justify-content:space-between;padding:9px 20px;background:#d9c9a3">
+<div style="font-family:var(--font-heading);font-weight:800;font-size:13px;letter-spacing:.04em;text-transform:uppercase">{{ g.title }}</div>
+<div style="font-size:11px;color:#5c5850">{{ g.note }}</div>
+</div>
+<sc-for list="{{ g.items }}" as="i" hint-placeholder-count="3">
+<button class="nkt-row" onClick="{{ i.open }}" style="padding:9px 20px">
+<span style="flex:1;min-width:0">
+<span style="display:block;font-size:13px;font-weight:600">{{ i.title }}</span>
+<span style="display:block;font-size:11.5px;margin-top:2px;color:color-mix(in srgb,var(--color-text) 60%,transparent)">{{ i.sub }}</span>
+</span>
+<span style="flex:none;font-family:var(--font-heading);font-weight:800;font-size:13px;padding-left:10px">{{ i.value }}</span>
+</button>
+</sc-for>
+<sc-if value="{{ g.empty }}" hint-placeholder-val="{{ false }}">
+<div style="padding:12px 20px 16px;font-size:12px;color:color-mix(in srgb,var(--color-text) 48%,transparent)">{{ g.emptyText }}</div>
+</sc-if>
+</div>
+</sc-for>
+<div style="height:28px"></div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isForm }}" hint-placeholder-val="{{ false }}">
+<div style="animation:nktUp .18s ease">
+<div style="padding:16px 20px 14px;border-bottom:2px solid var(--color-divider)">
+<div style="font-family:var(--font-heading);font-weight:800;font-size:20px;letter-spacing:-.015em">{{ formTitle }}</div>
+<div style="font-size:11.5px;margin-top:4px;color:color-mix(in srgb,var(--color-text) 58%,transparent);text-wrap:pretty">{{ formHint }}</div>
+</div>
+<sc-if value="{{ showQuickDonor }}" hint-placeholder-val="{{ false }}">
+<div style="margin:14px 20px 0;border:1px solid var(--color-accent-300);background:var(--color-accent-100)">
+<div style="display:flex;align-items:center;justify-content:space-between;padding:9px 12px">
+<div style="font-size:12px;font-weight:600;color:var(--color-accent-800)">Donor not in the list yet?</div>
+<button class="btn btn-ghost nkt-tap" onClick="{{ onToggleQuickDonor }}" style="font-size:12px">{{ quickDonorToggleLabel }}</button>
+</div>
+<sc-if value="{{ quickDonorOpen }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;gap:8px;padding:0 12px 12px;flex-wrap:wrap">
+<input class="input" value="{{ quickDonorName }}" onChange="{{ onQuickDonorName }}" placeholder="Donor, organization or family name" style="flex:2;min-width:160px;height:34px;min-height:34px">
+<select class="input" value="{{ quickDonorType }}" onChange="{{ onQuickDonorType }}" style="flex:1;min-width:120px;height:34px">
+<sc-for list="{{ donorTypes }}" as="o" hint-placeholder-count="3"><option value="{{ o }}">{{ o }}</option></sc-for>
+</select>
+<button class="btn btn-primary nkt-tap" onClick="{{ onCreateQuickDonor }}" style="height:34px;padding:0 14px">Create &amp; link</button>
+</div>
+</sc-if>
+</div>
+</sc-if>
+<div style="{{ formGridStyle }}">
+<sc-for list="{{ formFields }}" as="f" hint-placeholder-count="10">
+<div class="field" style="{{ f.wrapStyle }}">
+<label style="display:flex;justify-content:space-between"><span>{{ f.label }}</span><span style="color:var(--color-accent)">{{ f.req }}</span></label>
+<sc-if value="{{ f.isText }}" hint-placeholder-val="{{ true }}">
+<input class="input" value="{{ f.value }}" onChange="{{ f.onChange }}" placeholder="{{ f.placeholder }}">
+</sc-if>
+<sc-if value="{{ f.isArea }}" hint-placeholder-val="{{ false }}">
+<textarea class="input" value="{{ f.value }}" onChange="{{ f.onChange }}" placeholder="{{ f.placeholder }}" style="min-height:70px"></textarea>
+</sc-if>
+<sc-if value="{{ f.isSelect }}" hint-placeholder-val="{{ false }}">
+<select class="input" value="{{ f.value }}" onChange="{{ f.onChange }}" style="height:36px">
+<sc-for list="{{ f.options }}" as="o" hint-placeholder-count="4"><option value="{{ o }}">{{ o }}</option></sc-for>
+</select>
+<sc-if value="{{ f.addable }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;gap:6px;margin-top:6px">
+<input class="input" value="{{ f.newOption }}" onChange="{{ f.onNewOption }}" placeholder="{{ f.addPlaceholder }}" style="flex:1;height:32px;min-height:32px;font-size:12.5px">
+<button class="btn btn-secondary nkt-tap" onClick="{{ f.onAddOption }}" style="height:32px;padding:0 11px;font-size:12px">Add</button>
+</div>
+</sc-if>
+</sc-if>
+<sc-if value="{{ f.isMulti }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;flex-wrap:wrap;gap:6px;padding-top:2px">
+<sc-for list="{{ f.chips }}" as="c" hint-placeholder-count="5">
+<button class="nkt-tap" onClick="{{ c.toggle }}" style="{{ c.style }}">{{ c.label }}</button>
+</sc-for>
+</div>
+</sc-if>
+<sc-if value="{{ f.help }}" hint-placeholder-val="{{ false }}">
+<div style="font-size:10.5px;margin-top:4px;color:color-mix(in srgb,var(--color-text) 50%,transparent)">{{ f.help }}</div>
+</sc-if>
+</div>
+</sc-for>
+</div>
+<sc-if value="{{ hasRepeater }}" hint-placeholder-val="{{ false }}">
+<div style="border-top:2px solid var(--color-divider);margin-top:6px">
+<div style="display:flex;align-items:baseline;justify-content:space-between;padding:12px 20px 6px">
+<div style="font-family:var(--font-heading);font-weight:800;font-size:13px;text-transform:uppercase;letter-spacing:.04em">{{ repeaterTitle }}</div>
+<button class="btn btn-ghost nkt-tap" onClick="{{ onAddRepeaterRow }}" style="font-size:12px">+ Add row</button>
+</div>
+<sc-for list="{{ repeaterRows }}" as="c" hint-placeholder-count="2">
+<div style="display:flex;gap:8px;padding:8px 20px;border-top:1px solid color-mix(in srgb,var(--color-text) 12%,transparent)">
+<input class="input" value="{{ c.date }}" onChange="{{ c.onDate }}" placeholder="{{ repeaterDateHint }}" style="flex:1.1;height:34px;min-height:34px">
+<input class="input" value="{{ c.label }}" onChange="{{ c.onLabel }}" placeholder="{{ repeaterLabelHint }}" style="flex:1.5;height:34px;min-height:34px">
+<input class="input" value="{{ c.amount }}" onChange="{{ c.onAmount }}" placeholder="{{ repeaterAmountHint }}" style="flex:.9;height:34px;min-height:34px">
+</div>
+</sc-for>
+</div>
+</sc-if>
+<div style="display:flex;gap:8px;padding:18px 20px 30px;border-top:2px solid var(--color-divider);margin-top:12px">
+<button class="btn btn-primary nkt-tap" onClick="{{ onSave }}" style="height:40px;padding:0 18px">{{ saveLabel }}</button>
+<button class="btn btn-secondary nkt-tap" onClick="{{ onBack }}" style="height:40px;padding:0 16px">Cancel</button>
+<div style="flex:1"></div>
+<div style="align-self:center;font-size:10.5px;color:color-mix(in srgb,var(--color-text) 45%,transparent)">Writes to /{{ sectionKey }}</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isEmptyDetail }}" hint-placeholder-val="{{ false }}">
+<div style="height:100%;display:flex;flex-direction:column;justify-content:center;gap:8px;padding:40px 28px;animation:nktFade .2s ease">
+<div style="width:34px;height:2px;background:var(--color-accent)"></div>
+<div style="font-family:var(--font-heading);font-weight:800;font-size:17px;letter-spacing:-.01em">{{ emptyTitle }}</div>
+<div style="font-size:12.5px;max-width:250px;color:color-mix(in srgb,var(--color-text) 55%,transparent);text-wrap:pretty">{{ emptyBody }}</div>
+</div>
+</sc-if>
+
+</div>
+</div>
+
+<sc-if value="{{ isMobile }}" hint-placeholder-val="{{ false }}">
+<div style="flex:none;display:flex;border-top:2px solid var(--color-divider);background:var(--color-bg)">
+<sc-for list="{{ tabBar }}" as="t" hint-placeholder-count="4">
+<button class="nkt-tap" onClick="{{ t.on }}" style="{{ t.style }}">
+<span style="font-family:var(--font-heading);font-weight:800;font-size:13px">{{ t.glyph }}</span>
+<span style="font-size:10px;letter-spacing:.04em">{{ t.label }}</span>
+</button>
+</sc-for>
+</div>
+</sc-if>
+
+</div>
+
+<sc-if value="{{ drawerOpen }}" hint-placeholder-val="{{ false }}">
+<div style="position:absolute;inset:0;z-index:5;display:flex;background:color-mix(in srgb,#2d2b2b 45%,transparent);animation:nktFade .15s ease">
+<div style="width:250px;background:#d9c9a3;color:#4a473f;display:flex;flex-direction:column;animation:nktDrawer .2s ease">
+<div style="padding:16px 16px 14px;border-bottom:2px solid rgba(30,42,32,.25)">
+<img src="https://rotaryknk.org/images/nku/NKU-800x378.png" alt="North Kitsap United" style="width:120px;height:auto">
+<div style="font-size:9px;letter-spacing:.16em;text-transform:uppercase;margin-top:10px;color:#6b675e">NKU Tracker</div>
+</div>
+<div class="nkt-scroll" style="flex:1;overflow-y:auto;padding:6px 0">
+<sc-for list="{{ navItems }}" as="n" hint-placeholder-count="8">
+<button class="nkt-nav" onClick="{{ n.go }}" style="{{ n.style }}">
+<span style="flex:none;width:22px;font-family:var(--font-heading);font-weight:800;font-size:10px;opacity:.7">{{ n.num }}</span>
+<span style="flex:1;font-size:14px">{{ n.label }}</span>
+<span style="flex:none;font-size:11px;opacity:.7">{{ n.count }}</span>
+</button>
+</sc-for>
+</div>
+<div style="padding:12px 16px 16px;border-top:2px solid rgba(30,42,32,.25);font-size:10px;color:#6b675e;word-break:break-all">northkitsapunited-default-rtdb.firebaseio.com</div>
+</div>
+<button onClick="{{ onCloseDrawer }}" style="flex:1;border:0;background:transparent;cursor:pointer"></button>
+</div>
+</sc-if>
+
+</div>
+</div>
+
+<div style="width:100%;max-width:1280px;border-top:2px solid var(--color-divider);padding-top:14px;display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:22px">
+<div>
+<div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--color-accent);margin-bottom:5px">Try in the mockup</div>
+<div style="font-size:12px;line-height:1.55;color:color-mix(in srgb,var(--color-text) 68%,transparent);text-wrap:pretty">Admin → Data fields → add a field to Donors, then open Donors → New: the form picks it up. Every list row opens a detail pane; detail panes cross-link to related records.</div>
+</div>
+<div>
+<div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--color-accent);margin-bottom:5px">Data model assumed</div>
+<div style="font-size:12px;line-height:1.55;color:color-mix(in srgb,var(--color-text) 68%,transparent);text-wrap:pretty">Transactions carry donorId. Tasks carry phaseId, a workerIds list and dated cost rows. Donors and transactions each carry a taskIds list, so one gift can be split across tasks. A worker record can point at a donor record.</div>
+</div>
+<div>
+<div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--color-accent);margin-bottom:5px">Open questions</div>
+<div style="font-size:12px;line-height:1.55;color:color-mix(in srgb,var(--color-text) 68%,transparent);text-wrap:pretty">Should allocation of a gift across tasks be by amount or by percentage? Do workers need timesheets, or only assignment? Who may see donor amounts — role-gated, or all signed-in users?</div>
+</div>
+</div>
+
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;layout&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;desktop&quot;,&quot;mobile&quot;],&quot;default&quot;:&quot;desktop&quot;,&quot;tsType&quot;:&quot;'desktop'|'mobile'&quot;,&quot;section&quot;:&quot;Rendering&quot;},&quot;density&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;comfortable&quot;,&quot;compact&quot;],&quot;default&quot;:&quot;comfortable&quot;,&quot;tsType&quot;:&quot;'comfortable'|'compact'&quot;,&quot;section&quot;:&quot;Rendering&quot;},&quot;hideDonorAmounts&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Permissions&quot;}}">
+const F = {
+  money(n){ if(n==null||isNaN(n)) return "—";
+    const a=Math.abs(n);
+    if(a>=1e6) return "$"+(n/1e6).toFixed(a>=1e7?1:2).replace(/\.0+$/,"")+"M";
+    if(a>=1e3) return "$"+Math.round(n/1e3)+"K";
+    return "$"+n.toLocaleString(); },
+  full(n){ return n==null?"—":"$"+Math.round(n).toLocaleString(); }
+};
+
+const SECTIONS = [
+  {key:"overview", label:"Overview", num:"—"},
+  {key:"donors", label:"Donors", num:"01"},
+  {key:"transactions", label:"Donations", num:"02"},
+  {key:"phases", label:"Phases of work", num:"03"},
+  {key:"workers", label:"Workers & contractors", num:"04"},
+  {key:"tasks", label:"Work to do / tasks", num:"05"},
+  {key:"admin", label:"Admin", num:"06"},
+  {key:"reports", label:"Reports", num:"07"},
+  {key:"calendar", label:"Calendar", num:"08"}
+];
+
+const GREEN="#2e6b3e", DEEP="#1b4127", TAN="#d9c9a3", YELLOW="#c9a227", RED="#b3261e", CHART="#2f3a31";
+const MONTHS=["January","February","March","April","May","June","July","August","September","October","November","December"];
+
+const SCHEMA = {
+  donors:[
+    {k:"donorId",l:"Donor ID",t:"Text",req:true,help:"Auto-assigned NKU-#### on save"},
+    {k:"type",l:"Type",t:"Select",req:true,o:["Individual","Organization","Family"],help:"Name below can be a person, an organization or a family"},
+    {k:"name",l:"Name",t:"Text",req:true},
+    {k:"org",l:"Organization",t:"Text"},
+    {k:"phone",l:"Phone",t:"Text"},
+    {k:"mobile",l:"Mobile",t:"Text"},
+    {k:"email",l:"Email",t:"Text"},
+    {k:"address",l:"Mailing address",t:"Long text"},
+    {k:"preferred",l:"Preferred contact",t:"Select",o:["Phone","Mobile","Email","Mail","In person"],help:"Used for collection and retention outreach"},
+    {k:"tier",l:"Tier",t:"Select",o:["Cornerstone","Keystone","Pillar","Foundation","Friend"]},
+    {k:"proposed",l:"Proposed $$",t:"Money"},
+    {k:"prospectiveDate",l:"Prospective date",t:"Date"},
+    {k:"confidence",l:"Confidence level",t:"Select",o:["High","Medium","Low"]},
+    {k:"status",l:"Current status",t:"Select",req:true,o:["New","Contacted","Promised","Completed"]},
+    {k:"giftType",l:"$$ type",t:"Select",o:["Cash","Pledge","In-kind","Grant","Stock","Labor credit"]},
+    {k:"frequency",l:"Frequency",t:"Select",o:["One-time","Monthly","Quarterly","Annual","On milestone"]},
+    {k:"linked",l:"Linked to",t:"Link",link:"donors",help:"Other donor records — family, business, matching source"},
+    {k:"phaseTaskLinks",l:"Phase / task connection",t:"Link",link:"tasks",help:"Tasks this donor's giving is earmarked for"},
+    {k:"familyNotes",l:"Family notes",t:"Long text"},
+    {k:"other",l:"Other information",t:"Long text"}
+  ],
+  transactions:[
+    {k:"donorId",l:"Donor",t:"Link",link:"donors",req:true},
+    {k:"amount",l:"Amount",t:"Money",req:true},
+    {k:"date",l:"Date",t:"Date",req:true},
+    {k:"status",l:"Status",t:"Select",req:true,o:["Completed","Promised","Potential"]},
+    {k:"method",l:"Method",t:"Select",o:["Check","ACH","Card","Stock","In-kind","Grant award"]},
+    {k:"taskIds",l:"Applied to tasks",t:"Link",link:"tasks",help:"A single gift can be split across several tasks"},
+    {k:"notes",l:"Notes",t:"Long text"}
+  ],
+  phases:[
+    {k:"code",l:"Phase code",t:"Text",req:true},
+    {k:"name",l:"Phase name",t:"Text",req:true},
+    {k:"budget",l:"Budget",t:"Money",req:true},
+    {k:"start",l:"Start",t:"Date"},
+    {k:"end",l:"Target finish",t:"Date"},
+    {k:"status",l:"Status",t:"Select",o:["Not started","In progress","Blocked","Complete"]},
+    {k:"lead",l:"Phase lead",t:"Link",link:"workers"},
+    {k:"scope",l:"Scope notes",t:"Long text"}
+  ],
+  workers:[
+    {k:"name",l:"Name",t:"Text",req:true},
+    {k:"company",l:"Company",t:"Select",dyn:"companies",help:"Add a company once and it is offered on every later entry"},
+    {k:"status",l:"Status",t:"Select",req:true,o:["Contacted","Negotiating","Reviewing","Vetted","Contracted"]},
+    {k:"trade",l:"Trade / role",t:"Select",req:true,o:["General contractor","Site super","Excavation","Concrete","Framing","Electrical","Plumbing/HVAC","Roofing","Finish","Landscape","Volunteer crew"]},
+    {k:"kind",l:"Engagement",t:"Select",o:["Contractor","Employee","Volunteer","Donated labor"]},
+    {k:"rate",l:"Rate",t:"Money",help:"Hourly, or leave blank for bid work"},
+    {k:"phone",l:"Phone",t:"Text"},
+    {k:"mobile",l:"Mobile",t:"Text"},
+    {k:"email",l:"Email",t:"Text"},
+    {k:"address",l:"Mailing address",t:"Long text"},
+    {k:"preferred",l:"Preferred contact",t:"Select",o:["Phone","Mobile","Email","Mail","In person"]},
+    {k:"license",l:"License / bond",t:"Text"},
+    {k:"insuredThru",l:"Insurance through",t:"Date"},
+    {k:"donorLink",l:"Also a donor",t:"Link",link:"donors",help:"Point at the donor record if this person also gives"}
+  ],
+  tasks:[
+    {k:"name",l:"Task name",t:"Text",req:true},
+    {k:"phaseId",l:"Phase",t:"Link",link:"phases",req:true},
+    {k:"location",l:"Location",t:"Select",dyn:"locations",help:"Managed list — add a location once and reuse it"},
+    {k:"status",l:"Status",t:"Select",req:true,o:["Not started","In progress","Blocked","Complete"]},
+    {k:"start",l:"Start date",t:"Date"},
+    {k:"duration",l:"Duration",t:"Text",help:"Working days, or a range"},
+    {k:"workerIds",l:"Assigned to",t:"Link",link:"workers",help:"Several workers or contractors per task"},
+    {k:"cost",l:"Estimated cost",t:"Money",req:true},
+    {k:"funders",l:"Funded by",t:"Link",link:"donors",help:"Donors and transactions marked against this task"},
+    {k:"notes",l:"Notes",t:"Long text"}
+  ]
+};
+
+const FIRST=["Marge","Dale","Ruth","Ken","Alice","Tom","Nina","Grant","Paula","Vern","Joyce","Hal","Diane","Owen","Fern","Cal","Roberta","Stan","Lynn","Curt","Edith","Ray","Maura","Bud","Cheryl","Wes","Ilene","Gordon","Sue","Arlen"];
+const LAST=["Bergstrom","Kaneko","Olsen","Vasquez","Hollister","Nakamura","Pruitt","Sandberg","Tolliver","Ingebretsen","Marsh","Chen","Dahlgren","Fenwick","Rasmussen","Whitcomb","Aguilar","Lindqvist","Bramble","Okafor","Sorensen","Trapp","Yeager","Calder","Novak","Pearsall"];
+const ORGS=["","","Kingston Marine Supply","North Kitsap Rotary","Poulsbo Timber Co.","","Hansville Grange","","Suquamish Trading","Olympic Ridge Dental","","Little Norway Bakery","Kitsap Bank","","Port Gamble Millworks",""];
+
+function rng(seed){ let s=seed; return ()=>{ s=(s*1103515245+12345)&0x7fffffff; return s/0x7fffffff; }; }
+
+function buildData(){
+  const r=rng(97);
+  const tiers=["Cornerstone","Keystone","Pillar","Foundation","Friend"];
+  const conf=["High","Medium","Low"];
+  const stat=["New","Contacted","Promised","Completed"];
+  const types=["Cash","Pledge","In-kind","Grant","Stock","Labor credit"];
+  const freq=["One-time","Monthly","Quarterly","Annual","On milestone"];
+
+  const donors=[];
+  const anchors=[
+    {name:"Bergstrom Family Trust",org:"",kind:"Family",tier:"Cornerstone",proposed:3200000,status:"Promised",conf:"High",type:"Pledge",freq:"On milestone"},
+    {name:"Kitsap Community Foundation",org:"KCF",kind:"Organization",tier:"Cornerstone",proposed:2500000,status:"Completed",conf:"High",type:"Grant",freq:"One-time"},
+    {name:"Poulsbo Timber Co.",org:"Poulsbo Timber Co.",kind:"Organization",tier:"Keystone",proposed:1400000,status:"Completed",conf:"High",type:"In-kind",freq:"On milestone"},
+    {name:"Dale & Ruth Kaneko",org:"",kind:"Family",tier:"Keystone",proposed:900000,status:"Promised",conf:"High",type:"Pledge",freq:"Annual"},
+    {name:"Kingston Marine Supply",org:"Kingston Marine Supply",kind:"Organization",tier:"Pillar",proposed:600000,status:"Contacted",conf:"Medium",type:"Cash",freq:"Quarterly"},
+    {name:"Suquamish Trading",org:"Suquamish Trading",kind:"Organization",tier:"Pillar",proposed:450000,status:"Promised",conf:"High",type:"Cash",freq:"One-time"}
+  ];
+  anchors.forEach((a,i)=>donors.push({id:"d"+(i+1),donorId:"NKU-"+(1001+i),name:a.name,type:a.kind,org:a.org,tier:a.tier,proposed:a.proposed,prospectiveDate:"2026-"+String(3+i).padStart(2,"0")+"-15",confidence:a.conf,status:a.status,giftType:a.type,frequency:a.freq,linked:[],phaseTaskLinks:[],familyNotes:"",other:"",phone:"(360) 297-0"+String(140+i),mobile:"(360) 620-0"+String(210+i),email:a.name.toLowerCase().replace(/[^a-z]+/g,".").slice(0,20)+"@example.org",address:(1200+i*7)+" NE Hostmark St, Poulsbo, WA 98370",preferred:["Email","Phone","In person"][i%3]}));
+  for(let i=anchors.length;i<118;i++){
+    const fn=FIRST[Math.floor(r()*FIRST.length)], ln=LAST[Math.floor(r()*LAST.length)];
+    const org=ORGS[Math.floor(r()*ORGS.length)];
+    const kind=org?"Organization":(r()<0.18?"Family":"Individual");
+    const tier=tiers[Math.min(4,Math.floor(r()*r()*6))];
+    const base=[900000,420000,180000,60000,12000][tiers.indexOf(tier)];
+    donors.push({id:"d"+(i+1),donorId:"NKU-"+(1001+i),name:kind==="Family"?(ln+" Family"):(fn+" "+ln),type:kind,org,tier,
+      proposed:Math.round(base*(0.5+r())/500)*500,
+      prospectiveDate:"2026-"+String(1+Math.floor(r()*12)).padStart(2,"0")+"-"+String(1+Math.floor(r()*28)).padStart(2,"0"),
+      confidence:conf[Math.floor(r()*3)],status:stat[Math.floor(r()*4)],giftType:types[Math.floor(r()*6)],frequency:freq[Math.floor(r()*5)],
+      linked:[],phaseTaskLinks:[],familyNotes:"",other:"",
+      phone:"(360) 297-0"+String(140+i),mobile:"(360) 620-0"+String(210+i),
+      email:(fn+"."+ln).toLowerCase()+"@example.com",
+      address:(300+i*3)+" "+["NE Lincoln Rd","Bond Rd NE","Viking Way NW","NE State Hwy 104"][i%4]+", "+["Poulsbo","Kingston","Hansville","Suquamish"][i%4]+", WA",
+      preferred:["Email","Phone","Mobile","Mail"][i%4]});
+  }
+  donors[3].linked=["d1"]; donors[0].linked=["d4"];
+  donors[0].familyNotes="Third generation in Hansville. Prefers a spring site walk before releasing each milestone payment.";
+  donors[0].other="Named-gift interest: the community hall. Attorney handles the trust paperwork.";
+
+  const phaseDefs=[
+    ["P01","Site acquisition & survey",1800000,"Complete","2025-04-01","2025-09-30"],
+    ["P02","Permitting & design",2400000,"Complete","2025-06-01","2026-01-31"],
+    ["P03","Clearing & earthwork",3100000,"In progress","2026-02-01","2026-11-30"],
+    ["P04","Utilities & stormwater",2750000,"In progress","2026-05-01","2027-03-31"],
+    ["P05","Foundations",4200000,"Not started","2026-10-01","2027-06-30"],
+    ["P06","Structure & framing",6800000,"Not started","2027-03-01","2028-02-28"],
+    ["P07","Envelope & roofing",3900000,"Not started","2027-09-01","2028-06-30"],
+    ["P08","Mechanical, electrical, plumbing",4600000,"Not started","2028-01-01","2028-10-31"],
+    ["P09","Interior finishes",3300000,"Not started","2028-06-01","2029-02-28"],
+    ["P10","Site work & landscape",1600000,"Blocked","2028-09-01","2029-05-31"],
+    ["P11","Commissioning & handover",700000,"Not started","2029-03-01","2029-08-31"]
+  ];
+  const phases=phaseDefs.map((p,i)=>({id:"p"+(i+1),code:p[0],name:p[1],budget:p[2],status:p[3],start:p[4],end:p[5],lead:"w"+(1+(i%4)),scope:""}));
+  phases[9].scope="Held pending the shoreline variance. Do not release bids.";
+
+  const workerDefs=[
+    ["Hal Ingebretsen","Ingebretsen Bros. Construction","General contractor","Contractor",165],
+    ["Curt Marsh","","Site super","Employee",92],
+    ["Vern Sandberg","Sandberg Excavating","Excavation","Contractor",148],
+    ["Nina Pruitt","Cascade Concrete","Concrete","Contractor",139],
+    ["Owen Fenwick","Fenwick Framing","Framing","Contractor",132],
+    ["Alice Nakamura","Nakamura Electric","Electrical","Contractor",144],
+    ["Tom Hollister","Hollister Mechanical","Plumbing/HVAC","Contractor",151],
+    ["Grant Olsen","Olsen Roofing","Roofing","Contractor",128],
+    ["Paula Vasquez","Vasquez Interiors","Finish","Contractor",118],
+    ["Joyce Dahlgren","Dahlgren Landscape","Landscape","Contractor",96],
+    ["Ken Rasmussen","","Volunteer crew","Volunteer",0],
+    ["Diane Whitcomb","Whitcomb Survey","Site super","Contractor",112],
+    ["Cal Sorensen","Sorensen Steel","Framing","Contractor",158],
+    ["Fern Trapp","","Volunteer crew","Donated labor",0]
+  ];
+  const wStatus=["Contracted","Contracted","Contracted","Contracted","Vetted","Contracted","Contracted","Vetted","Reviewing","Negotiating","Contracted","Contracted","Reviewing","Contacted"];
+  const workers=workerDefs.map((w,i)=>({id:"w"+(i+1),name:w[0],company:w[1],trade:w[2],kind:w[3],status:wStatus[i]||"Contacted",rate:w[4]||null,
+    phone:"(360) 555-0"+String(100+i),mobile:"(360) 471-0"+String(180+i),
+    email:w[0].split(" ")[0].toLowerCase()+"@"+(w[1]?w[1].split(" ")[0].toLowerCase()+".com":"nku.org"),
+    address:(820+i*11)+" NW Finn Hill Rd, Poulsbo, WA 98370",preferred:i%2?"Mobile":"Email",
+    license:w[1]?"WA "+(String(w[1].length)+"ICBC"+(340+i)):"",insuredThru:"2027-0"+(1+(i%9))+"-01",donorLink:null}));
+  workers[0].donorLink="d3"; workers[9].donorLink="d5";
+
+  const taskDefs=[
+    ["Boundary & topographic survey","p1","Complete",84000,"2025-04-08","12 days",["w12"]],
+    ["Wetland delineation","p1","Complete",56000,"2025-05-12","9 days",["w12"]],
+    ["Schematic design package","p2","Complete",410000,"2025-06-15","60 days",["w1"]],
+    ["County land-use permit","p2","Complete",220000,"2025-09-01","110 days",["w1","w2"]],
+    ["Clear north parcel","p3","Complete",380000,"2026-02-10","18 days",["w3","w11"]],
+    ["Mass grading, pads A–C","p3","In progress",1240000,"2026-04-01","64 days",["w3","w2"]],
+    ["Haul-road & staging yard","p3","In progress",290000,"2026-06-15","21 days",["w3"]],
+    ["Stormwater vault","p4","In progress",860000,"2026-07-01","45 days",["w3","w7"]],
+    ["Water main extension","p4","Not started",640000,"2026-11-02","38 days",["w7"]],
+    ["Primary power service","p4","Not started",520000,"2027-01-05","30 days",["w6"]],
+    ["Footing excavation","p5","Not started",470000,"2026-10-12","20 days",["w3","w4"]],
+    ["Foundation walls, block A","p5","Not started",1380000,"2027-01-11","55 days",["w4"]],
+    ["Slab on grade","p5","Not started",910000,"2027-04-05","34 days",["w4"]],
+    ["Steel erection","p6","Not started",2600000,"2027-03-15","90 days",["w13","w5"]],
+    ["Wood framing, wings B & C","p6","Not started",1950000,"2027-07-06","110 days",["w5"]],
+    ["Roof deck & membrane","p7","Not started",1420000,"2027-09-20","48 days",["w8"]],
+    ["Window & curtainwall","p7","Not started",1180000,"2027-11-08","52 days",["w5","w8"]],
+    ["Rough-in electrical","p8","Not started",1340000,"2028-01-17","70 days",["w6"]],
+    ["Rough-in mechanical","p8","Not started",1520000,"2028-02-07","75 days",["w7"]],
+    ["Drywall & paint","p9","Not started",980000,"2028-06-12","65 days",["w9"]],
+    ["Millwork & casework","p9","Not started",760000,"2028-09-04","40 days",["w9"]],
+    ["Plaza & walkways","p10","Blocked",520000,"2028-09-11","30 days",["w10","w11"]],
+    ["Planting & irrigation","p10","Blocked",340000,"2028-11-06","26 days",["w10","w14"]],
+    ["Systems commissioning","p11","Not started",410000,"2029-03-05","35 days",["w1","w6","w7"]]
+  ];
+  const LOC=["North parcel","South parcel","Pad A","Pad B","Pad C","Community hall","Main building","Access road","Utility corridor","Shoreline edge","Plaza"];
+  const taskLoc=[0,9,5,5,0,2,7,8,8,8,3,3,4,6,6,6,6,6,6,5,5,10,10,6];
+  const tasks=taskDefs.map((t,i)=>({id:"t"+(i+1),name:t[0],phaseId:t[1],location:LOC[taskLoc[i]]||"Main building",status:t[2],cost:t[3],start:t[4],duration:t[5],workerIds:t[6],
+    costRows:[{date:t[4],label:"Mobilization",amount:Math.round(t[3]*0.3)},{date:t[4],label:"Balance on completion",amount:Math.round(t[3]*0.7)}],
+    funders:[],notes:""}));
+  tasks[5].notes="Weather hold risk October onward. Sandberg wants the pad C change order signed before crews return.";
+
+  const transactions=[];
+  const txStat=["Completed","Completed","Promised","Promised","Potential"];
+  const methods=["Check","ACH","Card","Stock","In-kind","Grant award"];
+  let ti=0;
+  const seedTx=[
+    ["d2",2500000,"2025-11-14","Completed","Grant award",["t3","t4"]],
+    ["d3",620000,"2026-01-22","Completed","In-kind",["t5","t7"]],
+    ["d1",800000,"2026-03-02","Completed","Check",["t6"]],
+    ["d1",1200000,"2026-12-01","Potential","Check",["t11","t12"]],
+    ["d4",300000,"2026-02-18","Completed","ACH",["t6"]],
+    ["d4",300000,"2027-02-18","Potential","ACH",["t12"]],
+    ["d6",450000,"2026-05-30","Completed","Check",["t8"]],
+    ["d5",150000,"2026-04-09","Completed","Card",["t7"]],
+    ["d5",450000,"2026-10-15","Potential","Check",["t9","t10"]],
+    ["d3",780000,"2027-04-01","Potential","In-kind",["t14"]]
+  ];
+  seedTx.forEach(s=>{ ti++; transactions.push({id:"x"+ti,donorId:s[0],amount:s[1],date:s[2],status:s[3],method:s[4],taskIds:s[5],notes:"",completedAt:s[3]==="Completed"?s[2]+" 09:14":""}); });
+  for(let i=0;i<74;i++){
+    ti++;
+    const d=donors[6+Math.floor(r()*(donors.length-6))];
+    const st=txStat[Math.floor(r()*5)];
+    transactions.push({id:"x"+ti,donorId:d.id,amount:Math.round(d.proposed*(0.2+r()*0.8)/500)*500,
+      date:(r()<0.55?"2026-":"2027-")+String(1+Math.floor(r()*12)).padStart(2,"0")+"-"+String(1+Math.floor(r()*28)).padStart(2,"0"),
+      status:st,method:methods[Math.floor(r()*6)],taskIds:[tasks[Math.floor(r()*tasks.length)].id],notes:"",completedAt:""});
+    if(transactions[transactions.length-1].status==="Completed") transactions[transactions.length-1].completedAt=transactions[transactions.length-1].date+" 10:02";
+  }
+  transactions.sort((a,b)=>a.date<b.date?1:-1);
+  return {donors,transactions,phases,workers,tasks};
+}
+
+const TAG={
+  "Completed":"tag tag-accent","Complete":"tag tag-accent","Promised":"tag tag-outline",
+  "Contacted":"tag tag-neutral","New":"tag tag-neutral","Potential":"tag tag-outline",
+  "In progress":"tag tag-accent","Not started":"tag tag-neutral","Blocked":"tag tag-accent-2"
+};
+
+class Component extends DCLogic {
+  constructor(p){
+    super(p);
+    const data=buildData();
+    this.state={
+      layout:(p.layout||"desktop"),
+      section:"overview", mode:"list", recordId:null, drawerOpen:false,
+      query:"", filter:"All", adminTab:"users", schemaTarget:"donors",
+      newFieldLabel:"", newFieldType:"Text",
+      schema:JSON.parse(JSON.stringify(SCHEMA)),
+      draft:null, repeaterRows:[],
+      amountMin:0, sortKey:"default", sortDir:"desc",
+      lists:{
+        companies:["Ingebretsen Bros. Construction","Sandberg Excavating","Cascade Concrete","Fenwick Framing","Nakamura Electric","Hollister Mechanical","Olsen Roofing","Vasquez Interiors","Dahlgren Landscape","Whitcomb Survey","Sorensen Steel"],
+        locations:["North parcel","South parcel","Pad A","Pad B","Pad C","Community hall","Main building","Access road","Utility corridor","Shoreline edge","Plaza"]
+      },
+      newOption:{}, optionsOpenIdx:null, newChoice:"", editingUser:null,
+      resetPick:{donors:true,transactions:true,phases:true,workers:true,tasks:true},
+      resetStage:"idle", resetConfirm:"", resetDoneMsg:"",
+      quickDonorOpen:false, quickDonorName:"", quickDonorType:"Individual",
+      logOpen:false, logKind:"contact", logDate:"", logNote:"",
+      contacts:{}, reminders:[
+        {id:"r1",donorId:"d1",date:"2026-09-12",note:"Confirm the milestone release before the trustees meet."},
+        {id:"r2",donorId:"d5",date:"2026-09-24",note:"Second ask — quarterly pledge renewal."},
+        {id:"r3",donorId:"d4",date:"2026-10-08",note:"Send the naming agreement draft."}
+      ],
+      calMode:"month", calAnchor:"2026-09-15", certTxId:null, reportModal:null,
+      completeOpen:false, completeAmount:"", completeDate:"", completeMethod:"Check",
+      data,
+      users:[
+        {name:"Marge Bergstrom",email:"marge@nkunited.org",role:"Admin",access:"Full read / write",active:true},
+        {name:"Curt Marsh",email:"curt@nkunited.org",role:"View Only Full",access:"Reads everything, edits nothing",active:true},
+        {name:"Ilene Sorensen",email:"ilene@nkunited.org",role:"Entry User",access:"Enters donors & transactions only",active:true},
+        {name:"Hal Ingebretsen",email:"hal@ingebretsen.com",role:"View Only Limited",access:"No donor $$ or work-cost detail",active:false},
+        {name:"Wes Calder",email:"wes@nkunited.org",role:"View Only Limited",access:"No donor $$ or work-cost detail",active:true}
+      ]
+    };
+  }
+
+  get dense(){ return (this.props.density||"comfortable")==="compact"; }
+  get hideAmounts(){ return this.props.hideDonorAmounts===true; }
+  get mobile(){ return this.state.layout==="mobile"; }
+
+  d(){ return this.state.data; }
+  donor(id){ return this.d().donors.find(x=>x.id===id); }
+  phase(id){ return this.d().phases.find(x=>x.id===id); }
+  worker(id){ return this.d().workers.find(x=>x.id===id); }
+  task(id){ return this.d().tasks.find(x=>x.id===id); }
+
+  go(section){ this.setState({section,mode:section==="admin"||section==="reports"||section==="overview"?"list":"list",recordId:null,query:"",filter:"All",drawerOpen:false}); }
+  open(section,id){ this.setState({section,recordId:id,mode:"detail",drawerOpen:false}); }
+  back(){ this.setState({mode:"list",recordId:null}); }
+
+  money(n){ return this.hideAmounts?"•••":F.money(n); }
+  full(n){ return this.hideAmounts?"•••":F.full(n); }
+
+  received(){ return this.d().transactions.filter(t=>t.status==="Completed").reduce((s,t)=>s+t.amount,0); }
+  pledged(){ return this.d().transactions.filter(t=>t.status==="Potential").reduce((s,t)=>s+t.amount,0); }
+  budget(){ return this.d().phases.reduce((s,p)=>s+p.budget,0); }
+  taskCost(){ return this.d().tasks.reduce((s,t)=>s+t.cost,0); }
+  donorReceived(id){ return this.d().transactions.filter(t=>t.donorId===id&&t.status==="Completed").reduce((s,t)=>s+t.amount,0); }
+  phaseTasks(id){ return this.d().tasks.filter(t=>t.phaseId===id); }
+  phaseAllocated(id){
+    const ids=this.phaseTasks(id).map(t=>t.id);
+    return this.d().transactions.filter(t=>t.status==="Completed"&&t.taskIds.some(x=>ids.includes(x))).reduce((s,t)=>s+t.amount,0);
+  }
+
+  startAdd(){
+    const sec=this.state.section;
+    if(sec==="admin"||sec==="reports"||sec==="overview") return;
+    const draft={};
+    (this.state.schema[sec]||[]).forEach(f=>{ draft[f.k]=f.t==="Link"?[]:""; });
+    this.setState({mode:"form",recordId:null,draft,repeaterRows:[{date:"",label:"",amount:""}]});
+  }
+  startEdit(){
+    const sec=this.state.section, rec=this.currentRecord();
+    if(!rec) return;
+    const draft={};
+    (this.state.schema[sec]||[]).forEach(f=>{
+      const v=rec[f.k];
+      draft[f.k]=f.t==="Link"?(Array.isArray(v)?v.slice():(v?[v]:[])):(v==null?"":String(v));
+    });
+    this.setState({mode:"form",draft,repeaterRows:(rec.costRows||[{date:"",label:"",amount:""}]).map(r=>({date:r.date,label:r.label,amount:String(r.amount)}))});
+  }
+  setDraft(k,v){ this.setState(s=>({draft:Object.assign({},s.draft,{[k]:v})})); }
+  toggleLink(k,id){
+    this.setState(s=>{
+      const cur=(s.draft[k]||[]).slice();
+      const i=cur.indexOf(id);
+      if(i>=0) cur.splice(i,1); else cur.push(id);
+      return {draft:Object.assign({},s.draft,{[k]:cur})};
+    });
+  }
+  save(){
+    const sec=this.state.section, d=this.state.draft;
+    if(!d) return;
+    this.setState(s=>{
+      const data=Object.assign({},s.data);
+      const list=data[sec].slice();
+      const rec=Object.assign({},d);
+      ["proposed","amount","budget","cost","rate"].forEach(k=>{ if(rec[k]!=null&&rec[k]!=="") rec[k]=Number(String(rec[k]).replace(/[^0-9.]/g,""))||0; });
+      if(sec==="tasks"||sec==="transactions") rec.costRows=s.repeaterRows.filter(r=>r.date||r.amount).map(r=>({date:r.date,label:r.label,amount:Number(String(r.amount).replace(/[^0-9.]/g,""))||0}));
+      if(s.recordId){
+        const i=list.findIndex(x=>x.id===s.recordId);
+        list[i]=Object.assign({},list[i],rec);
+        data[sec]=list;
+        return {data,mode:"detail",draft:null};
+      }
+      const id=sec[0]+"n"+(list.length+1);
+      rec.id=id;
+      if(sec==="donors") rec.donorId=rec.donorId||("NKU-"+(1001+list.length));
+      if(sec==="tasks"&&!Array.isArray(rec.workerIds)) rec.workerIds=[];
+      list.unshift(rec);
+      data[sec]=list;
+      return {data,mode:"detail",recordId:id,draft:null};
+    });
+  }
+
+  currentRecord(){ const l=this.d()[this.state.section]; return l?l.find(x=>x.id===this.state.recordId):null; }
+
+  filtersFor(sec){
+    if(sec==="donors") return ["All","Top 10","New","Contacted","Promised","Completed"];
+    if(sec==="transactions") return ["All","Completed","Promised","Potential"];
+    if(sec==="phases"||sec==="tasks") return ["All","Not started","In progress","Blocked","Complete"];
+    if(sec==="workers") return ["All","Contractor","Employee","Volunteer","Donated labor"];
+    return ["All"];
+  }
+
+  listRows(){
+    const s=this.state, sec=s.section, q=s.query.toLowerCase(), f=s.filter;
+    const pad=this.dense?"8px 16px":"12px 16px";
+    const mk=(r,o)=>Object.assign({open:()=>this.open(sec,r.id),style:"padding:"+pad+";"+(s.recordId===r.id?"background:color-mix(in srgb,#ec3013 9%,transparent);box-shadow:inset 3px 0 0 var(--color-accent)":""),tagStyle:TAG[o.tag]||"tag tag-neutral"},o);
+    const amt=s.amountMin||0;
+    if(sec==="donors"){
+      const ranked=this.d().donors.slice().sort((a,b)=>(b.proposed||0)-(a.proposed||0)).slice(0,10).map(x=>x.id);
+      return this.d().donors
+      .filter(d=>(f==="All"||(f==="Top 10"?ranked.includes(d.id):d.status===f))&&(d.proposed||0)>=amt&&(!q||(d.name+" "+d.org+" "+d.donorId).toLowerCase().includes(q)))
+      .map(d=>mk(d,{kicker:d.donorId+" · "+(d.type||"—")+" · "+d.tier,title:d.name,sub:(d.org||d.type||"—")+" · "+d.confidence.toLowerCase()+" confidence · "+d.giftType,value:this.money(d.proposed),tag:d.status}));
+    }
+    if(sec==="transactions") return this.sortRows(this.d().transactions
+      .filter(t=>(f==="All"||t.status===f)&&(t.amount||0)>=amt&&(!q||((this.donor(t.donorId)||{}).name||"").toLowerCase().includes(q))),"amount","date")
+      .map(t=>mk(t,{kicker:t.date+" · "+t.method,title:((this.donor(t.donorId)||{}).name||"Unknown donor"),sub:t.taskIds.map(id=>(this.task(id)||{}).name).filter(Boolean).join(" · ")||"Unallocated",value:this.money(t.amount),tag:t.status}));
+    if(sec==="phases") return this.d().phases
+      .filter(p=>(f==="All"||p.status===f)&&(!q||(p.name+" "+p.code).toLowerCase().includes(q)))
+      .map(p=>{ const al=this.phaseAllocated(p.id); return mk(p,{kicker:p.code+" · "+p.start+" → "+p.end,title:p.name,sub:this.phaseTasks(p.id).length+" tasks · "+this.money(al)+" allocated of "+this.money(p.budget),value:this.money(p.budget),tag:p.status}); });
+    if(sec==="workers") return this.d().workers
+      .filter(w=>(f==="All"||w.kind===f)&&(!q||(w.name+" "+w.company+" "+w.trade).toLowerCase().includes(q)))
+      .map(w=>mk(w,{kicker:w.trade,title:w.name,sub:(w.company||"Independent")+(w.donorLink?" · also a donor":""),value:w.rate?"$"+w.rate+"/hr":"Bid",tag:w.kind}));
+    if(sec==="tasks") return this.sortRows(this.d().tasks
+      .filter(t=>(f==="All"||t.status===f)&&(t.cost||0)>=amt&&(!q||t.name.toLowerCase().includes(q))),"cost","start")
+      .map(t=>mk(t,{kicker:((this.phase(t.phaseId)||{}).code||"—")+" · "+(t.location||"—")+" · starts "+t.start+" · "+t.duration,title:t.name,sub:t.workerIds.map(id=>(this.worker(id)||{}).name).filter(Boolean).join(", ")||"Unassigned",value:this.money(t.cost),tag:t.status}));
+    return [];
+  }
+
+  sortRows(arr,moneyKey,dateKey){
+    const {sortKey,sortDir}=this.state;
+    if(sortKey==="default") return arr;
+    const s=arr.slice();
+    const dir=sortDir==="desc"?-1:1;
+    s.sort((a,b)=>{
+      if(sortKey==="amount") return ((a[moneyKey]||0)-(b[moneyKey]||0))*dir;
+      return (String(a[dateKey]||"")<String(b[dateKey]||"")?-1:1)*dir;
+    });
+    return s;
+  }
+
+  summaryFor(){
+    const sec=this.state.section, d=this.d();
+    if(sec==="donors") return [
+      {value:String(d.donors.length),label:"Donor records"},
+      {value:this.money(d.donors.reduce((s,x)=>s+x.proposed,0)),label:"Proposed total"},
+      {value:String(d.donors.filter(x=>x.status==="Promised").length),label:"Promised"}];
+    if(sec==="transactions") return [
+      {value:this.money(this.received()),label:"Completed"},
+      {value:this.money(this.pledged()),label:"Potential"},
+      {value:String(d.transactions.length),label:"Transactions"}];
+    if(sec==="phases") return [
+      {value:String(d.phases.length),label:"Phases"},
+      {value:F.money(this.budget()),label:"Program budget"},
+      {value:String(d.phases.filter(p=>p.status==="Complete").length)+" / "+d.phases.length,label:"Complete"}];
+    if(sec==="workers") return [
+      {value:String(d.workers.length),label:"On the roster"},
+      {value:String(d.workers.filter(w=>w.donorLink).length),label:"Also donors"},
+      {value:String(d.workers.filter(w=>w.kind==="Contractor").length),label:"Contractors"}];
+    if(sec==="tasks") return [
+      {value:String(d.tasks.length),label:"Tasks"},
+      {value:F.money(this.taskCost()),label:"Committed cost"},
+      {value:String(d.tasks.filter(t=>t.status==="In progress").length),label:"In progress"}];
+    return [];
+  }
+
+  fieldDisplay(f,rec){
+    const v=rec[f.k];
+    if(f.t==="Link"){
+      const ids=Array.isArray(v)?v:(v?[v]:[]);
+      if(!ids.length) return "—";
+      const src=f.link;
+      return ids.map(id=>{
+        const o=src==="donors"?this.donor(id):src==="tasks"?this.task(id):src==="workers"?this.worker(id):this.phase(id);
+        return o?(o.name||o.donorId):id;
+      }).join(", ");
+    }
+    if(f.t==="Money") return v?this.full(v):"—";
+    if(v==null||v==="") return "—";
+    return String(v);
+  }
+
+  detailPack(){
+    const sec=this.state.section, rec=this.currentRecord();
+    if(!rec) return null;
+    const fields=(this.state.schema[sec]||[]).map(f=>({label:f.l,value:this.fieldDisplay(f,rec)}));
+    const grp=(title,note,items,emptyText)=>({title,note,items,empty:items.length===0,emptyText:emptyText||"Nothing linked yet."});
+    let head={}, stats=[], groups=[];
+    if(sec==="donors"){
+      const tx=this.d().transactions.filter(t=>t.donorId===rec.id);
+      const got=this.donorReceived(rec.id);
+      head={kicker:rec.donorId+" · "+(rec.type||"—")+" · "+rec.tier+" tier",title:rec.name,tag:rec.status,sub:(rec.org||rec.type||"—")+" · "+rec.frequency.toLowerCase()+" "+rec.giftType.toLowerCase()};
+      stats=[{value:this.money(got),label:"Received"},{value:this.money(rec.proposed-got>0?rec.proposed-got:0),label:"Outstanding"},{value:String(tx.length),label:"Transactions"}];
+      const alsoWorker=this.d().workers.filter(w=>w.donorLink===rec.id);
+      groups=[
+        grp("Donations",tx.length+" linked",tx.map(t=>({title:t.date+" · "+t.method,sub:t.status+" · "+(t.taskIds.map(id=>(this.task(id)||{}).name).filter(Boolean).join(", ")||"unallocated"),value:this.money(t.amount),open:()=>this.open("transactions",t.id)})),"No transactions recorded for this donor."),
+        grp("Contact history",this.contactsFor(rec.id).length+" entries",this.contactsFor(rec.id).map(c=>({title:c.date,sub:c.note,value:""})),"No contact logged yet — use Log contact above."),
+        grp("Reminders",this.remindersFor(rec.id).length+" open",this.remindersFor(rec.id).map(r=>({title:r.date,sub:r.note,value:"Follow up"})),"No reminders set — use Log reminder above."),
+        grp("Also on the crew",alsoWorker.length?"linked worker record":"none",alsoWorker.map(w=>({title:w.name,sub:w.trade+" · "+(w.company||"Independent"),value:w.rate?"$"+w.rate+"/hr":"Bid",open:()=>this.open("workers",w.id)})),"This donor is not on the worker roster.")
+      ];
+    } else if(sec==="transactions"){
+      const dn=this.donor(rec.donorId)||{};
+      head={kicker:rec.date+" · "+rec.method,title:this.money(rec.amount)+" — "+(dn.name||"Unknown"),tag:rec.status,sub:rec.completedAt?("Donation "+rec.id.toUpperCase()+" · completed "+rec.completedAt):("Donation "+rec.id.toUpperCase())};
+      stats=[{value:this.money(rec.amount),label:"Amount"},{value:rec.status,label:"Status"},{value:rec.completedAt?rec.completedAt.split(" ")[0]:"—",label:"Completed on"}];
+      fields.push({label:"Completed timestamp",value:rec.completedAt||"—"});
+      groups=[
+        grp("Donor",dn.donorId||"",dn.id?[{title:dn.name,sub:(dn.org||"Individual")+" · "+dn.tier,value:this.money(dn.proposed),open:()=>this.open("donors",dn.id)}]:[]),
+        grp("Applied to tasks",rec.taskIds.length+" linked",rec.taskIds.map(id=>this.task(id)).filter(Boolean).map(t=>({title:t.name,sub:((this.phase(t.phaseId)||{}).name||"")+" · "+t.status,value:this.money(t.cost),open:()=>this.open("tasks",t.id)})),"This gift is not yet allocated to a task.")
+      ];
+    } else if(sec==="phases"){
+      const ts=this.phaseTasks(rec.id), done=ts.filter(t=>t.status==="Complete").length;
+      const al=this.phaseAllocated(rec.id);
+      head={kicker:rec.code,title:rec.name,tag:rec.status,sub:rec.start+" → "+rec.end};
+      stats=[{value:this.money(rec.budget),label:"Budget"},{value:this.money(al),label:"Allocated"},{value:done+" / "+ts.length,label:"Tasks done"}];
+      groups=[grp("Tasks in this phase",this.money(ts.reduce((s,t)=>s+t.cost,0))+" committed",ts.map(t=>({title:t.name,sub:t.status+" · "+t.duration+" · "+(t.workerIds.map(id=>(this.worker(id)||{}).name).filter(Boolean).join(", ")||"unassigned"),value:this.money(t.cost),open:()=>this.open("tasks",t.id)})))];
+    } else if(sec==="workers"){
+      const ts=this.d().tasks.filter(t=>t.workerIds.includes(rec.id));
+      const dn=rec.donorLink?this.donor(rec.donorLink):null;
+      head={kicker:rec.trade,title:rec.name,tag:rec.kind,sub:(rec.company||"Independent")+" · "+rec.phone};
+      stats=[{value:String(ts.length),label:"Assigned tasks"},{value:rec.rate?"$"+rec.rate:"Bid",label:"Rate / hr"},{value:this.money(ts.reduce((s,t)=>s+t.cost,0)),label:"Task value"}];
+      groups=[
+        grp("Assigned tasks",ts.length+" active",ts.map(t=>({title:t.name,sub:((this.phase(t.phaseId)||{}).code||"")+" · "+t.status+" · starts "+t.start,value:this.money(t.cost),open:()=>this.open("tasks",t.id)})),"Not assigned to any task."),
+        grp("Donor record",dn?"linked":"none",dn?[{title:dn.name,sub:dn.tier+" · "+dn.status,value:this.money(dn.proposed),open:()=>this.open("donors",dn.id)}]:[],"This person has no donor record.")
+      ];
+    } else if(sec==="tasks"){
+      const ph=this.phase(rec.phaseId)||{};
+      const ws=rec.workerIds.map(id=>this.worker(id)).filter(Boolean);
+      const tx=this.d().transactions.filter(t=>t.taskIds.includes(rec.id));
+      const funded=tx.filter(t=>t.status==="Completed").reduce((s,t)=>s+t.amount,0);
+      head={kicker:(ph.code||"")+" · "+(ph.name||""),title:rec.name,tag:rec.status,sub:"Starts "+rec.start+" · "+rec.duration};
+      stats=[{value:this.money(rec.cost),label:"Est. cost"},{value:this.money(funded),label:"Funded"},{value:String(ws.length),label:"Assigned"}];
+      groups=[
+        grp("Cost schedule",(rec.costRows||[]).length+" dated amounts",(rec.costRows||[]).map(c=>({title:c.label||"Payment",sub:"Due "+c.date,value:this.money(c.amount)}))),
+        grp("Assigned workers & contractors",ws.length+" people",ws.map(w=>({title:w.name,sub:w.trade+" · "+(w.company||"Independent"),value:w.rate?"$"+w.rate+"/hr":"Bid",open:()=>this.open("workers",w.id)})),"Nobody assigned yet."),
+        grp("Funding against this task",this.money(funded)+" received",tx.map(t=>({title:((this.donor(t.donorId)||{}).name||"Unknown"),sub:t.date+" · "+t.status+" · "+t.method,value:this.money(t.amount),open:()=>this.open("transactions",t.id)})),"No gifts marked against this task."),
+        grp("Phase",ph.code||"",ph.id?[{title:ph.name,sub:ph.status+" · "+ph.start+" → "+ph.end,value:this.money(ph.budget),open:()=>this.open("phases",ph.id)}]:[])
+      ];
+    }
+    return {head,stats,fields,groups};
+  }
+
+  formFieldList(){
+    const sec=this.state.section, d=this.state.draft||{};
+    const two=!this.mobile;
+    return (this.state.schema[sec]||[]).map(f=>{
+      const base={label:f.l,req:f.req?"required":"",help:f.help||"",wrapStyle:(f.t==="Long text"||f.t==="Link")&&two?"grid-column:1 / -1":"",
+        isText:false,isArea:false,isSelect:false,isMulti:false,value:d[f.k]==null?"":d[f.k],
+        placeholder:f.t==="Money"?"$0":f.t==="Date"?"YYYY-MM-DD":"",
+        onChange:e=>this.setDraft(f.k,e.target.value)};
+      if(f.t==="Long text") return Object.assign(base,{isArea:true});
+      if(f.t==="Select"&&f.dyn) return Object.assign(base,{isSelect:true,options:["",...(this.state.lists[f.dyn]||[])],
+        addable:true,addPlaceholder:f.dyn==="companies"?"Add a new company":"Add a new location",
+        newOption:this.state.newOption[f.dyn]||"",
+        onNewOption:e=>{const v=e.target.value;this.setState(st=>({newOption:Object.assign({},st.newOption,{[f.dyn]:v})}));},
+        onAddOption:()=>{const v=this.state.newOption[f.dyn];this.addListOption(f.dyn,v);this.setDraft(f.k,(v||"").trim());}});
+      if(f.t==="Select") return Object.assign(base,{isSelect:true,options:["",...(f.o||[])]});
+      if(f.t==="Link"){
+        const src=this.d()[f.link]||[];
+        const sel=d[f.k]||[];
+        const chips=src.slice(0,14).map(o=>{
+          const on=sel.includes(o.id);
+          return {label:o.name||o.donorId||o.code,toggle:()=>this.toggleLink(f.k,o.id),
+            style:"cursor:pointer;font-family:var(--font-body);font-size:11.5px;padding:4px 10px;border:1px solid "+(on?"var(--color-accent)":"var(--color-divider)")+";background:"+(on?"var(--color-accent-100)":"transparent")+";color:"+(on?"var(--color-accent-800)":"var(--color-text)")};
+        });
+        return Object.assign(base,{isMulti:true,chips,help:(f.help||"")+" · "+src.length+" available"});
+      }
+      return Object.assign(base,{isText:true});
+    });
+  }
+
+  addField(){
+    const label=this.state.newFieldLabel.trim();
+    if(!label) return;
+    const key=label.toLowerCase().replace(/[^a-z0-9]+/g,"_").replace(/^_|_$/g,"");
+    this.setState(s=>{
+      const schema=Object.assign({},s.schema);
+      schema[s.schemaTarget]=schema[s.schemaTarget].concat([{k:key,l:label,t:s.newFieldType}]);
+      return {schema,newFieldLabel:""};
+    });
+  }
+  moveField(i){
+    if(i===0) return;
+    this.setState(s=>{
+      const schema=Object.assign({},s.schema);
+      const arr=schema[s.schemaTarget].slice();
+      const t=arr[i-1]; arr[i-1]=arr[i]; arr[i]=t;
+      schema[s.schemaTarget]=arr;
+      return {schema};
+    });
+  }
+  removeField(i){
+    this.setState(s=>{
+      const schema=Object.assign({},s.schema);
+      schema[s.schemaTarget]=schema[s.schemaTarget].filter((_,j)=>j!==i);
+      return {schema};
+    });
+  }
+
+  addListOption(key,val){
+    const v=(val||"").trim();
+    if(!v) return;
+    this.setState(s=>{
+      const lists=Object.assign({},s.lists);
+      if(lists[key].includes(v)) return {newOption:Object.assign({},s.newOption,{[key]:""})};
+      lists[key]=lists[key].concat([v]).sort();
+      return {lists,newOption:Object.assign({},s.newOption,{[key]:""})};
+    });
+  }
+  editChoice(i,j,val){
+    this.setState(s=>{
+      const schema=Object.assign({},s.schema);
+      const arr=schema[s.schemaTarget].slice();
+      const f=Object.assign({},arr[i]);
+      const o=(f.o||[]).slice(); o[j]=val; f.o=o; arr[i]=f;
+      schema[s.schemaTarget]=arr;
+      return {schema};
+    });
+  }
+  removeChoice(i,j){
+    this.setState(s=>{
+      const schema=Object.assign({},s.schema);
+      const arr=schema[s.schemaTarget].slice();
+      const f=Object.assign({},arr[i]);
+      f.o=(f.o||[]).filter((_,x)=>x!==j); arr[i]=f;
+      schema[s.schemaTarget]=arr;
+      return {schema};
+    });
+  }
+  addChoice(i){
+    const v=this.state.newChoice.trim();
+    if(!v) return;
+    this.setState(s=>{
+      const schema=Object.assign({},s.schema);
+      const arr=schema[s.schemaTarget].slice();
+      const f=Object.assign({},arr[i]);
+      f.o=(f.o||[]).concat([v]); arr[i]=f;
+      schema[s.schemaTarget]=arr;
+      return {schema,newChoice:""};
+    });
+  }
+  createQuickDonor(){
+    const name=this.state.quickDonorName.trim();
+    if(!name) return;
+    this.setState(s=>{
+      const data=Object.assign({},s.data);
+      const id="dq"+(s.data.donors.length+1);
+      data.donors=[{id,donorId:"NKU-"+(1001+s.data.donors.length),name,type:s.quickDonorType,org:s.quickDonorType==="Individual"?"":name,
+        tier:"Friend",proposed:null,prospectiveDate:"",confidence:"Medium",status:"New",giftType:"Cash",frequency:"One-time",
+        linked:[],phaseTaskLinks:[],familyNotes:"",other:""}].concat(s.data.donors);
+      return {data,quickDonorOpen:false,quickDonorName:"",
+        draft:Object.assign({},s.draft,{donorId:[id]})};
+    });
+  }
+  saveLog(){
+    const s=this.state, rec=this.currentRecord();
+    if(!rec||!s.logNote.trim()) return;
+    const date=s.logDate.trim()||"2026-09-01";
+    if(s.logKind==="reminder"){
+      this.setState(st=>({reminders:st.reminders.concat([{id:"r"+(st.reminders.length+1),donorId:rec.id,date,note:st.logNote.trim()}]),
+        logOpen:false,logNote:"",logDate:""}));
+    } else {
+      this.setState(st=>{
+        const contacts=Object.assign({},st.contacts);
+        contacts[rec.id]=(contacts[rec.id]||[]).concat([{date,note:st.logNote.trim()}]);
+        return {contacts,logOpen:false,logNote:"",logDate:""};
+      });
+    }
+  }
+  contactsFor(id){
+    return (this.state.contacts[id]||[]).concat(id==="d1"?[
+      {date:"2026-06-14",note:"Walked pads A–C with Curt. Asked for updated foundation numbers."},
+      {date:"2026-04-02",note:"Confirmed milestone schedule; wants the naming agreement drafted."}
+    ]:[]).sort((a,b)=>a.date<b.date?1:-1);
+  }
+  remindersFor(id){ return this.state.reminders.filter(r=>r.donorId===id).sort((a,b)=>a.date<b.date?1:-1); }
+
+  calendarEvents(){
+    const ev={};
+    const push=(date,e)=>{ if(!date) return; (ev[date]=ev[date]||[]).push(e); };
+    this.d().tasks.forEach(t=>push(t.start,{kind:"task",label:t.name,open:()=>this.open("tasks",t.id)}));
+    this.d().tasks.forEach(t=>(t.costRows||[]).forEach(c=>{ if(c.label&&c.label.indexOf("Balance")===0) push(c.date,{kind:"task",label:t.name+" — payment",open:()=>this.open("tasks",t.id)}); }));
+    this.state.reminders.forEach(r=>{
+      const d=this.donor(r.donorId);
+      push(r.date,{kind:"reminder",label:(d?d.name:"Donor")+" — follow up",open:()=>this.open("donors",r.donorId)});
+    });
+    this.d().phases.forEach(p=>push(p.end,{kind:"phase",label:p.code+" target finish",open:()=>this.open("phases",p.id)}));
+    return ev;
+  }
+  calGrid(){
+    const s=this.state;
+    const anchor=new Date(s.calAnchor+"T12:00:00");
+    const ev=this.calendarEvents();
+    const iso=d=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+    let start, count, title;
+    if(s.calMode==="week"){
+      start=new Date(anchor); start.setDate(anchor.getDate()-anchor.getDay());
+      count=7;
+      const end=new Date(start); end.setDate(start.getDate()+6);
+      title="Week of "+MONTHS[start.getMonth()]+" "+start.getDate()+", "+start.getFullYear();
+    } else {
+      const first=new Date(anchor.getFullYear(),anchor.getMonth(),1,12);
+      start=new Date(first); start.setDate(1-first.getDay());
+      count=42;
+      title=MONTHS[anchor.getMonth()]+" "+anchor.getFullYear();
+    }
+    const cellH=s.calMode==="week"?"minmax(210px,auto)":"minmax(92px,auto)";
+    const days=[];
+    for(let i=0;i<count;i++){
+      const d=new Date(start); d.setDate(start.getDate()+i);
+      const key=iso(d);
+      const inMonth=s.calMode==="week"||d.getMonth()===anchor.getMonth();
+      const list=(ev[key]||[]);
+      const cap=s.calMode==="week"?8:3;
+      days.push({
+        num:String(d.getDate()),
+        style:"background:var(--color-bg);min-width:0;overflow:hidden;padding:6px 7px;min-height:"+(s.calMode==="week"?"210px":"92px")+";"+(inMonth?"":"opacity:.42"),
+        numStyle:"font-family:var(--font-heading);font-weight:800;font-size:12px;"+(key===s.calAnchor?"background:"+GREEN+";color:#fff;padding:1px 6px":""),
+        hasMore:list.length>cap, moreLabel:"+"+(list.length-cap),
+        events:list.slice(0,cap).map(e=>({label:e.label,open:e.open,
+          style:"cursor:pointer;border:0;text-align:left;width:100%;font-family:var(--font-body);font-size:10px;line-height:1.25;padding:3px 5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#fff;background:"+(e.kind==="reminder"?YELLOW:e.kind==="phase"?CHART:GREEN)}))
+      });
+    }
+    return {days,title,cellH};
+  }
+  calShift(dir){
+    this.setState(s=>{
+      const d=new Date(s.calAnchor+"T12:00:00");
+      if(s.calMode==="week") d.setDate(d.getDate()+7*dir); else d.setMonth(d.getMonth()+dir);
+      return {calAnchor:d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")};
+    });
+  }
+
+  setUser(i,patch){
+    this.setState(s=>{
+      const users=s.users.slice();
+      users[i]=Object.assign({},users[i],patch);
+      if(patch.role) users[i].access=({"Admin":"Full read / write","View Only Full":"Reads everything, edits nothing","View Only Limited":"No donor $$ or work-cost detail","Entry User":"Enters donors & transactions only"})[patch.role]||users[i].access;
+      return {users};
+    });
+  }
+  runReset(){
+    if(this.state.resetConfirm.trim().toUpperCase()!=="DELETE") return;
+    this.setState(s=>{
+      const data=Object.assign({},s.data);
+      const cleared=[];
+      Object.keys(s.resetPick).forEach(k=>{ if(s.resetPick[k]){ cleared.push(s.data[k].length+" "+k); data[k]=[]; } });
+      const remindersKept=s.resetPick.donors?[]:s.reminders;
+      return {data,reminders:remindersKept,contacts:s.resetPick.donors?{}:s.contacts,
+        resetStage:"done",resetConfirm:"",recordId:null,mode:"list",certTxId:null,
+        resetDoneMsg:cleared.length?("Cleared "+cleared.join(", ")+". Data fields, choices and users kept."):"Nothing selected."};
+    });
+  }
+  removeUser(i){ this.setState(s=>({users:s.users.filter((_,j)=>j!==i),editingUser:null})); }
+  toggleRequired(i){
+    this.setState(s=>{
+      const schema=Object.assign({},s.schema);
+      const arr=schema[s.schemaTarget].slice();
+      arr[i]=Object.assign({},arr[i],{req:!arr[i].req});
+      schema[s.schemaTarget]=arr;
+      return {schema};
+    });
+  }
+  openComplete(){
+    const rec=this.currentRecord();
+    if(!rec) return;
+    this.setState({completeOpen:true,completeAmount:String(rec.amount||""),completeDate:"2026-09-01",completeMethod:rec.method||"Check"});
+  }
+  saveComplete(){
+    const s=this.state, id=s.recordId;
+    this.setState(st=>{
+      const data=Object.assign({},st.data);
+      data.transactions=st.data.transactions.map(t=>t.id===id?Object.assign({},t,{
+        status:"Completed",
+        amount:Number(String(st.completeAmount).replace(/[^0-9.]/g,""))||t.amount,
+        date:st.completeDate||t.date,
+        method:st.completeMethod||t.method,
+        completedAt:(st.completeDate||t.date)+" "+new Date().toTimeString().slice(0,5)
+      }):t);
+      return {data,completeOpen:false};
+    });
+  }
+  exportReportPng(){
+    const root=document.getElementById("nkt-report-modal");
+    const svg=root&&root.querySelector("svg");
+    if(!svg) return;
+    const clone=svg.cloneNode(true);
+    clone.setAttribute("xmlns","http://www.w3.org/2000/svg");
+    const vb=(svg.getAttribute("viewBox")||"0 0 960 420").split(" ").map(Number);
+    const w=vb[2], hgt=vb[3], scale=2;
+    const data="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(new XMLSerializer().serializeToString(clone));
+    const img=new Image();
+    img.onload=()=>{
+      const c=document.createElement("canvas");
+      c.width=w*scale; c.height=hgt*scale;
+      const ctx=c.getContext("2d");
+      ctx.fillStyle="#ffffff"; ctx.fillRect(0,0,c.width,c.height);
+      ctx.drawImage(img,0,0,c.width,c.height);
+      const a=document.createElement("a");
+      a.download="nku-report.png"; a.href=c.toDataURL("image/png"); a.click();
+    };
+    img.src=data;
+  }
+
+  reportSeries(){
+    const months=[];
+    for(let y=2025;y<=2026;y++) for(let m=(y===2025?6:0);m<12;m++) months.push({y,m});
+    const don=[0.4,0.9,1.6,2.4,3.4,4.2,4.8,5.6,6.4,7.1,7.9,8.6,9.2,9.9,10.6,11.2,11.9,12.6];
+    const cost=[1.2,1.9,2.8,3.6,4.6,5.4,6.4,7.4,8.5,9.6,10.8,12.1,13.4,14.8,16.2,17.6,19.1,20.6];
+    const max=24, x0=96, x1=944, yTop=24, yBase=372;
+    const px=i=>Math.round(x0+i*((x1-x0)/(don.length-1)));
+    const py=v=>Math.round(yBase-(v/max)*(yBase-yTop));
+    const pt=arr=>arr.map((v,i)=>px(i)+","+py(v)).join(" ");
+    const yTicks=[];
+    for(let v=0;v<=max;v+=4) yTicks.push({y:py(v),label:"$"+v+"M",
+      style:"position:absolute;left:0;width:9%;text-align:right;top:"+(py(v)/420*100).toFixed(2)+"%;transform:translateY(-50%);font-size:10.5px;color:#5c6a5e;white-space:nowrap"});
+    const monthTicks=months.map((o,i)=>({x:px(i),label:MONTHS[o.m].slice(0,3)+(o.m===0||i===0?" "+String(o.y).slice(2):""),
+      style:"position:absolute;bottom:1%;left:"+(px(i)/960*100).toFixed(2)+"%;transform:translateX(-50%);font-size:9.5px;color:#5c6a5e;white-space:nowrap"}));
+    return {donationPoints:pt(don),costPoints:pt(cost),yTicks,monthTicks};
+  }
+
+  dailySeries(){
+    const r=rng(41), days=30, x0=96, x1=944, yTop=24, yBase=372, max=900000;
+    const slot=(x1-x0)/days, bw=Math.max(6,Math.round(slot/2)-3);
+    const bars=[], ticks=[];
+    for(let d=0;d<days;d++){
+      const give=r()<0.55?Math.round(r()*r()*820000/1000)*1000:0;
+      const due=(d===4||d===11||d===18||d===25)?Math.round((0.25+r()*0.7)*760000/1000)*1000:(r()<0.18?Math.round(r()*180000/1000)*1000:0);
+      const bx=Math.round(x0+d*slot)+2;
+      if(give) bars.push({x:bx,w:bw,y:Math.round(yBase-(give/max)*(yBase-yTop)),h:Math.round((give/max)*(yBase-yTop)),fill:GREEN});
+      if(due) bars.push({x:bx+bw+1,w:bw,y:Math.round(yBase-(due/max)*(yBase-yTop)),h:Math.round((due/max)*(yBase-yTop)),fill:YELLOW});
+      if((d+1)%3===0||d===0){ const tx=Math.round(x0+d*slot+slot/2);
+        ticks.push({x:tx,label:String(d+1),style:"position:absolute;bottom:1%;left:"+(tx/960*100).toFixed(2)+"%;transform:translateX(-50%);font-size:10px;color:#5c6a5e"}); }
+    }
+    const yTicks=[];
+    for(let v=0;v<=max;v+=180000){ const yy=Math.round(yBase-(v/max)*(yBase-yTop));
+      yTicks.push({y:yy,label:v?"$"+Math.round(v/1000)+"K":"$0",
+        style:"position:absolute;left:0;width:9%;text-align:right;top:"+(yy/420*100).toFixed(2)+"%;transform:translateY(-50%);font-size:10.5px;color:#5c6a5e;white-space:nowrap"}); }
+    return {bars,ticks,yTicks,label:"September 2026"};
+  }
+
+  laneSeries(){
+    const qStart=2025+1/4, qEnd=2029+3/4, x0=196, x1=944;
+    const cols=[];
+    for(let y=2025;y<=2029;y++) for(let q=0;q<4;q++){
+      const t=y+q/4;
+      if(t<qStart||t>qEnd) continue;
+      const x=Math.round(x0+((t-qStart)/(qEnd-qStart))*(x1-x0));
+      cols.push({x,label:"Q"+(q+1)+(q===0?" "+String(y).slice(2):""),
+        style:"position:absolute;top:0;left:"+((x+20)/960*100).toFixed(2)+"%;transform:translateX(-50%);font-size:9.5px;color:#5c6a5e;white-space:nowrap"});
+    }
+    const pos=iso=>{
+      const d=new Date(iso+"T12:00:00");
+      const t=d.getFullYear()+Math.floor(d.getMonth()/3)/4+(d.getMonth()%3)/12;
+      return x0+((t-qStart)/(qEnd-qStart))*(x1-x0);
+    };
+    const fillOf=st=>st==="Complete"?GREEN:st==="In progress"?YELLOW:st==="Blocked"?RED:"#8a8f89";
+    const top=40, rowH=Math.floor(360/this.d().phases.length);
+    const lanes=this.d().phases.map((p,i)=>{
+      const y=top+i*rowH, bh=Math.max(12,rowH-9);
+      const x=Math.round(pos(p.start)), w=Math.max(10,Math.round(pos(p.end)-pos(p.start)));
+      return {name:p.code,band:i%2?"rgba(30,42,32,.05)":"transparent",ry:y-4,rh:rowH,
+        x,y,w,h:bh,fill:fillOf(p.status),
+        nameStyle:"position:absolute;left:0;width:19%;text-align:right;padding-right:8px;top:"+((y+bh/2)/460*100).toFixed(2)+"%;transform:translateY(-50%);font-size:10.5px;font-weight:600;color:#2f3a31;white-space:nowrap",
+        innerStyle:"position:absolute;left:"+((x+8)/960*100).toFixed(2)+"%;top:"+((y+bh/2)/460*100).toFixed(2)+"%;transform:translateY(-50%);font-size:10px;color:#ffffff;white-space:nowrap;pointer-events:none",
+        inner:w>150?p.name:""};
+    });
+    return {cols,lanes};
+  }
+
+  renderVals(){
+    const s=this.state, sec=s.section, mobile=this.mobile;
+    const secDef=SECTIONS.find(x=>x.key===sec)||SECTIONS[0];
+    const isForm=s.mode==="form", isDetail=s.mode==="detail"&&!!this.currentRecord();
+    const isRecordSection=["donors","transactions","phases","workers","tasks"].includes(sec)&&!s.certTxId;
+    const mobileShowDetail=mobile&&(isForm||isDetail);
+    const counts={overview:"",donors:this.d().donors.length,transactions:this.d().transactions.length,phases:this.d().phases.length,workers:this.d().workers.length,tasks:this.d().tasks.length,admin:s.users.length,reports:"5",calendar:""};
+
+    const det=isDetail?this.detailPack():null;
+    const cal=this.calGrid();
+    const certTx=s.certTxId?this.d().transactions.find(x=>x.id===s.certTxId):null;
+    const series=this.reportSeries();
+    const daily=this.dailySeries();
+    const lane=this.laneSeries();
+    const received=this.received(), pledgedV=this.pledged(), budget=this.budget();
+    const pct=Math.round(received/budget*100);
+
+    const chip=(active)=>"cursor:pointer;flex:none;font-family:var(--font-body);font-size:11.5px;padding:5px 11px;border:1px solid "+(active?"var(--color-accent)":"var(--color-divider)")+";background:"+(active?"var(--color-accent)":"transparent")+";color:"+(active?"var(--color-bg)":"var(--color-text)");
+
+    const gapRows=this.d().phases.slice(0,7).map(p=>{
+      const al=this.phaseAllocated(p.id);
+      const w=Math.min(100,Math.round(al/p.budget*100));
+      return {name:p.code+" "+p.name,note:this.money(al)+" of "+this.money(p.budget),
+        barStyle:"width:"+Math.max(w,1)+"%;background:"+(w<25?RED:w<70?YELLOW:GREEN)};
+    });
+    const completionRows=this.d().phases.map(p=>{
+      const ts=this.phaseTasks(p.id), done=ts.filter(t=>t.status==="Complete").length;
+      const w=ts.length?Math.round(done/ts.length*100):0;
+      return {name:p.code+" "+p.name,label:w+"%",barStyle:"width:"+Math.max(w,1)+"%;background:"+GREEN};
+    }).slice(0,8);
+    const totals={};
+    this.d().transactions.filter(t=>t.status==="Completed").forEach(t=>{ totals[t.donorId]=(totals[t.donorId]||0)+t.amount; });
+    const top=Object.keys(totals).map(id=>({id,v:totals[id]})).sort((a,b)=>b.v-a.v).slice(0,6);
+    const topMax=top.length?top[0].v:1;
+
+    const pledgeTotal=received+pledgedV;
+
+    return {
+      isDesktop:!mobile, isMobile:mobile,
+      onDesktop:()=>this.setState({layout:"desktop",drawerOpen:false}),
+      onMobile:()=>this.setState({layout:"mobile"}),
+      desktopBtnStyle:"cursor:pointer;border:0;font-family:var(--font-heading);font-weight:800;font-size:12px;padding:7px 14px;background:"+(!mobile?GREEN:"transparent")+";color:"+(!mobile?"#ffffff":"var(--color-text)"),
+      mobileBtnStyle:"cursor:pointer;border:0;border-left:1px solid var(--color-divider);font-family:var(--font-heading);font-weight:800;font-size:12px;padding:7px 14px;background:"+(mobile?GREEN:"transparent")+";color:"+(mobile?"#ffffff":"var(--color-text)"),
+
+      deviceStyle:mobile?"width:392px;background:"+DEEP+";padding:11px;box-shadow:var(--shadow-lg)":"width:100%;max-width:1280px",
+      shellStyle:"position:relative;display:flex;overflow:hidden;background:var(--color-bg);"+(mobile?"width:370px;height:790px":"width:100%;height:780px;border:2px solid "+DEEP),
+
+      navItems:SECTIONS.map(x=>({num:x.num,label:x.label,count:counts[x.key],go:()=>this.go(x.key),
+        style:"padding:9px 14px;"+(sec===x.key?"background:"+GREEN+";color:#ffffff;font-weight:700":"color:#6f6b62;font-weight:400")})),
+      drawerOpen:s.drawerOpen,
+      onCloseDrawer:()=>this.setState({drawerOpen:false}),
+
+      showBackBtn:mobile,
+      leftNavGlyph:mobileShowDetail?"←":"≡",
+      onLeftNav:()=>{ if(mobileShowDetail) this.back(); else this.setState({drawerOpen:true}); },
+      headerKicker:secDef.num==="—"?"Dashboard":"Section "+secDef.num,
+      headerTitle:isForm?(s.recordId?"Edit record":"New entry"):(isDetail&&mobile?((det&&det.head.title)||secDef.label):secDef.label),
+      showSearch:!mobile&&isRecordSection&&!isForm,
+      searchStyle:"flex:none;width:230px;height:34px;min-height:34px",
+      searchPlaceholder:"Search "+secDef.label.toLowerCase(),
+      query:s.query,
+      onQuery:e=>this.setState({query:e.target.value}),
+      showAdd:isRecordSection&&!isForm,
+      addLabel:mobile?"+ New":"+ New "+({donors:"donor",transactions:"donation",phases:"phase",workers:"worker",tasks:"task"}[sec]||"record"),
+      onAdd:()=>this.startAdd(),
+
+      panesStyle:"flex:1;min-height:0;display:flex",
+      listPaneStyle:(mobile
+        ? (mobileShowDetail?"display:none":"flex:1;min-width:0;overflow-y:auto")
+        : ((isDetail||isForm)&&isRecordSection
+            ? "flex:none;width:390px;overflow-y:auto;border-right:2px solid var(--color-divider)"
+            : "flex:1;min-width:0;overflow-y:auto")),
+      detailPaneStyle:(mobile
+        ? (mobileShowDetail?"flex:1;min-width:0;overflow-y:auto":"display:none")
+        : (isRecordSection?"flex:1;min-width:0;overflow-y:auto":"display:none")),
+
+      tabBar:[
+        {k:"donors",glyph:"01",label:"Donors"},
+        {k:"tasks",glyph:"05",label:"Tasks"},
+        {k:"reports",glyph:"07",label:"Reports"},
+        {k:"__menu",glyph:"≡",label:"More"}
+      ].map(t=>({glyph:t.glyph,label:t.label,
+        on:()=>{ if(t.k==="__menu") this.setState({drawerOpen:true}); else this.go(t.k); },
+        style:"flex:1;min-height:54px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;border:0;border-right:1px solid var(--color-divider);font-family:var(--font-body);padding:8px 4px;background:"+(sec===t.k?GREEN:"transparent")+";color:"+(sec===t.k?"#ffffff":"var(--color-text)")})),
+
+      isCalendar:sec==="calendar",
+      isCertificate:!!s.certTxId,
+      calTitle:cal.title, calDays:cal.days,
+      weekdayNames:["Sun","Mon","Tue","Wed","Thu","Fri","Sat"],
+      onCalPrev:()=>this.calShift(-1), onCalNext:()=>this.calShift(1),
+      onCalToday:()=>this.setState({calAnchor:"2026-09-15"}),
+      onCalMonth:()=>this.setState({calMode:"month"}), onCalWeek:()=>this.setState({calMode:"week"}),
+      calMonthStyle:"cursor:pointer;border:0;font-family:var(--font-heading);font-weight:800;font-size:11.5px;padding:6px 12px;background:"+(s.calMode==="month"?GREEN:"transparent")+";color:"+(s.calMode==="month"?"#fff":"var(--color-text)"),
+      calWeekStyle:"cursor:pointer;border:0;border-left:1px solid var(--color-divider);font-family:var(--font-heading);font-weight:800;font-size:11.5px;padding:6px 12px;background:"+(s.calMode==="week"?GREEN:"transparent")+";color:"+(s.calMode==="week"?"#fff":"var(--color-text)"),
+
+      certName:certTx?((this.donor(certTx.donorId)||{}).name||"—"):"",
+      certAmount:certTx?F.full(certTx.amount):"",
+      certDate:certTx?certTx.date:"",
+      certRef:certTx?certTx.id.toUpperCase():"",
+      onPrintCert:()=>window.print(),
+      onCloseCert:()=>this.setState({certTxId:null}),
+
+      showAmountFilter:sec==="donors"||sec==="tasks"||sec==="transactions",
+      amountFilterLabel:sec==="tasks"?"Minimum task cost":sec==="transactions"?"Minimum transaction":"Minimum proposed gift",
+      amountFilterValue:s.amountMin?F.money(s.amountMin)+" and up":"Any amount",
+      amountMax:sec==="tasks"?2600000:sec==="transactions"?2500000:3200000,
+      amountStep:sec==="tasks"?50000:25000, amountMin:s.amountMin,
+      onAmountMin:e=>this.setState({amountMin:Number(e.target.value)}),
+
+      showSort:sec==="tasks"||sec==="transactions",
+      sorts:[
+        {k:"default",d:"desc",l:"Default"},
+        {k:"amount",d:"desc",l:"$$ high → low"},
+        {k:"amount",d:"asc",l:"$$ low → high"},
+        {k:"date",d:"desc",l:"Date newest"},
+        {k:"date",d:"asc",l:"Date oldest"}
+      ].map(o=>({label:o.l,on:()=>this.setState({sortKey:o.k,sortDir:o.d}),
+        style:chip(s.sortKey===o.k&&(o.k==="default"||s.sortDir===o.d))})),
+
+      detailHeadStyle:"padding:18px 20px 16px;border-bottom:2px solid var(--color-divider);background:var(--color-bg);"+(mobile?"":"position:sticky;top:0;z-index:3"),
+
+      showQuickDonor:sec==="transactions",
+      quickDonorOpen:s.quickDonorOpen,
+      quickDonorToggleLabel:s.quickDonorOpen?"Close":"+ Create donor",
+      onToggleQuickDonor:()=>this.setState(st=>({quickDonorOpen:!st.quickDonorOpen})),
+      quickDonorName:s.quickDonorName, quickDonorType:s.quickDonorType,
+      donorTypes:["Individual","Organization","Family"],
+      onQuickDonorName:e=>this.setState({quickDonorName:e.target.value}),
+      onQuickDonorType:e=>this.setState({quickDonorType:e.target.value}),
+      onCreateQuickDonor:()=>this.createQuickDonor(),
+
+      showLogContact:isDetail&&(sec==="donors"||sec==="workers"),
+      showLogReminder:isDetail&&sec==="donors",
+      showCertificate:isDetail&&sec==="transactions",
+      onCertificate:()=>this.setState({certTxId:s.recordId}),
+      onLogContact:()=>this.setState({logOpen:true,logKind:"contact",logNote:"",logDate:""}),
+      onLogReminder:()=>this.setState({logOpen:true,logKind:"reminder",logNote:"",logDate:""}),
+      logOpen:s.logOpen,
+      logTitle:s.logKind==="reminder"?"New reminder":"New contact entry",
+      logPlaceholder:s.logKind==="reminder"?"What needs following up":"What was discussed",
+      logDate:s.logDate, logNote:s.logNote,
+      onLogDate:e=>this.setState({logDate:e.target.value}),
+      onLogNote:e=>this.setState({logNote:e.target.value}),
+      onLogSave:()=>this.saveLog(), onLogCancel:()=>this.setState({logOpen:false}),
+
+      isOverview:sec==="overview"&&!s.certTxId,
+      isList:isRecordSection&&!s.certTxId,
+      isAdmin:sec==="admin"&&!s.certTxId,
+      isReports:sec==="reports"&&!s.certTxId,
+      isDetail:isDetail&&!s.certTxId, isForm:isForm&&!s.certTxId,
+      isEmptyDetail:!mobile&&isRecordSection&&!isDetail&&!isForm,
+      emptyTitle:"Select a "+({donors:"donor",transactions:"donation",phases:"phase",workers:"worker",tasks:"task"}[sec]||"record"),
+      emptyBody:"Pick a row on the left to see its full record, linked entries and edit controls. Or start a new entry from the header.",
+
+      overviewCols:mobile?"1fr 1fr":"repeat(4,1fr)",
+      overviewLowerCols:mobile?"1fr":"1fr 1fr",
+      kpis:[
+        {label:"Received to date",value:F.money(received),note:pct+"% of program budget",noteColor:"color-mix(in srgb,var(--color-text) 55%,transparent)"},
+        {label:"Pledged, not received",value:F.money(pledgedV),note:this.d().transactions.filter(t=>t.status==="Potential").length+" open transactions",noteColor:"color-mix(in srgb,var(--color-text) 55%,transparent)"},
+        {label:"Committed task cost",value:F.money(this.taskCost()),note:this.d().tasks.length+" tasks across "+this.d().phases.length+" phases",noteColor:"color-mix(in srgb,var(--color-text) 55%,transparent)"},
+        {label:"Funding gap",value:F.money(budget-received-pledgedV),note:"Against "+F.money(budget)+" budget",noteColor:RED}
+      ],
+      raisedLabel:F.money(received), pledgedLabel:F.money(pledgedV), gapLabel:F.money(budget-received-pledgedV), raisedPct:pct,
+      barReceived:"width:"+(received/budget*100)+"%;background:"+GREEN,
+      barPledged:"width:"+(pledgedV/budget*100)+"%;background:"+YELLOW,
+      attention:s.reminders.slice().sort((a,b)=>a.date<b.date?-1:1).slice(0,3).map(r=>{
+        const dn=this.donor(r.donorId)||{};
+        return {title:(dn.name||"Donor")+" — follow up",sub:r.note,value:r.date,mark:YELLOW,open:()=>this.open("donors",r.donorId)};
+      }).concat([
+        {title:"Plaza & walkways",sub:"Blocked on the shoreline variance",value:F.money(520000),mark:RED,open:()=>this.open("tasks","t22")},
+        {title:"Mass grading, pads A–C",sub:"Change order unsigned, weather window closing",value:F.money(1240000),mark:GREEN,open:()=>this.open("tasks","t6")}
+      ]),
+      activity:[
+        {when:"Today",text:"Ilene logged a site walk with the Bergstrom trustees."},
+        {when:"Yesterday",text:"Suquamish Trading gift of $450K marked Completed and applied to the stormwater vault."},
+        {when:"2 days",text:"Curt moved Haul-road & staging yard to In progress."},
+        {when:"4 days",text:"Nakamura Electric added to Primary power service."},
+        {when:"1 week",text:"Phase P10 flagged Blocked pending the shoreline variance."}
+      ],
+
+      summary:this.summaryFor(),
+      filters:this.filtersFor(sec).map(f=>({label:f,on:()=>this.setState({filter:f}),style:chip(s.filter===f)})),
+      rows:this.listRows(),
+      rowsEmpty:this.listRows().length===0,
+      listFooter:this.listRows().length+" of "+((this.d()[sec]||[]).length)+" records · synced from the Realtime Database",
+
+      detailKicker:det?det.head.kicker:"", detailTitle:det?det.head.title:"", detailSub:det?det.head.sub:"",
+      detailTag:det?det.head.tag:"", detailTagStyle:det?(TAG[det.head.tag]||"tag tag-neutral"):"tag",
+      detailStats:det?det.stats:[], hasDetailStats:!!(det&&det.stats.length),
+      detailFields:det?det.fields:[], detailGroups:det?det.groups:[],
+      onEdit:()=>this.startEdit(), onBack:()=>this.back(),
+
+      formTitle:(s.recordId?"Edit ":"New ")+({donors:"donor",transactions:"donation",phases:"phase",workers:"worker",tasks:"task"}[sec]||"record"),
+      formHint:"Fields come from the schema in Admin → Data fields. Add or reorder them there and this form follows.",
+      formGridStyle:"display:grid;grid-template-columns:"+(mobile?"1fr":"1fr 1fr")+";gap:13px 16px;padding:16px 20px 10px",
+      formFields:this.formFieldList(),
+      hasRepeater:sec==="tasks"||sec==="transactions",
+      repeaterTitle:sec==="tasks"?"Dated cost schedule":"Allocation across tasks (%) — must total 100",
+      repeaterDateHint:sec==="tasks"?"2026-10-01":"Date applied",
+      repeaterLabelHint:sec==="tasks"?"Milestone":"Task name",
+      repeaterAmountHint:sec==="tasks"?"$":"%",
+      repeaterRows:s.repeaterRows.map((r,i)=>({date:r.date,label:r.label,amount:r.amount,
+        onDate:e=>{const v=e.target.value;this.setState(st=>{const rr=st.repeaterRows.slice();rr[i]=Object.assign({},rr[i],{date:v});return{repeaterRows:rr};});},
+        onLabel:e=>{const v=e.target.value;this.setState(st=>{const rr=st.repeaterRows.slice();rr[i]=Object.assign({},rr[i],{label:v});return{repeaterRows:rr};});},
+        onAmount:e=>{const v=e.target.value;this.setState(st=>{const rr=st.repeaterRows.slice();rr[i]=Object.assign({},rr[i],{amount:v});return{repeaterRows:rr};});}})),
+      onAddRepeaterRow:()=>this.setState(st=>({repeaterRows:st.repeaterRows.concat([{date:"",label:"",amount:""}])})),
+      saveLabel:s.recordId?"Save changes":"Create entry",
+      onSave:()=>this.save(),
+      sectionKey:sec,
+
+      adminTabs:[{k:"users",l:"Users & roles"},{k:"fields",l:"Data fields"},{k:"reset",l:"Reset data"}].map(t=>({label:t.l,on:()=>this.setState({adminTab:t.k,resetStage:"idle"}),
+        style:"cursor:pointer;flex:1;border:0;border-right:1px solid var(--color-divider);font-family:var(--font-heading);font-weight:800;font-size:12.5px;padding:11px 14px;text-align:left;background:"+(s.adminTab===t.k?GREEN:"transparent")+";color:"+(s.adminTab===t.k?"#ffffff":"var(--color-text)")})),
+      adminIsUsers:s.adminTab==="users", adminIsFields:s.adminTab==="fields", adminIsReset:s.adminTab==="reset",
+      resetTargets:[["donors","Donors"],["transactions","Donations"],["phases","Phases of work"],["workers","Workers & contractors"],["tasks","Work to do / tasks"]].map(t=>({
+        label:t[1], on:!!s.resetPick[t[0]], count:(this.d()[t[0]]||[]).length+" records",
+        toggle:()=>this.setState(st=>({resetPick:Object.assign({},st.resetPick,{[t[0]]:!st.resetPick[t[0]]})}))})),
+      resetIdle:s.resetStage!=="armed", resetArmed:s.resetStage==="armed",
+      resetDone:s.resetStage==="done", resetDoneMsg:s.resetDoneMsg,
+      resetConfirm:s.resetConfirm,
+      onResetConfirm:e=>this.setState({resetConfirm:e.target.value}),
+      onResetArm:()=>this.setState({resetStage:"armed",resetConfirm:"",resetDoneMsg:""}),
+      onResetCancel:()=>this.setState({resetStage:"idle",resetConfirm:""}),
+      onResetRun:()=>this.runReset(),
+      roleNames:["Admin","View Only Full","View Only Limited","Entry User"],
+      users:s.users.map((u,i)=>({name:u.name,email:u.email,access:u.access,role:u.role,
+        initials:u.name.split(" ").map(x=>x[0]).join(""),
+        tagStyle:u.role==="Admin"?"tag tag-accent":"tag tag-neutral",
+        inactive:u.active===false,
+        rowStyle:"padding:11px 16px;border-bottom:1px solid var(--color-divider);"+(u.active===false?"opacity:.55;background:var(--color-neutral-100)":""),
+        viewing:s.editingUser!==i, editing:s.editingUser===i,
+        edit:()=>this.setState({editingUser:i}),
+        done:()=>this.setState({editingUser:null}),
+        toggle:()=>this.setUser(i,{active:u.active===false}),
+        toggleLabel:u.active===false?"Reactivate":"Deactivate",
+        remove:()=>this.removeUser(i),
+        onName:e=>this.setUser(i,{name:e.target.value}),
+        onEmail:e=>this.setUser(i,{email:e.target.value}),
+        onRole:e=>this.setUser(i,{role:e.target.value})})),
+      onAddUser:()=>this.setState(st=>({users:st.users.concat([{name:"New user",email:"invite pending",role:"Entry User",access:"Enters donors & transactions only",active:true}]),editingUser:st.users.length})),
+
+      schemaTabs:Object.keys(this.state.schema).map(k=>({label:(SECTIONS.find(x=>x.key===k)||{}).label||k,on:()=>this.setState({schemaTarget:k}),style:chip(s.schemaTarget===k)})),
+      schemaTargetLabel:(SECTIONS.find(x=>x.key===s.schemaTarget)||{}).label||s.schemaTarget,
+      schemaFields:(this.state.schema[s.schemaTarget]||[]).map((f,i)=>({label:f.l,
+        meta:f.t+(f.req?" · required":"")+(f.link?" → "+f.link:"")+(f.dyn?" · managed list":"")+(f.o?" · "+f.o.length+" choices":""),
+        up:()=>this.moveField(i),remove:()=>this.removeField(i),
+        required:!!f.req, toggleRequired:()=>this.toggleRequired(i),
+        isSelect:f.t==="Select"&&!f.dyn,
+        optionsOpen:s.optionsOpenIdx===i,
+        optionsLabel:s.optionsOpenIdx===i?"Done":"Choices",
+        toggleOptions:()=>this.setState(st=>({optionsOpenIdx:st.optionsOpenIdx===i?null:i,newChoice:""})),
+        options:(f.o||[]).map((o,j)=>({label:o,onRename:e=>this.editChoice(i,j,e.target.value),remove:()=>this.removeChoice(i,j)})),
+        newOption:s.newChoice,
+        onNewOption:e=>this.setState({newChoice:e.target.value}),
+        addOption:()=>this.addChoice(i)})),
+      fieldEditorStyle:"display:grid;grid-template-columns:"+(mobile?"1fr":"1fr 340px")+";gap:0;align-items:start",
+      fieldAddStyle:"display:flex;flex-direction:column;gap:11px;padding:14px 18px 24px;"+(mobile?"border-top:2px solid var(--color-divider)":"border-left:2px solid var(--color-divider)"),
+      fieldTypes:["Text","Long text","Number","Money","Date","Select","Link","Checkbox"],
+      newFieldLabel:s.newFieldLabel, newFieldType:s.newFieldType,
+      onNewFieldLabel:e=>this.setState({newFieldLabel:e.target.value}),
+      onNewFieldType:e=>this.setState({newFieldType:e.target.value}),
+      onAddField:()=>this.addField(),
+
+      reportsGridStyle:"display:grid;grid-template-columns:"+(mobile?"1fr":"repeat(auto-fit,minmax(340px,1fr))")+";gap:2px;background:var(--color-divider)",
+      donationPoints:series.donationPoints, costPoints:series.costPoints,
+      yTicks:series.yTicks, monthTicks:series.monthTicks,
+      dayBars:daily.bars, dayTicks:daily.ticks, dayYTicks:daily.yTicks, dayMonthLabel:daily.label,
+      laneCols:lane.cols, lanes:lane.lanes,
+      onOpen_line:()=>this.setState({reportModal:"line"}),
+      onOpen_day:()=>this.setState({reportModal:"day"}),
+      onOpen_lane:()=>this.setState({reportModal:"lane"}),
+      onOpen_gap:()=>this.setState({reportModal:"gap"}),
+      onOpen_pledge:()=>this.setState({reportModal:"pledge"}),
+      onOpen_top:()=>this.setState({reportModal:"top"}),
+      onOpen_comp:()=>this.setState({reportModal:"comp"}),
+      onCloseReport:()=>this.setState({reportModal:null}),
+      onExportPdf:()=>window.print(),
+      onExportPng:()=>this.exportReportPng(),
+      modalCanPng:["line","day","lane"].includes(s.reportModal),
+
+      showQuickComplete:isDetail&&sec==="transactions"&&["Promised","Potential"].includes((this.currentRecord()||{}).status),
+      onOpenComplete:()=>this.openComplete(),
+      completeOpen:s.completeOpen,
+      completeWho:(()=>{const r=this.currentRecord();const d=r?this.donor(r.donorId):null;return r?((d?d.name:"Donor")+" · currently "+r.status):"";})(),
+      completeAmount:s.completeAmount, completeDate:s.completeDate, completeMethod:s.completeMethod,
+      completeMethods:["Check","ACH","Card","Stock","In-kind","Grant award"],
+      onCompleteAmount:e=>this.setState({completeAmount:e.target.value}),
+      onCompleteDate:e=>this.setState({completeDate:e.target.value}),
+      onCompleteMethod:e=>this.setState({completeMethod:e.target.value}),
+      onCompleteSave:()=>this.saveComplete(),
+      onCompleteCancel:()=>this.setState({completeOpen:false}),
+      reportModalOpen:!!s.reportModal,
+      modalTitle:({line:"Donations vs. task cost",day:"Daily giving vs. payments due",lane:"Phase swim lanes",gap:"Funding gap by phase",pledge:"Pledged vs. completed",top:"Top donors",comp:"Phase completion"})[s.reportModal]||"",
+      modalSub:({line:"Cumulative dollars by month, program to date",day:daily.label+" — one bar pair per day",lane:"Each phase as a bar across the quarters it spans",gap:"Allocated donations against phase budget",pledge:"All donor transactions by status",top:"By total received",comp:"Tasks completed of tasks planned"})[s.reportModal]||"",
+      modalIsLine:s.reportModal==="line", modalIsDay:s.reportModal==="day", modalIsLane:s.reportModal==="lane",
+      modalIsGap:s.reportModal==="gap", modalIsPledge:s.reportModal==="pledge",
+      modalIsTop:s.reportModal==="top", modalIsComp:s.reportModal==="comp",
+      gapRows, completionRows,
+      pledgeBarA:"width:"+(received/pledgeTotal*100)+"%;background:"+GREEN,
+      pledgeBarB:"width:"+(pledgedV/pledgeTotal*100)+"%;background:"+YELLOW,
+      statusStats:[{value:F.money(received),label:"Completed"},{value:F.money(pledgedV),label:"Potential"},{value:Math.round(received/pledgeTotal*100)+"%",label:"Conversion"}],
+      topDonors:top.map((t,i)=>({rank:String(i+1),name:(this.donor(t.id)||{}).name||"—",value:this.money(t.v),
+        pct:Math.round(t.v/topMax*100),open:()=>this.open("donors",t.id)}))
+    };
+  }
+}
+
+</script>
+</body>
+</html>

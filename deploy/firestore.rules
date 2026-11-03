@@ -1,0 +1,181 @@
+rules_version = '2';
+
+// North Kitsap United Tracker — Firestore rules.
+//
+// Access lives in /users/{email} (the document id IS the lowercased email
+// address, so rules can look the caller up straight from their auth token).
+//
+// Each user holds roles (bundles of operations, defined in meta/roles) plus
+// extra operations. The app writes the effective result to users/{email}.perms:
+//   perms.<section>  'none' | 'view' | 'write'   for overview, donors,
+//                    transactions, events, phases, workers, tasks, admin,
+//                    reports, documents, calendar
+//   perms.money      true | false                 View $$
+// Writes to a collection need 'write' on its section; perms.admin == 'write'
+// is full admin. Section visibility is enforced in the app — the Overview,
+// Reports and Calendar roll up every collection, so records stay readable to
+// any active signed-in user. Amounts are enforced here.
+//
+// Accounts that predate operations (a single 'role' field, no perms) keep
+// their old access until an admin signs in, which migrates them.
+//
+// Amounts are not fields on the records. Every money value (donor proposed
+// amount, donation amount, phase budget, worker rate, task cost and cost rows)
+// lives in a per-record `secure/v` subcollection document. View Only Limited is
+// denied read on that whole collection group, so those numbers never reach the
+// device at all — nothing is merely hidden in the interface. Raising a user's
+// role takes effect live; the app re-subscribes and the amounts arrive.
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // BOOTSTRAP — these addresses are Admin before any roster exists, and stay
+    // a lockout escape hatch afterwards. Mirror in firebase-sync.js.
+    function bootstrapAdmin() {
+      return signedIn() && myEmail() in [
+        'gerry@gb2solutions.net',
+        'gerandkar@gmail.com'
+      ];
+    }
+
+    // Any Firebase login, before the texted code. Only enough to read and
+    // update one's own roster entry while finishing first-time setup.
+    function loggedIn() {
+      return request.auth != null && request.auth.token.email != null;
+    }
+    // Signed in with password AND a texted code (multi-factor), on an account
+    // an admin has added. Everything else in the database requires this.
+    function mfa() {
+      return request.auth.token.firebase.get('sign_in_second_factor', null) == 'phone';
+    }
+    function signedIn() {
+      return loggedIn() && mfa();
+    }
+    function member() {
+      return bootstrapAdmin() || activeUser();
+    }
+    function myEmail() {
+      return request.auth.token.email.lower();
+    }
+    function myPath() {
+      return /databases/$(database)/documents/users/$(myEmail());
+    }
+    function hasProfile() {
+      return signedIn() && exists(myPath());
+    }
+    function me() {
+      return get(myPath()).data;
+    }
+    function activeUser() {
+      return hasProfile() && me().active != false;
+    }
+    function hasPerms() {
+      return me().get('perms', null) != null;
+    }
+    function legacyRole() {
+      return me().get('role', '');
+    }
+    function isAdmin() {
+      return bootstrapAdmin() || (activeUser() && (hasPerms()
+        ? me().perms.get('admin', 'none') == 'write'
+        : legacyRole() == 'Admin'));
+    }
+    // May create / edit records belonging to this section.
+    function canWrite(sec) {
+      return isAdmin() || (activeUser() && (hasPerms()
+        ? me().perms.get(sec, 'none') == 'write'
+        : (legacyRole() == 'Entry User' && sec in ['donors', 'transactions', 'events', 'documents'])));
+    }
+    // Who may receive a single dollar figure.
+    function canSeeMoney() {
+      return isAdmin() || (activeUser() && (hasPerms()
+        ? me().perms.get('money', false) == true
+        : legacyRole() in ['View Only Full', 'Entry User']));
+    }
+    function anyRecordWrite() {
+      return canWrite('donors') || canWrite('transactions') || canWrite('events');
+    }
+
+    // ---- records (no amounts in these documents) ----------------------------
+
+    match /donors/{id} {
+      allow read: if member();
+      allow write: if canWrite('donors');
+    }
+    match /transactions/{id} {
+      allow read: if member();
+      allow write: if canWrite('transactions');
+    }
+    match /events/{id} {
+      allow read: if member();
+      allow write: if canWrite('events');
+    }
+    match /phases/{id} {
+      allow read: if member();
+      allow write: if canWrite('phases');
+    }
+    match /workers/{id} {
+      allow read: if member();
+      allow write: if canWrite('workers');
+    }
+    match /tasks/{id} {
+      allow read: if member();
+      allow write: if canWrite('tasks');
+    }
+    // Documents section — uploaded file records (no amounts).
+    match /docs/{id} {
+      allow read: if member();
+      allow write: if canWrite('documents');
+    }
+
+    // ---- amounts ------------------------------------------------------------
+    // The recursive path is required: a collection-group query on `secure` can
+    // only be authorized by a rule whose path starts with a recursive wildcard.
+    match /{path=**}/secure/{doc} {
+      allow read: if canSeeMoney();
+    }
+    // Writes stay scoped per collection, matching who may edit each record.
+    match /donors/{id}/secure/{doc} {
+      allow write: if canWrite('donors');
+    }
+    match /transactions/{id}/secure/{doc} {
+      allow write: if canWrite('transactions');
+    }
+    match /events/{id}/secure/{doc} {
+      allow write: if canWrite('events');
+    }
+    match /phases/{id}/secure/{doc} {
+      allow write: if canWrite('phases');
+    }
+    match /workers/{id}/secure/{doc} {
+      allow write: if canWrite('workers');
+    }
+    match /tasks/{id}/secure/{doc} {
+      allow write: if canWrite('tasks');
+    }
+    match /docs/{id}/secure/{doc} {
+      allow write: if canWrite('documents');
+    }
+
+    // ---- configuration ------------------------------------------------------
+    // Data fields, select choices, managed lists, roles, reminders, contact log.
+    match /meta/{doc} {
+      allow read: if member();
+      allow write: if isAdmin() || (anyRecordWrite() && doc in ['reminders', 'contacts']);
+    }
+
+    // ---- roster -------------------------------------------------------------
+    // Invitation only: admins create every entry. Anyone logged in may read
+    // and touch their own (password change, last sign-in) while finishing
+    // setup, but nobody may change their own access.
+    match /users/{email} {
+      allow read: if member() || (loggedIn() && email == myEmail());
+      allow create: if isAdmin();
+      allow update: if isAdmin() ||
+        (loggedIn() && email == myEmail()
+          && !request.resource.data.diff(resource.data).affectedKeys()
+               .hasAny(['roles', 'ops', 'perms', 'role', 'active']));
+      allow delete: if isAdmin();
+    }
+  }
+}

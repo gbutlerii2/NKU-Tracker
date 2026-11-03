@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<title>NKU Tracker — User Guide</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="stylesheet" href="_ds/modernist-4d9033cd-c6b0-4387-a942-ba9610f9c5cd/styles.css">
+<script src="_ds/modernist-4d9033cd-c6b0-4387-a942-ba9610f9c5cd/_ds_bundle.js"></script>
+<script src="./doc-page.js"></script>
+<style>
+:root{--color-bg:#ffffff;--color-surface:#f6f2e7;--color-text:#1e2a20;--color-accent:#2e6b3e;--color-divider:color-mix(in srgb,#1e2a20 30%,transparent);--color-accent-100:#e9f0ea;--color-accent-700:#1b4127}
+body{margin:0}
+doc-page:not(:defined){visibility:hidden}
+a{color:#2e6b3e;text-decoration:underline}
+a:hover{color:#1b4127}
+</style>
+</helmet>
+
+<template id="__bundler_thumbnail" data-bg-color="#2e6b3e">
+<svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg"><rect width="1200" height="800" fill="#2e6b3e"></rect><rect x="420" y="220" width="360" height="360" fill="#ffffff"></rect><rect x="460" y="270" width="200" height="22" fill="#1e2a20"></rect><rect x="460" y="320" width="280" height="10" fill="#a9c5b1"></rect><rect x="460" y="346" width="250" height="10" fill="#a9c5b1"></rect><rect x="460" y="372" width="270" height="10" fill="#a9c5b1"></rect><rect x="460" y="420" width="280" height="110" fill="#d9c9a3"></rect></svg>
+</template>
+
+<doc-page margin="0.7in">
+<div style="font-family:var(--font-body);color:#1e2a20;font-size:15px;line-height:1.65">
+
+<div style="display:flex;justify-content:space-between;align-items:flex-end;gap:20px;border-bottom:2px solid #1e2a20;padding-bottom:16px;flex-wrap:wrap">
+<img src="https://rotaryknk.org/images/nku/NKU-800x378.png" alt="North Kitsap United" style="width:150px;height:auto">
+<div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#2e6b3e;font-weight:700">Project Tracker · User Guide</div>
+</div>
+<h1 style="font-family:var(--font-heading);font-weight:800;font-size:44px;line-height:1.02;letter-spacing:-.03em;margin:28px 0 12px">How to use the NKU Project Tracker</h1>
+<p style="font-size:17px;line-height:1.6;margin:0 0 8px;max-width:600px;color:#3c4a3f">Signing in, entering and editing records in every section, how the sections connect, and how to read the calendar and reports. Admin tools are covered in the last chapter.</p>
+<p style="font-size:13px;color:#6b675e;margin:0 0 26px">Names and dollar amounts in the screenshots are blurred on purpose.</p>
+
+<div style="background:#f6f2e7;padding:18px 22px 14px;break-inside:avoid">
+<div style="font-family:var(--font-heading);font-weight:800;font-size:13px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px">Contents</div>
+<ol style="margin:0;padding-left:22px;columns:2;column-gap:30px;font-size:14.5px;line-height:1.85">
+<li><a href="#signin">Signing in</a></li>
+<li><a href="#basics">The basics: screen, records, editing</a></li>
+<li><a href="#overview">Overview</a></li>
+<li><a href="#donors">Donors</a></li>
+<li><a href="#donations">Donations</a></li>
+<li><a href="#events">Events</a></li>
+<li><a href="#phases">Phases of work</a></li>
+<li><a href="#workers">Workers &amp; contractors</a></li>
+<li><a href="#tasks">Work to do / tasks</a></li>
+<li><a href="#links">How the sections are linked</a></li>
+<li><a href="#calendar">Reading the calendar</a></li>
+<li><a href="#reports">Reading reports</a></li>
+<li><a href="#documents">Documents</a></li>
+<li><a href="#phone">Using it on a phone</a></li>
+<li><a href="#admin">Admin</a></li>
+</ol>
+</div>
+
+<!-- 1 SIGN IN -->
+<section id="signin" style="break-before:page">
+<div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#2e6b3e;font-weight:700">Chapter 1</div>
+<h2 style="font-family:var(--font-heading);font-weight:800;font-size:30px;letter-spacing:-.02em;line-height:1.1;margin:4px 0 14px;padding-bottom:12px;border-bottom:2px solid #1e2a20">Signing in</h2>
+<p>Open the tracker's web address in any browser. You'll see the sign-in page. There are two ways in.</p>
+
+<figure style="margin:18px 0 22px;break-inside:avoid">
+<div style="border:1px solid color-mix(in srgb,#1e2a20 30%,transparent);display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.8fr)">
+<div style="padding:22px 24px;display:flex;flex-direction:column;gap:10px">
+<div style="font-family:var(--font-heading);font-weight:800;font-size:24px;letter-spacing:-.02em">Project Tracker</div>
+<div style="height:2px;background:color-mix(in srgb,#1e2a20 30%,transparent);margin:4px 0"></div>
+<div style="border:2px solid #1e2a20;height:38px;display:flex;align-items:center;padding:0 12px;font-weight:800;font-size:13px">Continue with Google</div>
+<div style="font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#6b675e;margin-top:6px">Or with email</div>
+<div style="font-size:11px;color:#6b675e">Email</div><div style="height:30px;background:#f6f2e7;border:1px solid #ded5c2"></div>
+<div style="font-size:11px;color:#6b675e">Password</div><div style="height:30px;background:#f6f2e7;border:1px solid #ded5c2"></div>
+<div style="display:flex;gap:8px;align-items:center;font-size:12px;font-weight:800"><span style="background:#2e6b3e;color:#fff;padding:8px 14px">Sign in</span><span style="border:2px solid #1e2a20;padding:6px 12px">Create account</span><span style="font-weight:400;text-decoration:underline;color:#6b675e">Forgot password</span></div>
+</div>
+<div style="background:#2e6b3e;color:#fff;padding:22px;font-family:var(--font-heading);font-weight:800;font-size:22px;line-height:1.05;display:flex;align-items:center">We believe we are better together.</div>
+</div>
+<figcaption style="font-size:12.5px;color:#6b675e;margin-top:6px">The sign-in page (simplified drawing).</figcaption>
+</figure>
+
+<h3 style="font-family:var(--font-heading);font-weight:800;font-size:18px;margin:22px 0 6px">With a Google account</h3>
+<ol style="margin:0 0 12px;padding-left:22px">
+<li>Click <strong>Continue with Google</strong>.</li>
+<li>Pick your Google account in the window that opens. If nothing opens, allow pop-ups for the site and try again.</li>
+</ol>
+
+<h3 style="font-family:var(--font-heading);font-weight:800;font-size:18px;margin:22px 0 6px">With email and password</h3>
+<ol style="margin:0 0 12px;padding-left:22px">
+<li>Type your email and password, then click <strong>Sign in</strong> (or press Enter).</li>
+<li>No account yet? Type your email and a password of at least six characters and click <strong>Create account</strong>.</li>
+<li>Forgot it? Type your email and click <strong>Forgot password</strong>. A reset link arrives by email.</li>
+</ol>
+
+<h3 style="font-family:var(--font-heading);font-weight:800;font-size:18px;margin:22px 0 6px">If an admin set up your login</h3>
+<p>When an admin creates your account with a temporary password, the first sign-in takes you to a <strong>Choose your own password</strong> screen. Type a new password twice and click <strong>Save password</strong>. From then on, use the new one.</p>
+
+<div style="background:#f6f2e7;padding:12px 16px;margin:16px 0;font-size:14px;break-inside:avoid"><strong>What you can see depends on your role.</strong> New accounts start as <strong>General</strong>: Overview, Reports, Documents and Calendar, view only, no dollar amounts. An admin can give you more (see <a href="#admin">Admin</a>). If a section you expect is missing from the sidebar, ask an admin.</div>
+
+<p><strong>Signing out:</strong> click <strong>Sign out</strong> at the bottom of the sidebar. On a shared computer, always sign out.</p>
+</section>
+
+<!-- 2 BASICS -->
+<section id="basics" style="break-before:page">
+<div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#2e6b3e;font-weight:700">Chapter 2</div>
+<h2 style="font-family:var(--font-heading);font-weight:800;font-size:30px;letter-spacing:-.02em;line-height:1.1;margin:4px 0 14px;padding-bottom:12px;border-bottom:2px solid #1e2a20">The basics: screen, records, editing</h2>
+<p>Every section works the same way. Learn it once here and it applies to Donors, Donations, Events, Phases, Workers and Tasks.</p>
+
+<figure style="margin:18px 0 22px;break-inside:avoid">
+<img src="guide/donors-list.jpg" alt="Donors list" style="width:100%;height:auto;display:block;border:1px solid color-mix(in srgb,#1e2a20 30%,transparent)">
+<figcaption style="font-size:12.5px;color:#6b675e;margin-top:6px">A section list: sidebar on the left, section title, search and <strong>+ New</strong> button across the top, totals, filters and sort, then one line per record.</figcaption>
+</figure>
+
+<h3 style="font-family:var(--font-heading);font-weight:800;font-size:18px;margin:22px 0 6px">Parts of the screen</h3>
+<ul style="margin:0 0 12px;padding-left:22px">
+<li><strong>Sidebar</strong> — every section you have access to, with a record count. Click one to open it.</li>
+<li><strong>Search box</strong> — type any part of a name, organization, ID or note. The list narrows as you type.</li>
+<li><strong>+ New</strong> button — starts a new record in the current section.</li>
+<li><strong>Totals strip</strong> — counts and dollar totals for what's in the list.</li>
+<li><strong>Filters and Sort</strong> — narrow the list (status, payment type, owner, task, type) and change its order. Status and Payment type let you tick more than one box.</li>
+<li><strong>Connection light</strong> — bottom of the sidebar. <em>Live · Firestore</em> means changes are saving and reaching everyone else within a second. <em>Offline · cached</em> means you can keep working; changes send when the connection returns.</li>
+</ul>
+
+<h3 style="font-family:var(--font-heading);font-weight:800;font-size:18px;margin:22px 0 6px">Opening a record</h3>
+<p>Click any line in a list. The record opens in a window over the list, showing its totals and every field. Close it with <strong>Close</strong> or the red <strong>×</strong> in the corner.</p>
+<figure style="margin:18px 0 22px;break-inside:avoid">
+<img src="guide/donation-detail.jpg" alt="A donation record" style="width:100%;height:auto;display:block;border:1px solid color-mix(in srgb,#1e2a20 30%,transparent)">
+<figcaption style="font-size:12.5px;color:#6b675e;margin-top:6px">An open record. The buttons along the top change by section; <strong>Edit entry</strong> is always first.</figcaption>
+</figure>
+
+<h3 style="font-family:var(--font-heading);font-weight:800;font-size:18px;margin:22px 0 6px">Adding a record</h3>
+<ol style="margin:0 0 12px;padding-left:22px">
+<li>Click <strong>+ New</strong> at the top right of the section.</li>
+<li>Fill in the fields. Fields marked <span style="color:#2e6b3e">required</span> must have a value before it will save.</li>
+<li>Click <strong>Save</strong>. Click <strong>Cancel</strong> to throw the entry away.</li>
+</ol>
+
+<h3 style="font-family:var(--font-heading);font-weight:800;font-size:18px;margin:22px 0 6px">Editing a record</h3>
+<ol style="margin:0 0 12px;padding-left:22px">
+<li>Open the record and click <strong>Edit entry</strong>.</li>
+<li>Change what you need and click <strong>Save</strong>.</li>
+</ol>
+<p>All changes happen inside the Edit entry window, including payment schedules, <strong>Log contact</strong>, <strong>Log reminder</strong> and <strong>Delete</strong>. If you don't see Edit entry, your role is view only for that section.</p>
+<figure style="margin:18px 0 22px;break-inside:avoid">
+<img src="guide/donor-edit.jpg" alt="Edit donor form" style="width:100%;height:auto;display:block;border:1px solid color-mix(in srgb,#1e2a20 30%,transparent)">
+<figcaption style="font-size:12.5px;color:#6b675e;margin-top:6px">The Edit entry window. Small grey help text under a field explains what it's for.</figcaption>
+</figure>
+
+<h3 style="font-family:var(--font-heading);font-weight:800;font-size:18px;margin:22px 0 6px">Field types you'll meet</h3>
+<ul style="margin:0 0 12px;padding-left:22px">
+<li><strong>Dollar fields</strong> format as you type: enter 1500000 and it shows $1,500,000.</li>
+<li><strong>Dropdowns with "Add a new option"</strong> — pick from the list, or type a new value and click <strong>Add</strong>. It's offered on every later entry.</li>
+<li><strong>Link fields</strong> (Donor, Linked to, Assigned to, Funded by) — type part of a name and pick the record from the list. This is what connects sections together.</li>
+<li><strong>Tags</strong> — type a tag and click Add. Tags are shared across donors, donations and tasks.</li>
+</ul>
+
+<h3 style="font-family:var(--font-heading);font-weight:800;font-size:18px;margin:22px 0 6px">Deleting</h3>
+<p>Open the record, click <strong>Edit entry</strong>, then <strong>Delete</strong>. You'll be asked to confirm with <strong>Delete permanently</strong> or back out with <strong>Keep it</strong>. Deleting can't be undone.</p>
+</section>
+
+<!-- 3 OVERVIEW -->
+<section id="overview" style="break-before:page">
+<div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#2e6b3e;font-weight:700">Chapter 3</div>
+<h2 style="font-family:var(--font-heading);font-weight:800;font-size:30px;letter-spacing:-.02em;line-height:1.1;margin:4px 0 14px;padding-bottom:12px;border-bottom:2px solid #1e2a20">Overview</h2>
+<p>The Overview is the campaign dashboard. It is read only; every figure is calculated from the other sections.</p>
+<figure style="margin:18px 0 22px;break-inside:avoid">
+<img src="guide/overview.jpg" alt="Overview" style="width:100%;height:auto;display:block;border:1px solid color-mix(in srgb,#1e2a20 30%,transparent)">
+<figcaption style="font-size:12.5px;color:#6b675e;margin-top:6px">The Overview: six totals, the campaign bar, then Needs attention, Upcoming events and Recent activity.</figcaption>
+</figure>
+<table style="width:100%;border-collapse:collapse;font-size:14px;margin:8px 0 16px">
+<thead><tr><th style="text-align:left;padding:7px 10px 7px 0;border-bottom:2px solid #1e2a20;width:30%">Tile</th><th style="text-align:left;padding:7px 0;border-bottom:2px solid #1e2a20">What it counts</th></tr></thead>
+<tbody>
+<tr><td style="padding:7px 10px 7px 0;border-bottom:1px solid #ded5c2;font-weight:700">Received to date</td><td style="padding:7px 0;border-bottom:1px solid #ded5c2">Money actually in hand, including installment payments already received.</td></tr>
+<tr><td style="padding:7px 10px 7px 0;border-bottom:1px solid #ded5c2;font-weight:700">Pledged</td><td style="padding:7px 0;border-bottom:1px solid #ded5c2">The remaining balance on pledges — what's committed in writing but not yet received. Payments already in are not counted twice.</td></tr>
+<tr><td style="padding:7px 10px 7px 0;border-bottom:1px solid #ded5c2;font-weight:700">Promised</td><td style="padding:7px 0;border-bottom:1px solid #ded5c2">Verbal commitments.</td></tr>
+<tr><td style="padding:7px 10px 7px 0;border-bottom:1px solid #ded5c2;font-weight:700">Potential</td><td style="padding:7px 0;border-bottom:1px solid #ded5c2">Open asks plus high-priority donors. "Throwing darts" donations count here.</td></tr>
+<tr><td style="padding:7px 10px 7px 0;border-bottom:1px solid #ded5c2;font-weight:700">Funding gap</td><td style="padding:7px 0;border-bottom:1px solid #ded5c2">Full cost less received, pledged and promised.</td></tr>
+<tr><td style="padding:7px 10px 7px 0;border-bottom:1px solid #ded5c2;font-weight:700">Full cost</td><td style="padding:7px 0;border-bottom:1px solid #ded5c2">The estimated cost of every task across all phases.</td></tr>
+</tbody>
+</table>
+<p><strong>Campaign against full cost</strong> is one bar the length of the full cost, filled left to right with Received (dark green), Pledged (green), Promised (gold), Potential (pink) and the Funding gap (red).</p>
+<p><strong>NKU Grant Master Tracker</strong> opens the top fifty open asks, ranked by probability or dollars, with deadline, contact, portal link, match and owner. It exports to PDF or Excel.</p>
+<p><strong>Needs attention</strong> lists anything due in the next two weeks or up to two weeks overdue. <strong>Upcoming events</strong> and <strong>Recent activity</strong> show what's next and what changed. Click any line to open it.</p>
+</section>
+
+<!-- 4 DONORS -->
+<section id="donors" style="break-before:page">
+<div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#2e6b3e;font-weight:700">Chapter 4 · Section 01</div>
+<h2 style="font-family:var(--font-heading);font-weight:800;font-size:30px;letter-spacing:-.02em;line-height:1.1;margin:4px 0 14px;padding-bottom:12px;border-bottom:2px solid #1e2a20">Donors</h2>
+<p>One record per person, family or organization that gives or might give. Donations are entered separately (chapter 5) and roll up onto the donor automatically.</p>
+
+<h3 style="font-family:var(--font-heading);font-weight:800;font-size:18px;margin:22px 0 6px">Reading the list</h3>
+<p>Each line shows the donor ID and type, the name, the account owner, and four columns: <strong>Potential</strong>, <strong>Promised</strong>, <strong>Pledged</strong> and <strong>Received</strong>, with the donor's current status underneath. Pledged shows the full commitment. The line color tells you where the donor stands at a glance:</p>
+<div style="display:flex;flex-direction:column;gap:6px;margin:10px 0 16px;font-size:14px;break-inside:avoid">
+<div style="display:flex;align-items:center;gap:10px"><span style="flex:none;width:44px;height:20px;background:#e9f0ea;border:1px solid #ded5c2"></span>Green — has given something (Received or In Funding Progress)</div>
+<div style="display:flex;align-items:center;gap:10px"><span style="flex:none;width:44px;height:20px;background:color-mix(in srgb,#e9f0ea 45%,#fff);border:1px solid #ded5c2"></span>Lighter green — pledged, nothing received yet</div>
+<div style="display:flex;align-items:center;gap:10px"><span style="flex:none;width:44px;height:20px;background:#fbf4d6;border:1px solid #ded5c2"></span>Light yellow — promised only</div>
+<div style="display:flex;align-items:center;gap:10px"><span style="flex:none;width:44px;height:20px;background:#fff;border:1px solid #ded5c2"></span>White — no commitment yet</div>
+</div>
+<p>Use <strong>Top 10</strong>, <strong>Status</strong>, <strong>Payment type</strong> and <strong>account owner</strong> to filter; the <strong>Sort</strong> buttons order by donations or potential; the <strong>Minimum donation total</strong> slider hides smaller donors.</p>
+
+<h3 style="font-family:var(--font-heading);font-weight:800;font-size:18px;margin:22px 0 6px">Adding a donor</h3>
+<ol style="margin:0 0 12px;padding-left:22px">
+<li>Click <strong>+ New donor</strong>.</li>
+<li>Choose the <strong>Type</strong> (Individual, Organization, Family) and enter the <strong>Name</strong>.</li>
+<li>Add contact details and <strong>Preferred contact</strong>.</li>
+<li>Set <strong>Priority</strong> and <strong>Current status</strong>, and pick an <strong>Account owner</strong> — the team member who owns the relationship. Donations with nobody assigned inherit this person.</li>
+<li>Optionally connect the donor: <strong>Task group / location</strong>, <strong>Linked to</strong> (family members, a business, a matching source) and <strong>Phase / task connection</strong>.</li>
+<li>Click <strong>Save</strong>.</li>
+</ol>
+
+<figure style="margin:18px 0 22px;break-inside:avoid">
+<img src="guide/donor-detail.jpg" alt="Donor record" style="width:100%;height:auto;display:block;border:1px solid color-mix(in srgb,#1e2a20 30%,transparent)">
+<figcaption style="font-size:12.5px;color:#6b675e;margin-top:6px">An open donor: status, totals across Received, Pledged, Promised and Potential, then every field.</figcaption>
+</figure>
+
+<h3 style="font-family:var(--font-heading);font-weight:800;font-size:18px;margin:22px 0 6px">Contacts, reminders and recognition</h3>
+<ul style="margin:0 0 12px;padding-left:22px">
+<li><strong>Log contact</strong> (inside Edit entry) records a call, meeting or email with a date and note.</li>
+<li><strong>Log reminder</strong> sets a follow-up date and owner. It appears on the Calendar in gold.</li>
+<li><strong>Donor tiers</strong> are earned from total received. When a donor reaches a new tier, a recognition certificate is offered on their record until it's printed.</li>
+</ul>
+</section>
+
+<!-- 5 DONATIONS -->
+<section id="donations" style="break-before:page">
+<div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#2e6b3e;font-weight:700">Chapter 5 · Section 02</div>
+<h2 style="font-family:var(--font-heading);font-weight:800;font-size:30px;letter-spacing:-.02em;line-height:1.1;margin:4px 0 14px;padding-bottom:12px;border-bottom:2px solid #1e2a20">Donations</h2>
+<p>Every gift, pledge, grant application and ask is a donation record, always tied to one donor.</p>
+<figure style="margin:18px 0 22px;break-inside:avoid">
+<img src="guide/donations-list.jpg" alt="Donations list" style="width:100%;height:auto;display:block;border:1px solid color-mix(in srgb,#1e2a20 30%,transparent)">
+<figcaption style="font-size:12.5px;color:#6b675e;margin-top:6px">The Donations list. Totals at the top, filters for status, payment type, owner and task, then one line per donation.</figcaption>
+</figure>
+
+<h3 style="font-family:var(--font-heading);font-weight:800;font-size:18px;margin:22px 0 6px">Statuses</h3>
+<table style="width:100%;border-collapse:collapse;font-size:14px;margin:8px 0 16px">
+<thead><tr><th style="text-align:left;padding:7px 10px 7px 0;border-bottom:2px solid #1e2a20;width:30%">Status</th><th style="text-align:left;padding:7px 0;border-bottom:2px solid #1e2a20">Use it when</th></tr></thead>
+<tbody>
+<tr><td style="padding:7px 10px 7px 0;border-bottom:1px solid #ded5c2;font-weight:700">Received</td><td style="padding:7px 0;border-bottom:1px solid #ded5c2">The money is in. Date received fills in automatically.</td></tr>
+<tr><td style="padding:7px 10px 7px 0;border-bottom:1px solid #ded5c2;font-weight:700">Pledged</td><td style="padding:7px 0;border-bottom:1px solid #ded5c2">A firm, usually written, commitment not yet paid.</td></tr>
+<tr><td style="padding:7px 10px 7px 0;border-bottom:1px solid #ded5c2;font-weight:700">Promised</td><td style="padding:7px 0;border-bottom:1px solid #ded5c2">A verbal commitment.</td></tr>
+<tr><td style="padding:7px 10px 7px 0;border-bottom:1px solid #ded5c2;font-weight:700">Potential</td><td style="padding:7px 0;border-bottom:1px solid #ded5c2">An open ask or application.</td></tr>
+<tr><td style="padding:7px 10px 7px 0;border-bottom:1px solid #ded5c2;font-weight:700">Throwing darts</td><td style="padding:7px 0;border-bottom:1px solid #ded5c2">A long shot. Counts as Potential in the totals.</td></tr>
+</tbody>
+</table>
+
+<h3 style="font-family:var(--font-heading);font-weight:800;font-size:18px;margin:22px 0 6px">Adding a donation</h3>
+<ol style="margin:0 0 12px;padding-left:22px">
+<li>Click <strong>+ New donation</strong>.</li>
+<li>Optionally choose a <strong>Title/Event</strong> (a grant or event name). Reusing a title groups several donors together.</li>
+<li>In <strong>Donor</strong>, type part of the name, organization or ID and pick the donor.</li>
+<li>Enter the <strong>Amount</strong>, <strong>Date entered</strong> (the day you create the entry) and, if there is one, the <strong>Deadline</strong>. For a pledge or promise, the Deadline is the follow-up date: it appears on the Calendar and in Overview → Needs attention as "Pledge follow up" or "Promise follow up".</li>
+<li>Choose the <strong>Status</strong>, <strong>Probability</strong>, <strong>NKU team assigned</strong> and <strong>Payment type</strong>.</li>
+<li>For grants, fill in contact, application link, match required and eligible NKU component.</li>
+<li>Click <strong>Save</strong>.</li>
+</ol>
+<figure style="margin:18px 0 22px;break-inside:avoid">
+<img src="guide/donation-new.jpg" alt="New donation form" style="width:100%;height:auto;display:block;border:1px solid color-mix(in srgb,#1e2a20 30%,transparent)">
+<figcaption style="font-size:12.5px;color:#6b675e;margin-top:6px">The donor picker searches every donor as you type.</figcaption>
+</figure>
+
+<h3 style="font-family:var(--font-heading);font-weight:800;font-size:18px;margin:22px 0 6px">Installment donations</h3>
+<ol style="margin:0 0 12px;padding-left:22px">
+<li>Set <strong>Donation type</strong> to <strong>Installment</strong>.</li>
+<li>Choose the <strong>Installment frequency</strong> (Monthly or Annual), <strong>Number of payments</strong> and <strong>First payment date</strong>.</li>
+<li>Save. The amount is split into a payment schedule.</li>
+<li>As each payment arrives, open the donation, click <strong>Edit entry</strong> and tick that payment off in the <strong>Payment schedule</strong>.</li>
+</ol>
+<p>The status follows the schedule on its own: <strong>Pledged</strong> while nothing is received, <strong>In Funding Progress</strong> once some payments are in, and <strong>Received</strong> when the last one is ticked.</p>
+
+<h3 style="font-family:var(--font-heading);font-weight:800;font-size:18px;margin:22px 0 6px">Certificates</h3>
+<p>Open a donation and click <strong>Donor certificate</strong> to preview a certificate of appreciation, then <strong>Print certificate</strong>.</p>
+</section>
+
+<!-- 6 EVENTS -->
+<section id="events" style="break-before:page">
+<div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#2e6b3e;font-weight:700">Chapter 6 · Section 03</div>
+<h2 style="font-family:var(--font-heading);font-weight:800;font-size:30px;letter-spacing:-.02em;line-height:1.1;margin:4px 0 14px;padding-bottom:12px;border-bottom:2px solid #1e2a20">Events</h2>
+<p>Galas, dinners, raffles and other gatherings, with their attendees, tasks, documents and the gifts taken there.</p>
+<figure style="margin:18px 0 22px;break-inside:avoid">
+<img src="guide/event-detail.jpg" alt="Event record" style="width:100%;height:auto;display:block;border:1px solid color-mix(in srgb,#1e2a20 30%,transparent)">
+<figcaption style="font-size:12.5px;color:#6b675e;margin-top:6px">An open event: attending count, received, pledged and how many gave, with the event's action buttons.</figcaption>
+</figure>
+<h3 style="font-family:var(--font-heading);font-weight:800;font-size:18px;margin:22px 0 6px">Creating an event</h3>
+<ol style="margin:0 0 12px;padding-left:22px">
+<li>Click <strong>+ New event</strong>.</li>
+<li>Enter the <strong>Event name</strong> — it also becomes the donation title and tag for every gift taken at the event.</li>
+<li>Set <strong>Date &amp; time</strong>, address, <strong>Hosting company</strong> (from the Workers roster) and a <strong>Linked site</strong> if there's a registration page.</li>
+<li>Save, then open <strong>Edit entry</strong> to add attendees (pick existing donors or type new names), <strong>Tasks to do</strong> with an assignee, and <strong>Documents</strong> such as fliers and guides.</li>
+</ol>
+<h3 style="font-family:var(--font-heading);font-weight:800;font-size:18px;margin:22px 0 6px">At and after the event</h3>
+<ul style="margin:0 0 12px;padding-left:22px">
+<li><strong>+ Add donation</strong> records a gift taken at the event, with its status (Received, Pledged or Promised). It appears in Donations and on the donor automatically.</li>
+<li><strong>Post event donations</strong> is a check, not a transfer. It confirms every event gift appears once in Donations and Donors, removes any duplicate, and stamps the event as verified. Running it twice changes nothing.</li>
+<li><strong>Print attendee list</strong>, <strong>Print task list</strong> and <strong>Print certificates</strong> (one per donor with Received or Pledged gifts) print straight from the event.</li>
+</ul>
+</section>
+
+<!-- 7 PHASES -->
+<section id="phases" style="break-before:page">
+<div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#2e6b3e;font-weight:700">Chapter 7 · Section 04</div>
+<h2 style="font-family:var(--font-heading);font-weight:800;font-size:30px;letter-spacing:-.02em;line-height:1.1;margin:4px 0 14px;padding-bottom:12px;border-bottom:2px solid #1e2a20">Phases of work</h2>
+<p>The big stages of the project. Each phase has a budget, dates, a status and a lead. Tasks belong to phases, so a phase's progress and funding come from its tasks.</p>
+<figure style="margin:18px 0 22px;break-inside:avoid">
+<img src="guide/phases.jpg" alt="Phases list" style="width:100%;height:auto;display:block;border:1px solid color-mix(in srgb,#1e2a20 30%,transparent)">
+<figcaption style="font-size:12.5px;color:#6b675e;margin-top:6px">Phases with code, date range, budget and status.</figcaption>
+</figure>
+<ol style="margin:0 0 12px;padding-left:22px">
+<li>Click <strong>+ New phase</strong>.</li>
+<li>Enter the <strong>Phase name</strong> and <strong>Budget</strong>, then <strong>Start</strong> and <strong>Target finish</strong>.</li>
+<li>Set <strong>Status</strong> (Not started, In progress, Blocked, Complete) and pick a <strong>Phase lead</strong> from the Workers roster.</li>
+<li>Save. Phase start and finish dates appear on the Calendar as milestones.</li>
+</ol>
+</section>
+
+<!-- 8 WORKERS -->
+<section id="workers" style="break-before:page">
+<div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#2e6b3e;font-weight:700">Chapter 8 · Section 05</div>
+<h2 style="font-family:var(--font-heading);font-weight:800;font-size:30px;letter-spacing:-.02em;line-height:1.1;margin:4px 0 14px;padding-bottom:12px;border-bottom:2px solid #1e2a20">Workers &amp; contractors</h2>
+<p>Everyone who does the work: contractors, employees, volunteers and donated labor.</p>
+<figure style="margin:18px 0 22px;break-inside:avoid">
+<img src="guide/workers.jpg" alt="Workers list" style="width:100%;height:auto;display:block;border:1px solid color-mix(in srgb,#1e2a20 30%,transparent)">
+<figcaption style="font-size:12.5px;color:#6b675e;margin-top:6px">The roster, with how many are also donors and how many are contracted.</figcaption>
+</figure>
+<ol style="margin:0 0 12px;padding-left:22px">
+<li>Click <strong>+ New worker</strong>.</li>
+<li>Enter the name, pick or add a <strong>Company</strong>, and choose the <strong>Status</strong> (Contacted through Contracted) and <strong>Trade / role</strong>.</li>
+<li>Add rate, contact details, license and <strong>Insurance through</strong> date.</li>
+<li>If this person also gives, point <strong>Also a donor</strong> at their donor record.</li>
+<li>Save.</li>
+</ol>
+<p>Companies added here are offered as <strong>Hosting company</strong> on events.</p>
+</section>
+
+<!-- 9 TASKS -->
+<section id="tasks" style="break-before:page">
+<div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#2e6b3e;font-weight:700">Chapter 9 · Section 06</div>
+<h2 style="font-family:var(--font-heading);font-weight:800;font-size:30px;letter-spacing:-.02em;line-height:1.1;margin:4px 0 14px;padding-bottom:12px;border-bottom:2px solid #1e2a20">Work to do / tasks</h2>
+<p>The individual pieces of work. Task costs add up to the project's full cost, so this section drives the Funding gap.</p>
+<figure style="margin:18px 0 22px;break-inside:avoid">
+<img src="guide/tasks.jpg" alt="Task board" style="width:100%;height:auto;display:block;border:1px solid color-mix(in srgb,#1e2a20 30%,transparent)">
+<figcaption style="font-size:12.5px;color:#6b675e;margin-top:6px">Tasks are shown as a board in three columns by type: General, Raise Money and Spend Money.</figcaption>
+</figure>
+<ol style="margin:0 0 12px;padding-left:22px">
+<li>Click <strong>+ New task</strong>.</li>
+<li>Enter the <strong>Task name</strong> and choose its <strong>Type</strong>.</li>
+<li>Pick the <strong>Phase</strong> and a <strong>Task group / location</strong> (or add a new group right there).</li>
+<li>Set <strong>Status</strong>, <strong>Start date</strong>, <strong>Due date</strong> and/or <strong>Duration</strong>.</li>
+<li>Choose who it's <strong>Assigned to</strong> (workers) and the <strong>NKU team assigned</strong> owner.</li>
+<li>Enter the <strong>Estimated cost</strong>, and in <strong>Funded by</strong> pick the donors whose giving is earmarked for it.</li>
+<li>Save. In Edit entry you can also add <strong>Subtasks</strong> with their own due dates.</li>
+</ol>
+<figure style="margin:18px 0 22px;break-inside:avoid">
+<img src="guide/task-detail.jpg" alt="Task record" style="width:100%;height:auto;display:block;border:1px solid color-mix(in srgb,#1e2a20 30%,transparent)">
+<figcaption style="font-size:12.5px;color:#6b675e;margin-top:6px">An open task: estimated cost, what's been received and promised against it, and how many people are assigned.</figcaption>
+</figure>
+</section>
+
+<!-- 10 LINKS -->
+<section id="links" style="break-before:page">
+<div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#2e6b3e;font-weight:700">Chapter 10</div>
+<h2 style="font-family:var(--font-heading);font-weight:800;font-size:30px;letter-spacing:-.02em;line-height:1.1;margin:4px 0 14px;padding-bottom:12px;border-bottom:2px solid #1e2a20">How the sections are linked</h2>
+<p>You enter each fact once. Link fields connect records, and totals flow along those links.</p>
+
+<div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:2px;background:#1e2a20;border:2px solid #1e2a20;margin:16px 0 8px;break-inside:avoid;font-size:13px;line-height:1.45">
+<div style="background:#e9f0ea;padding:12px"><div style="font-weight:800;font-size:15px">Event</div>Gifts taken here become donations</div>
+<div style="background:#e9f0ea;padding:12px"><div style="font-weight:800;font-size:15px">Donor</div>Totals add up from their donations</div>
+<div style="background:#e9f0ea;padding:12px"><div style="font-weight:800;font-size:15px">Donation</div>Belongs to one donor; can be earmarked to tasks</div>
+<div style="background:#e9f0ea;padding:12px"><div style="font-weight:800;font-size:15px">Overview &amp; Reports</div>Read everything above</div>
+<div style="background:#f6f2e7;padding:12px"><div style="font-weight:800;font-size:15px">Worker</div>Assigned to tasks; can lead a phase; can also be a donor</div>
+<div style="background:#f6f2e7;padding:12px"><div style="font-weight:800;font-size:15px">Task</div>Belongs to a phase and a group; its cost is the need</div>
+<div style="background:#f6f2e7;padding:12px"><div style="font-weight:800;font-size:15px">Phase</div>Rolls up its tasks' cost and funding</div>
+<div style="background:#f6f2e7;padding:12px"><div style="font-weight:800;font-size:15px">Task group</div>A place or sub-project across phases</div>
+</div>
+<p style="font-size:12.5px;color:#6b675e;margin:0 0 18px">Top row: the money side. Bottom row: the work side. Tasks are where they meet.</p>
+
+<table style="width:100%;border-collapse:collapse;font-size:14px;margin:8px 0 16px">
+<thead><tr><th style="text-align:left;padding:7px 10px 7px 0;border-bottom:2px solid #1e2a20;width:34%">When you set…</th><th style="text-align:left;padding:7px 0;border-bottom:2px solid #1e2a20">…it shows up</th></tr></thead>
+<tbody>
+<tr><td style="padding:7px 10px 7px 0;border-bottom:1px solid #ded5c2;font-weight:700">Donor on a donation</td><td style="padding:7px 0;border-bottom:1px solid #ded5c2">In that donor's totals, list color and tier.</td></tr>
+<tr><td style="padding:7px 10px 7px 0;border-bottom:1px solid #ded5c2;font-weight:700">Gift on an event</td><td style="padding:7px 0;border-bottom:1px solid #ded5c2">In Donations (titled with the event name) and on the donor.</td></tr>
+<tr><td style="padding:7px 10px 7px 0;border-bottom:1px solid #ded5c2;font-weight:700">Funded by on a task</td><td style="padding:7px 0;border-bottom:1px solid #ded5c2">As received and promised money against that task and its phase; feeds Funding gap by phase.</td></tr>
+<tr><td style="padding:7px 10px 7px 0;border-bottom:1px solid #ded5c2;font-weight:700">Phase on a task</td><td style="padding:7px 0;border-bottom:1px solid #ded5c2">In the phase's cost, Phase completion and swim lanes.</td></tr>
+<tr><td style="padding:7px 10px 7px 0;border-bottom:1px solid #ded5c2;font-weight:700">Assigned to / owner</td><td style="padding:7px 0;border-bottom:1px solid #ded5c2">On the Calendar's person filter and Open donations by owner.</td></tr>
+<tr><td style="padding:7px 10px 7px 0;border-bottom:1px solid #ded5c2;font-weight:700">Also a donor on a worker</td><td style="padding:7px 0;border-bottom:1px solid #ded5c2">The worker and donor records point at each other.</td></tr>
+<tr><td style="padding:7px 10px 7px 0;border-bottom:1px solid #ded5c2;font-weight:700">Any date</td><td style="padding:7px 0;border-bottom:1px solid #ded5c2">On the Calendar.</td></tr>
+</tbody>
+</table>
+</section>
+
+<!-- 11 CALENDAR -->
+<section id="calendar" style="break-before:page">
+<div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#2e6b3e;font-weight:700">Chapter 11 · Section 10</div>
+<h2 style="font-family:var(--font-heading);font-weight:800;font-size:30px;letter-spacing:-.02em;line-height:1.1;margin:4px 0 14px;padding-bottom:12px;border-bottom:2px solid #1e2a20">Reading the calendar</h2>
+<p>The Calendar gathers every dated item from the other sections. You don't enter anything here; it fills itself.</p>
+<figure style="margin:18px 0 22px;break-inside:avoid">
+<img src="guide/calendar-month.jpg" alt="Calendar month view" style="width:100%;height:auto;display:block;border:1px solid color-mix(in srgb,#1e2a20 30%,transparent)">
+<figcaption style="font-size:12.5px;color:#6b675e;margin-top:6px">Month view. Today is the dark green date. Grey days belong to the next or previous month.</figcaption>
+</figure>
+<h3 style="font-family:var(--font-heading);font-weight:800;font-size:18px;margin:22px 0 6px">What the colors mean</h3>
+<div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 20px;margin:10px 0 16px;font-size:14px;break-inside:avoid">
+<div style="display:flex;align-items:center;gap:10px"><span style="flex:none;width:14px;height:14px;background:#2e6b3e"></span>Task due or starting</div>
+<div style="display:flex;align-items:center;gap:10px"><span style="flex:none;width:14px;height:14px;background:#4b7f5b"></span>Subtask due</div>
+<div style="display:flex;align-items:center;gap:10px"><span style="flex:none;width:14px;height:14px;background:#b3261e"></span>Event</div>
+<div style="display:flex;align-items:center;gap:10px"><span style="flex:none;width:14px;height:14px;background:#8a5a2b"></span>Event task (when Event tasks is on)</div>
+<div style="display:flex;align-items:center;gap:10px"><span style="flex:none;width:14px;height:14px;background:#c9a227"></span>Donor follow-up: reminders, and pledge or promise deadlines</div>
+<div style="display:flex;align-items:center;gap:10px"><span style="flex:none;width:14px;height:14px;background:#2f2f2f"></span>Phase milestone</div>
+</div>
+<h3 style="font-family:var(--font-heading);font-weight:800;font-size:18px;margin:22px 0 6px">Controls</h3>
+<ul style="margin:0 0 12px;padding-left:22px">
+<li><strong>← →</strong> move back or forward a month (or a week). <strong>Today</strong> jumps back to now.</li>
+<li><strong>Month / Week</strong> switches the view. Week shows more of each label.</li>
+<li><strong>Anyone assigned</strong> filters to one person — choose your own name to see only your items.</li>
+<li><strong>Event tasks: off/on</strong> adds the tasks attached to events.</li>
+<li>When a day has more items than fit, it shows <strong>+2</strong> (or similar). Click an item to see everything on that day and open it.</li>
+</ul>
+<figure style="margin:18px 0 22px;break-inside:avoid">
+<img src="guide/calendar-week.jpg" alt="Calendar week view" style="width:100%;height:auto;display:block;border:1px solid color-mix(in srgb,#1e2a20 30%,transparent)">
+<figcaption style="font-size:12.5px;color:#6b675e;margin-top:6px">Week view, with the color key underneath.</figcaption>
+</figure>
+</section>
+
+<!-- 12 REPORTS -->
+<section id="reports" style="break-before:page">
+<div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#2e6b3e;font-weight:700">Chapter 12 · Section 08</div>
+<h2 style="font-family:var(--font-heading);font-weight:800;font-size:30px;letter-spacing:-.02em;line-height:1.1;margin:4px 0 14px;padding-bottom:12px;border-bottom:2px solid #1e2a20">Reading reports</h2>
+<p>Reports are live charts built from your records. Click any report to expand it; from the expanded view you can print or export it.</p>
+<figure style="margin:18px 0 22px;break-inside:avoid">
+<img src="guide/reports.jpg" alt="Reports page" style="width:100%;height:auto;display:block;border:1px solid color-mix(in srgb,#1e2a20 30%,transparent)">
+<figcaption style="font-size:12.5px;color:#6b675e;margin-top:6px">Ask for a report at the top, then the standing reports in a grid.</figcaption>
+</figure>
+
+<h3 style="font-family:var(--font-heading);font-weight:800;font-size:18px;margin:22px 0 6px">Ask for a report</h3>
+<ol style="margin:0 0 12px;padding-left:22px">
+<li>Type a question in plain words, such as "Donations by status" or "Total donations by month in 2026 as a bar graph". Or click one of the example buttons.</li>
+<li>Click <strong>Run</strong>. Say "bar graph" for a chart, and "by month" or "by status" to group.</li>
+<li>Click <strong>Expand, print or export</strong> to open it full size. <strong>Clear</strong> resets it.</li>
+</ol>
+<figure style="margin:18px 0 22px;break-inside:avoid">
+<img src="guide/report-ask.jpg" alt="Ask for a report result" style="width:100%;height:auto;display:block;border:1px solid color-mix(in srgb,#1e2a20 30%,transparent)">
+<figcaption style="font-size:12.5px;color:#6b675e;margin-top:6px">"Donations by status": a summary with the number of records and the total amount for each group.</figcaption>
+</figure>
+<p>If nothing comes back, try fewer words, or spell a name exactly as it appears on the record.</p>
+
+<h3 style="font-family:var(--font-heading);font-weight:800;font-size:18px;margin:22px 0 6px">The standing reports</h3>
+<table style="width:100%;border-collapse:collapse;font-size:14px;margin:8px 0 16px">
+<thead><tr><th style="text-align:left;padding:7px 10px 7px 0;border-bottom:2px solid #1e2a20;width:30%">Report</th><th style="text-align:left;padding:7px 0;border-bottom:2px solid #1e2a20">How to read it</th></tr></thead>
+<tbody>
+<tr><td style="padding:7px 10px 7px 0;border-bottom:1px solid #ded5c2;font-weight:700">Donations received</td><td style="padding:7px 0;border-bottom:1px solid #ded5c2">A running total over time. The line only goes up; steeper means more money arrived in that stretch.</td></tr>
+<tr><td style="padding:7px 10px 7px 0;border-bottom:1px solid #ded5c2;font-weight:700">Daily giving</td><td style="padding:7px 0;border-bottom:1px solid #ded5c2">One bar per day for the month: how much was received that day. Tall bars are big days.</td></tr>
+<tr><td style="padding:7px 10px 7px 0;border-bottom:1px solid #ded5c2;font-weight:700">Phase swim lanes</td><td style="padding:7px 0;border-bottom:1px solid #ded5c2">Each phase as a bar across the quarters it spans. Overlapping bars run at the same time.</td></tr>
+<tr><td style="padding:7px 10px 7px 0;border-bottom:1px solid #ded5c2;font-weight:700">Funding gap by phase</td><td style="padding:7px 0;border-bottom:1px solid #ded5c2">Each phase's budget as a full-width bar, with the donations allocated to it filled in from the left. The unfilled part is that phase's gap.</td></tr>
+<tr><td style="padding:7px 10px 7px 0;border-bottom:1px solid #ded5c2;font-weight:700">Pledged vs. received</td><td style="padding:7px 0;border-bottom:1px solid #ded5c2">How much of what's been pledged has actually come in.</td></tr>
+<tr><td style="padding:7px 10px 7px 0;border-bottom:1px solid #ded5c2;font-weight:700">Top donors</td><td style="padding:7px 0;border-bottom:1px solid #ded5c2">The largest donors by total giving.</td></tr>
+<tr><td style="padding:7px 10px 7px 0;border-bottom:1px solid #ded5c2;font-weight:700">Open donations by owner</td><td style="padding:7px 0;border-bottom:1px solid #ded5c2">Open asks grouped by the team member responsible. Useful for follow-up meetings.</td></tr>
+<tr><td style="padding:7px 10px 7px 0;border-bottom:1px solid #ded5c2;font-weight:700">Phase completion</td><td style="padding:7px 0;border-bottom:1px solid #ded5c2">How far each phase has progressed, from its tasks' status.</td></tr>
+</tbody>
+</table>
+<figure style="margin:18px 0 22px;break-inside:avoid">
+<img src="guide/report-expanded.jpg" alt="Expanded report" style="width:100%;height:auto;display:block;border:1px solid color-mix(in srgb,#1e2a20 30%,transparent)">
+<figcaption style="font-size:12.5px;color:#6b675e;margin-top:6px">An expanded report, with <strong>Export PDF</strong> and <strong>Close</strong>.</figcaption>
+</figure>
+<p>Reports print landscape. If amounts show as dashes, your role doesn't include View $$.</p>
+</section>
+
+<!-- 13 DOCUMENTS -->
+<section id="documents" style="break-before:page">
+<div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#2e6b3e;font-weight:700">Chapter 13 · Section 09</div>
+<h2 style="font-family:var(--font-heading);font-weight:800;font-size:30px;letter-spacing:-.02em;line-height:1.1;margin:4px 0 14px;padding-bottom:12px;border-bottom:2px solid #1e2a20">Documents</h2>
+<p>A shared library of files: how-to guides, timelines, fliers, ideas. Files uploaded to an event also appear here.</p>
+<figure style="margin:18px 0 22px;break-inside:avoid">
+<img src="guide/documents.jpg" alt="Documents library" style="width:100%;height:auto;display:block;border:1px solid color-mix(in srgb,#1e2a20 30%,transparent)">
+<figcaption style="font-size:12.5px;color:#6b675e;margin-top:6px">The library. "From: Events — …" marks a file that lives on an event.</figcaption>
+</figure>
+<ul style="margin:0 0 12px;padding-left:22px">
+<li><strong>+ Add Document</strong> — choose a type, give it a title and description, and upload the file.</li>
+<li><strong>Search</strong>, the <strong>type</strong> filter and <strong>Newest first</strong> help you find a file.</li>
+<li><strong>Download</strong> saves a copy. <strong>Edit</strong> changes the title, type or file.</li>
+<li>For event files, <strong>Edit in Original Location</strong> opens the event they belong to.</li>
+</ul>
+</section>
+
+<!-- 14 PHONE -->
+<section id="phone" style="break-before:page">
+<div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#2e6b3e;font-weight:700">Chapter 14</div>
+<h2 style="font-family:var(--font-heading);font-weight:800;font-size:30px;letter-spacing:-.02em;line-height:1.1;margin:4px 0 14px;padding-bottom:12px;border-bottom:2px solid #1e2a20">Using it on a phone</h2>
+<p>The tracker works in a phone's browser with the same login. The layout changes to fit.</p>
+<ul style="margin:0 0 12px;padding-left:22px">
+<li>The sidebar becomes a <strong>menu drawer</strong>. Tap the menu button at the top left to open it and pick a section.</li>
+<li>A <strong>bottom bar</strong> gives one-tap access to the most used sections.</li>
+<li>Tap a line to open the record full screen; use the back arrow at the top left to return to the list.</li>
+<li>Add the site to your home screen (Share → Add to Home Screen on iPhone, ⋮ → Add to Home screen on Android) to open it like an app.</li>
+<li>No signal at an event? Keep entering. Changes are saved on the phone and send when you're back online. Check the connection light in the menu before you close the browser.</li>
+<li>Printing attendee lists, certificates and reports is easier from a computer.</li>
+</ul>
+</section>
+
+<!-- 15 ADMIN -->
+<section id="admin" style="break-before:page">
+<div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#2e6b3e;font-weight:700">Chapter 15 · Section 07</div>
+<h2 style="font-family:var(--font-heading);font-weight:800;font-size:30px;letter-spacing:-.02em;line-height:1.1;margin:4px 0 14px;padding-bottom:12px;border-bottom:2px solid #1e2a20">Admin</h2>
+<p>For people with the Admin role. Admin controls who can sign in, what they can see and change, and the lists and fields every other section uses. It is arranged as tabs across the top.</p>
+
+<h3 style="font-family:var(--font-heading);font-weight:800;font-size:20px;margin:26px 0 6px">Users &amp; invites</h3>
+<figure style="margin:14px 0 18px;break-inside:avoid">
+<img src="guide/admin-users.jpg" alt="Admin users" style="width:100%;height:auto;display:block;border:1px solid color-mix(in srgb,#1e2a20 30%,transparent)">
+<figcaption style="font-size:12.5px;color:#6b675e;margin-top:6px">Each user shows their access, roles, last login and actions.</figcaption>
+</figure>
+<p><strong>To add a user:</strong></p>
+<ol style="margin:0 0 12px;padding-left:22px">
+<li>Click <strong>+ Add user</strong>.</li>
+<li>Enter their <strong>Name</strong> and <strong>Email</strong>, and tick their roles (General is preselected).</li>
+<li>Optionally type a <strong>temporary password</strong> (six characters or more). Leave it blank if they'll sign in with Google or create their own password.</li>
+<li>Click <strong>Add user</strong>, then give them the email and temporary password.</li>
+</ol>
+<p>A user with a temporary password shows a <strong>Temp password</strong> tag until they sign in and choose their own; they can't get past that screen until they do.</p>
+<ul style="margin:0 0 12px;padding-left:22px">
+<li><strong>Edit</strong> — change name, roles or add extra operations for that one person.</li>
+<li><strong>Deactivate</strong> — blocks sign-in but keeps the account and history. <strong>Reactivate</strong> reverses it.</li>
+<li><strong>×</strong> — removes the account entirely.</li>
+<li>You can't remove your own admin access; another admin has to.</li>
+</ul>
+<p><strong>Team members without a login</strong> (under Tags &amp; lists) are board members or volunteers who own donations or tasks but don't use the tracker. They appear in owner and assignee lists.</p>
+
+<h3 style="font-family:var(--font-heading);font-weight:800;font-size:20px;margin:26px 0 6px">Roles &amp; permissions</h3>
+<p>A role is a named bundle of permissions. Each section can be <strong>Off</strong>, <strong>View only</strong> or <strong>Read / write</strong>, and <strong>View $$</strong> decides whether dollar amounts reach that person's device at all. A user gets the highest level any of their roles (or extra operations) gives.</p>
+<table style="width:100%;border-collapse:collapse;font-size:14px;margin:8px 0 16px">
+<thead><tr><th style="text-align:left;padding:7px 10px 7px 0;border-bottom:2px solid #1e2a20;width:24%">Role</th><th style="text-align:left;padding:7px 0;border-bottom:2px solid #1e2a20">Gives</th></tr></thead>
+<tbody>
+<tr><td style="padding:7px 10px 7px 0;border-bottom:1px solid #ded5c2;font-weight:700">Admin</td><td style="padding:7px 0;border-bottom:1px solid #ded5c2">Everything, including Admin and View $$. Locked.</td></tr>
+<tr><td style="padding:7px 10px 7px 0;border-bottom:1px solid #ded5c2;font-weight:700">General</td><td style="padding:7px 0;border-bottom:1px solid #ded5c2">View only: Overview, Reports, Documents, Calendar. Amounts hidden. Every new account starts here.</td></tr>
+<tr><td style="padding:7px 10px 7px 0;border-bottom:1px solid #ded5c2;font-weight:700">View Only</td><td style="padding:7px 0;border-bottom:1px solid #ded5c2">View only on every section except Admin. Amounts hidden.</td></tr>
+<tr><td style="padding:7px 10px 7px 0;border-bottom:1px solid #ded5c2;font-weight:700">Your own</td><td style="padding:7px 0;border-bottom:1px solid #ded5c2">Type a name (e.g. Event Crew) and click <strong>+ Add role</strong>, then set each section.</td></tr>
+</tbody>
+</table>
+<figure style="margin:14px 0 18px;break-inside:avoid">
+<img src="guide/admin-role-edit.jpg" alt="Editing a role" style="width:100%;height:auto;display:block;border:1px solid color-mix(in srgb,#1e2a20 30%,transparent)">
+<figcaption style="font-size:12.5px;color:#6b675e;margin-top:6px">Editing a role: one Off / View only / Read / write switch per section. Changes apply to everyone holding the role.</figcaption>
+</figure>
+
+<h3 style="font-family:var(--font-heading);font-weight:800;font-size:20px;margin:26px 0 6px">Data fields</h3>
+<p>Controls the fields on every entry form. Pick a section (Donors, Donations, Events…), then:</p>
+<ul style="margin:0 0 12px;padding-left:22px">
+<li>Tick <strong>Required</strong> to make a field mandatory.</li>
+<li><strong>Choices</strong> edits the options of a dropdown field.</li>
+<li><strong>↑</strong> moves a field up the form; <strong>×</strong> removes it.</li>
+<li><strong>Add a field</strong> on the right: give it a label and type, then <strong>Add field</strong>. It appears on that section's form straight away.</li>
+</ul>
+<figure style="margin:14px 0 18px;break-inside:avoid">
+<img src="guide/admin-fields.jpg" alt="Data fields" style="width:100%;height:auto;display:block;border:1px solid color-mix(in srgb,#1e2a20 30%,transparent)">
+<figcaption style="font-size:12.5px;color:#6b675e;margin-top:6px">Data fields for Donors.</figcaption>
+</figure>
+
+<h3 style="font-family:var(--font-heading);font-weight:800;font-size:20px;margin:26px 0 6px">Task groups</h3>
+<p>A task group is a place or sub-project — a field, a wing, the utility corridor. Each task belongs to one group, and a group can span several phases.</p>
+<ul style="margin:0 0 12px;padding-left:22px">
+<li>Type a name and click <strong>Add group</strong>. Click a name to rename it.</li>
+<li><strong>Phases</strong> sets which phases the group covers.</li>
+<li>Drag the ⋮⋮ handle to reorder. <strong>×</strong> deletes.</li>
+</ul>
+<figure style="margin:14px 0 18px;break-inside:avoid">
+<img src="guide/admin-groups.jpg" alt="Task groups" style="width:100%;height:auto;display:block;border:1px solid color-mix(in srgb,#1e2a20 30%,transparent)">
+<figcaption style="font-size:12.5px;color:#6b675e;margin-top:6px">Each group shows how many tasks and donors use it.</figcaption>
+</figure>
+
+<h3 style="font-family:var(--font-heading);font-weight:800;font-size:20px;margin:26px 0 6px">Tags &amp; lists</h3>
+<p>The shared lists behind dropdowns: <strong>Tags</strong>, <strong>Team members without a login</strong>, <strong>Donation titles</strong> and <strong>Companies</strong>. Add a value, drag to reorder, or remove one with ×. Each shows how many records use it; removing a value in use doesn't delete those records.</p>
+<figure style="margin:14px 0 18px;break-inside:avoid">
+<img src="guide/admin-lists.jpg" alt="Tags and lists" style="width:100%;height:auto;display:block;border:1px solid color-mix(in srgb,#1e2a20 30%,transparent)">
+<figcaption style="font-size:12.5px;color:#6b675e;margin-top:6px">Tags & lists, with the Tags panel open.</figcaption>
+</figure>
+
+<h3 style="font-family:var(--font-heading);font-weight:800;font-size:20px;margin:26px 0 6px">Donor tiers</h3>
+<p>Recognition levels by total received. Edit a tier's name or minimum amount in place; tiers sort by amount automatically. A donor earns the highest tier their received total reaches, shown as a badge, and a certificate is offered on their record until it's printed.</p>
+<figure style="margin:14px 0 18px;break-inside:avoid">
+<img src="guide/admin-tiers.jpg" alt="Donor tiers" style="width:100%;height:auto;display:block;border:1px solid color-mix(in srgb,#1e2a20 30%,transparent)">
+<figcaption style="font-size:12.5px;color:#6b675e;margin-top:6px">Each tier with its minimum and how many donors hold it.</figcaption>
+</figure>
+
+<h3 style="font-family:var(--font-heading);font-weight:800;font-size:20px;margin:26px 0 6px">Bulk upload</h3>
+<ol style="margin:0 0 12px;padding-left:22px">
+<li>Pick the section to load (Donors, Donations, Events, Phases, Workers, Tasks).</li>
+<li>Click <strong>Download template</strong>. It's a CSV with the right column headers; starred columns are required, and a guide row shows the expected format.</li>
+<li>Fill it in with Excel or Google Sheets and save as CSV.</li>
+<li>Click <strong>Upload CSV</strong>. You'll see a preview and a count before anything is written.</li>
+</ol>
+<p>Names in link columns are matched to records already in the tracker, so load in this order: donors and phases, then workers and task groups, then tasks, then donations.</p>
+<figure style="margin:14px 0 18px;break-inside:avoid">
+<img src="guide/admin-bulk.jpg" alt="Bulk upload" style="width:100%;height:auto;display:block;border:1px solid color-mix(in srgb,#1e2a20 30%,transparent)">
+<figcaption style="font-size:12.5px;color:#6b675e;margin-top:6px">Bulk upload for Donors, listing every column the template contains.</figcaption>
+</figure>
+
+<p style="margin-top:22px"><strong>Text size:</strong> Admin → General sets how large the desktop interface appears (100–150%). It's remembered per browser and doesn't affect phones or other users.</p>
+</section>
+
+</div>
+</doc-page>
+</x-dc>
+</body>
+</html>
