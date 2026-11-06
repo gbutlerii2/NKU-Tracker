@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Website inbox · NKU Tracker</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800&display=swap">
+<style>
+:root{--bg:#ffffff;--surface:#f6f2e7;--text:#1e2a20;--accent:#2e6b3e;--accent-100:#e9f0ea;--gold:#8a7440;--divider:color-mix(in srgb,#1e2a20 25%,transparent)}
+*{box-sizing:border-box}
+body{margin:0;background:#e7dfcc;color:var(--text);font:15px/1.55 Archivo,system-ui,sans-serif}
+header{background:var(--accent);color:#fff;padding:14px 24px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+header h1{margin:0;font-size:20px;font-weight:800;letter-spacing:-.01em;margin-right:auto}
+header a{color:#fff}
+main{max-width:1100px;margin:0 auto;padding:24px}
+.bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:16px}
+.seg{display:inline-flex;border:1px solid var(--divider);background:var(--bg)}
+.seg button{border:0;background:transparent;padding:9px 14px;font:inherit;font-size:14px;cursor:pointer;min-height:40px}
+.seg button[aria-pressed=true]{background:var(--accent);color:#fff}
+.btn{border:1px solid var(--accent);background:var(--accent);color:#fff;font:inherit;font-weight:800;font-size:14px;padding:0 16px;min-height:40px;cursor:pointer}
+.btn.secondary{background:var(--bg);color:var(--accent)}
+.msg{background:var(--bg);border-left:4px solid var(--accent);padding:14px 16px;margin-bottom:16px}
+.item{background:var(--bg);margin-bottom:12px;border:1px solid var(--divider)}
+.item summary{list-style:none;cursor:pointer;display:grid;grid-template-columns:150px 1fr auto;gap:12px;align-items:center;padding:12px 16px}
+.item summary::-webkit-details-marker{display:none}
+.kind{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--gold)}
+.who{font-weight:800}
+.when{font-size:13px;color:color-mix(in srgb,var(--text) 60%,transparent)}
+.tag{font-size:11px;padding:3px 9px;background:var(--accent-100);color:var(--accent);font-weight:800;margin-left:8px}
+.tag.done{background:#eee;color:#555}
+.body{padding:4px 16px 16px;border-top:1px solid var(--divider)}
+dl{display:grid;grid-template-columns:220px 1fr;gap:6px 16px;margin:12px 0}
+dt{color:color-mix(in srgb,var(--text) 60%,transparent);font-size:13px}
+dd{margin:0;white-space:pre-wrap;word-break:break-word}
+@media(max-width:700px){.item summary{grid-template-columns:1fr}dl{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header>
+  <h1>Website inbox</h1>
+  <a href="/">Back to the Tracker</a>
+</header>
+<main>
+  <div id="note" class="msg">Checking your sign-in…</div>
+  <div class="bar" id="controls" hidden>
+    <div class="seg" role="group" aria-label="Show">
+      <button type="button" data-status="New" aria-pressed="true">New</button>
+      <button type="button" data-status="Handled" aria-pressed="false">Handled</button>
+      <button type="button" data-status="All" aria-pressed="false">All</button>
+    </div>
+    <button type="button" class="btn secondary" id="refresh">Refresh</button>
+  </div>
+  <div id="list"></div>
+</main>
+<script type="module" src="/firebase-sync.js"></script>
+<script>
+// Submissions from the North Kitsap United website (contact, gift notices,
+// Zeffy gifts, pledges, in-kind offers, volunteers, updates list). Mark one
+// Handled once it has been entered in the Tracker or answered.
+const LABELS = {name:"Name",email:"Email",phone:"Phone",address:"Mailing address",company:"Company or donor",topic:"Topic",message:"Message",
+  method:"How they're giving",amount:"Amount",expectedDate:"Expected date",shares:"Shares",fundCompany:"Fund or IRA company",
+  recognitionName:"Recognition name",inHonorOf:"In honor or memory of",anonymous:"Keep anonymous",whyIGave:"Why I gave",
+  frequency:"How often",via:"Zeffy payment",installments:"Installments",begin_monthly:"Monthly from",begin_quarterly:"Quarterly from",
+  begin_semiannually:"Semi-annually from",begin_annually:"Annually from",payment:"Plans to pay by",license:"License / registration",
+  proposedDates:"Proposed dates",offer:"Offer",estimatedValue:"Estimated value",valueBasis:"Value based on",donation:"Gift is",
+  workBy:"Who does the work",requests:"Requests",referredBy:"Referred by",interests:"Would like to help with"};
+const MONEY = new Set(["amount","estimatedValue"]);
+let status = "New";
+const $ = (s) => document.querySelector(s);
+const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const fmt = (k, v) => Array.isArray(v) ? v.join(", ") : v === true ? "Yes" : v === false ? "No"
+  : MONEY.has(k) ? Number(v).toLocaleString("en-US",{style:"currency",currency:"USD"}) : v;
+
+async function api(path, opts = {}) {
+  const tok = await window.NKFB.idToken();
+  const r = await fetch(path, { ...opts, headers: { "Content-Type": "application/json", Authorization: "Bearer " + tok, ...(opts.headers || {}) } });
+  const j = await r.json().catch(() => ({ ok: false, error: "The server didn't answer." }));
+  if (!r.ok || !j.ok) throw new Error(j.error || "Something went wrong.");
+  return j;
+}
+
+async function load() {
+  $("#list").innerHTML = "";
+  $("#note").hidden = false; $("#note").textContent = "Loading…";
+  try {
+    const { items } = await api("/api/inbox?status=" + status);
+    $("#note").hidden = items.length > 0;
+    $("#note").textContent = "Nothing " + (status === "All" ? "" : status.toLowerCase() + " ") + "from the website.";
+    $("#list").innerHTML = items.map((it) => {
+      const rows = Object.entries(it.data || {}).map(([k, v]) => `<dt>${esc(LABELS[k] || k)}</dt><dd>${esc(fmt(k, v))}</dd>`).join("");
+      const done = it.status === "Handled";
+      const when = it.createdAt ? new Date(it.createdAt).toLocaleString() : "";
+      return `<details class="item"><summary><span class="kind">${esc(it.kindLabel || it.kind)}</span>
+        <span><span class="who">${esc(it.name || it.email)}</span> <span class="when">${esc(it.email)}</span><span class="tag ${done ? "done" : ""}">${esc(it.status || "New")}</span></span>
+        <span class="when">${esc(when)}</span></summary>
+        <div class="body"><dl>${rows}</dl>
+        ${done ? `<p class="when">Handled by ${esc(it.handledBy || "")}${it.handledAt ? " · " + esc(new Date(it.handledAt).toLocaleString()) : ""}</p>` : ""}
+        <button type="button" class="btn ${done ? "secondary" : ""}" data-id="${esc(it.id)}" data-to="${done ? "New" : "Handled"}">${done ? "Mark as new" : "Mark handled"}</button></div></details>`;
+    }).join("");
+  } catch (e) { $("#note").hidden = false; $("#note").textContent = e.message; }
+}
+
+document.addEventListener("click", async (e) => {
+  const seg = e.target.closest("[data-status]");
+  if (seg) { status = seg.dataset.status; document.querySelectorAll("[data-status]").forEach((b) => b.setAttribute("aria-pressed", b === seg)); load(); return; }
+  if (e.target.id === "refresh") { load(); return; }
+  const b = e.target.closest("button[data-id]");
+  if (b) { b.disabled = true; try { await api("/api/inbox/" + b.dataset.id, { method: "POST", body: JSON.stringify({ status: b.dataset.to }) }); load(); } catch (x) { alert(x.message); b.disabled = false; } }
+});
+
+function start() {
+  window.NKFB.watchAuth((u) => {
+    if (!u || u.noProfile || !u.active) { $("#note").innerHTML = 'Sign in to the <a href="/">Tracker</a> first, then come back to this page.'; $("#controls").hidden = true; return; }
+    if (u.secondFactor !== "phone") { $("#note").innerHTML = 'Finish signing in to the <a href="/">Tracker</a> with your texted code, then come back.'; return; }
+    $("#controls").hidden = false; load();
+  });
+}
+if (window.NKFB) start(); else window.addEventListener("nkfb-ready", start, { once: true });
+</script>
+</body>
+</html>

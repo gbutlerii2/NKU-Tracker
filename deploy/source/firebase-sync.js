@@ -598,6 +598,8 @@ window.NKFB = {
   resetPassword: (e) => sendPasswordResetEmail(auth, key(e)).catch((x) => { throw new Error(friendly(x)); }),
   signOut: () => { unsubscribe(); last = null; return fbSignOut(auth); },
   subscribe, unsubscribe, push, markPushed, migrate, isEmpty, seed,
-  uploadFile, deleteFile, createAccount, changePassword, DEVICE_DAYS
+  uploadFile, deleteFile, createAccount, changePassword, DEVICE_DAYS,
+  // Used by inbox.html to call the website API (/api/inbox) as the signed-in user.
+  idToken: () => (auth.currentUser ? auth.currentUser.getIdToken() : Promise.resolve(null))
 };
 window.dispatchEvent(new Event("nkfb-ready"));

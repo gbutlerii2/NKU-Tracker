@@ -96,3 +96,26 @@ protected child documents the rules keep off any device without View $$.
 - Certificates and reports print from the browser (Cmd/Ctrl-P) at landscape.
 - The sidebar footer shows connection state: **Live · Firestore** or
   **Offline · cached**.
+
+## Website API (North Kitsap United site)
+
+The repository root also holds a small API for the public website, as Netlify
+Functions in `netlify/functions/` (configured by `netlify.toml`, which publishes
+this `deploy/` folder). **Functions don't deploy by drag-and-drop**: deploy from
+Git (link the nku-tracker project to this repository) or with
+`npx netlify deploy --prod` from the repository root.
+
+| Endpoint | What it does |
+| --- | --- |
+| `POST /api/submit/:kind` | The website's forms: `contact`, `donation-question`, `gift`, `zeffy`, `pledge`, `inkind`, `volunteer`, `updates`. Each becomes a document in the Firestore `inbox` collection. |
+| `GET /api/public/campaign` | Pledged, Received to date and Estimated cost plus the progress bar, computed like the Overview. Totals only. Cached 5 minutes. |
+| `GET /api/inbox`, `POST /api/inbox/:id` | The team's review of submissions, used by **inbox.html** (nku-tracker.com/inbox.html). Requires a Tracker sign-in with the texted code and Admin or Donors write access. |
+
+Environment variables on the nku-tracker Netlify project (scope: Functions):
+
+- `FIREBASE_CLIENT_EMAIL` and `FIREBASE_PRIVATE_KEY`: from the Firebase service-account key (Project settings → Service accounts). Netlify caps all variables at about 4 KB, so set just these two fields, not the whole JSON. Keep the key file out of Git (`.gitignore` covers `Keys/`).
+- `ZEFFY_CARD_URL` and `ZEFFY_EFT_URL`: the Foundation's Zeffy donation pages. The website records a Zeffy gift here first, then sends the donor on to these links.
+- `API_ALLOWED_ORIGINS` (optional): extra website addresses allowed to call the API, comma-separated. The NKU domains, northkitsapunitednew.netlify.app and its deploy previews are already allowed.
+
+No Firestore rules change is needed: the API uses the Admin SDK and checks
+access itself.

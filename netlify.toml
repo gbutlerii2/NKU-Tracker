@@ -1,0 +1,6 @@
+# The Tracker app is static and lives in deploy/. The public API for the
+# North Kitsap United website lives in netlify/functions and serves /api/*.
+[build]
+  publish = "deploy"
+  functions = "netlify/functions"
+  command = "npm install --no-audit --no-fund"
