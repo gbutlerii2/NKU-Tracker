@@ -58,6 +58,14 @@ The top of Donations has **Print out Certificates**, **Print out Receipts**
 Received or Pledged donation still waiting on a thank-you and marks them in
 bulk. Plan payments are covered by their pledge's thank-you.
 
+## Donation type and Grant Name
+
+On a donation, **Donation type** (Check, Credit card, Grant award and so on)
+is now the first field, and **Payment type** is One-time or Installment. A
+Grant award shows a free-text **Grant Name** under it. On the first admin
+sign-in after this version, every Grant award's Title/Event moves into Grant
+Name and those titles leave the Title/Event list.
+
 ## Upgrading to roles & operations
 
 Publish the new `firestore.rules` and `storage.rules` **before** uploading the new

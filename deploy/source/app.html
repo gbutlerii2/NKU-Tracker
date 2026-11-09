@@ -3804,7 +3804,9 @@ const SCHEMA = {
     {k:"other",l:"Other information/Strategy",t:"Long text"}
   ],
   transactions:[
-    {k:"title",l:"Title/Event",t:"Select",dyn:"donationTitles",help:"Optional — an event or grant name. Reuse the same title across several donors to group them"},
+    {k:"method",l:"Donation type",t:"Select",o:["Check","Credit card","Stock","Donor fund","Estate","QCC","RMD","ACH","Card","In-kind","Grant award"]},
+    {k:"grantName",l:"Grant Name",t:"Text",help:"Only for a Grant award donation: the grant's name"},
+    {k:"title",l:"Title/Event",t:"Select",dyn:"donationTitles",help:"Optional — an event or appeal name. Reuse the same title across several donors to group them. Grants use Grant Name instead"},
     {k:"donorId",l:"Donor",t:"Link",link:"donors",one:true,req:true,help:"Type to search every donor record"},
     {k:"amount",l:"Amount",t:"Money",req:true},
     {k:"date",l:"Date entered",t:"Date",req:true},
@@ -3812,13 +3814,12 @@ const SCHEMA = {
     {k:"completedAt",l:"Date received",t:"Date",help:"Filled in automatically when a donation is marked Received"},
     {k:"thankedAt",l:"Thank-you sent",t:"Date",help:"Filled in by the Thank you sent button or the Thank-you list. Clear it to put the donation back on the list"},
     {k:"status",l:"Status",t:"Select",req:true,o:["Received","Pledged","Promised","Potential","Throwing darts"],help:"For an installment donation this is the status of the payments not yet received. Throwing darts counts as Potential in the totals"},
-    {k:"donationKind",l:"Donation type",t:"Select",o:["One-time","Installment"],help:"Installment splits the amount into payments you check off as they're received"},
+    {k:"donationKind",l:"Payment type",t:"Select",o:["One-time","Installment"],help:"Installment splits the amount into payments you check off as they're received"},
     {k:"instEvery",l:"Installment frequency",t:"Select",o:["Monthly","Annual"]},
     {k:"instCount",l:"Number of payments",t:"Number"},
     {k:"instStart",l:"First payment date",t:"Date"},
     {k:"probability",l:"Probability / confidence",t:"Select",o:["High","Medium","Low","Very Low"],help:"How likely this gift is to come in"},
     {k:"team",l:"NKU team assigned",t:"Select",dyn:"team",help:"Who owns this ask — every user account appears here automatically, and you can add people who have no login"},
-    {k:"method",l:"Payment type",t:"Select",o:["Check","Credit card","Stock","Donor fund","Estate","QCC","RMD","ACH","Card","In-kind","Grant award"]},
     {k:"contact",l:"Contact person",t:"Text",help:"Name at the funder"},
     {k:"contactPhone",l:"Contact phone",t:"Text",help:"Phone number for the contact"},
     {k:"appLink",l:"Application link/email",t:"Text",help:"URL of the portal or form, or an email address"},
@@ -4246,6 +4247,10 @@ class Component extends DCLogic {
             this._evRetired=true;
             setTimeout(()=>this.migrateEventsToDonations(),40);
           }
+          if(this.canEditSec("transactions")&&!this.hideAmounts&&!this._grantMoved){
+            this._grantMoved=true;
+            setTimeout(()=>this.migrateGrantNames(),60);
+          }
           if(!this._rcvMoved){ this._rcvMoved=true; setTimeout(()=>this.migrateReceivedLabel(),120); }
           if(!this._plansSynced){ this._plansSynced=true; setTimeout(()=>this.syncPlans(),50); }
           if(!this._amtMoved&&this.canEditSec("donors")&&this.canEditSec("transactions")&&!this.hideAmounts){ this._amtMoved=true; setTimeout(()=>this.migrateDonorAmounts(),80); }
@@ -4282,7 +4287,7 @@ class Component extends DCLogic {
     // Saved choice lists win over the shipped ones, so a newly shipped option
     // would never reach a database that is already in use. These are required:
     // they are merged into the saved list at their shipped position.
-    const REQUIRED={transactions:{status:["Received","Pledged","Throwing darts"],method:["Check","Credit card","Stock","Donor fund","Estate","QCC","RMD"]},donors:{status:["Pledged","Received"]},
+    const REQUIRED={transactions:{status:["Received","Pledged","Throwing darts"],method:["Check","Credit card","Stock","Donor fund","Estate","QCC","RMD","Grant award"]},donors:{status:["Pledged","Received"]},
       tasks:{type:["General","Raise Money","Spend Money"]}};
     // Options the code has retired, dropped from any saved list.
     const DROPPED={transactions:{status:["completed"]},donors:{status:["completed"]}};
@@ -4321,6 +4326,9 @@ class Component extends DCLogic {
         const pull=k=>{ const j=have.findIndex(f=>f.k===k); return j<0?null:have.splice(j,1)[0]; };
         const dl=pull("deadline"), rc=pull("completedAt"), at=have.findIndex(f=>f.k==="date");
         have.splice(at<0?have.length:at+1,0,...[dl,rc].filter(Boolean));
+        // Donation type always opens the record, with Grant Name right under it.
+        const mt=pull("method"), gn=pull("grantName");
+        have.splice(0,0,...[mt,gn].filter(Boolean));
       }
       out[sec]=have;
     });
@@ -5283,7 +5291,7 @@ body{margin:0;font-family:Archivo,system-ui,sans-serif;color:#201e1d;-webkit-pri
     return {name:dn.name||"Donor",contact:this.certContact(t.donorId),address:String(dn.address||"").trim(),
       amount:Number(amount)||0,goods:this.num(goods),method:t.method||"",pledge:pl,
       date:String((pl?t.date:(t.completedAt||t.date))||"").slice(0,10)||"—",
-      desc:(t.pledgeId?"Pledge payment":(pl||t.plan?"Pledge":"Donation"))+(t.title?" — "+t.title:""),
+      desc:(t.pledgeId?"Pledge payment":(pl||t.plan?"Pledge":"Donation"))+(t.grantName||t.title?" — "+(t.grantName||t.title):""),
       no:"NKU-"+String(t.id||"").toUpperCase(),note:note||""};
   }
   receiptCash(n){ return "$"+(Math.round((Number(n)||0)*100)/100).toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2}); }
@@ -5427,6 +5435,22 @@ body{margin:0;font-family:Archivo,system-ui,sans-serif;color:#201e1d;-webkit-pri
       onThanksAll:()=>all(true), onThanksNone:()=>all(false),
       onThanksClose:()=>this.setState({thanksList:null})
     };
+  }
+  // One-time move: on a Grant award the Title/Event was really the grant's
+  // name, so it moves to Grant Name, and those titles leave the shared
+  // Title/Event list so other donations can't pick them.
+  migrateGrantNames(){
+    this.setState(s=>{
+      const tx=s.data.transactions||[];
+      const move=tx.filter(t=>this.isGrantAward(t)&&String(t.title||"").trim());
+      if(!move.length) return null;
+      const gone=new Set(move.map(t=>String(t.title).trim()));
+      const data=Object.assign({},s.data,{transactions:tx.map(t=>move.indexOf(t)<0?t
+        :Object.assign({},t,{grantName:String(t.grantName||"").trim()||String(t.title).trim(),title:""}))});
+      const lists=Object.assign({},s.lists,{donationTitles:(s.lists.donationTitles||[]).filter(x=>!gone.has(String(x).trim()))});
+      console.info("[NKU] moved "+move.length+" grant title(s) to Grant Name");
+      return {data,lists};
+    });
   }
   // One-time move off the retired Events section. Every gift that hung under
   // an event becomes an ordinary donation titled and tagged with
@@ -6456,7 +6480,7 @@ body{margin:0;font-family:Archivo,system-ui,sans-serif;color:#201e1d;-webkit-pri
         })(),
         status:t.status||"—",
         nextAction:this.isGrantAward(t)?(this.actionSummary(t)||t.nextAction||"—"):(t.nextAction||"—"),
-        title:t.title||"—",
+        title:t.grantName||t.title||"—",
         reminder:(()=>{
           const rs=this.state.reminders
             .filter(r=>r.txId===t.id||(!r.txId&&r.donorId===t.donorId))
@@ -7036,7 +7060,7 @@ tr{page-break-inside:avoid;break-inside:avoid}
       };
       const typeOk=t=>!tyFil||String(t.giftType||((this.donor(t.donorId)||{}).giftType)||"")===tyFil;
       return this.sortRows(this.d().transactions
-      .filter(t=>(f==="All"||this.txInFilter(t,f))&&(!stSel.length||stSel.some(v=>this.txInFilter(t,v)))&&payOk(t)&&(t.amount||0)>=amt&&ownerOk(this.donationOwner(t))&&taskOk(t)&&(!q||(((this.donor(t.donorId)||{}).name||"")+" "+(t.title||"")).toLowerCase().includes(q))),"amount","date")
+      .filter(t=>(f==="All"||this.txInFilter(t,f))&&(!stSel.length||stSel.some(v=>this.txInFilter(t,v)))&&payOk(t)&&(t.amount||0)>=amt&&ownerOk(this.donationOwner(t))&&taskOk(t)&&(!q||(((this.donor(t.donorId)||{}).name||"")+" "+(t.title||"")+" "+(t.grantName||"")).toLowerCase().includes(q))),"amount","date")
       .reduce((out,t,_,all)=>{
         const dn=(this.donor(t.donorId)||{}).name||"Unknown donor";
         // A plan payment sits inside its pledge's row; it only lists on its
@@ -7071,10 +7095,10 @@ tr{page-break-inside:avoid;break-inside:avoid}
           return out;
         }
         const alloc=t.taskIds.map(id=>(this.task(id)||{}).name).filter(Boolean).join(" · ")||"Unallocated";
-        const who=t.eventLines?((t.eventLines||[]).length+" attendee gift"+((t.eventLines||[]).length===1?"":"s")):(t.title?dn:"");
+        const who=t.eventLines?((t.eventLines||[]).length+" attendee gift"+((t.eventLines||[]).length===1?"":"s")):(t.title||t.grantName?dn:"");
         const planBit=t.plan?("Plan "+t.plan.installments.filter(x=>!x.extra&&x.txId).length+"/"+t.plan.installments.filter(x=>!x.extra).length+" paid"):"";
-        out.push(mk(t,{kicker:[t.date,t.method,t.title].filter(Boolean).join(" · "),
-          title:t.title||dn,
+        out.push(mk(t,{kicker:[t.date,t.method,t.title||t.grantName].filter(Boolean).join(" · "),
+          title:t.title||t.grantName||dn,
         sub:[planBit,who,t.eventId?"":alloc,this.donationOwner(t)||"Unassigned"].filter(Boolean).join(" · "),
           value:this.money(t.amount),tag:this.txStatusLabel(t),amts:this.amtCells(this.txBucketsList(t))}));
         return out;
@@ -7329,7 +7353,7 @@ tr{page-break-inside:avoid;break-inside:avoid}
   detailPack(){
     const sec=this.state.section, rec=this.currentRecord();
     if(!rec) return null;
-    const fields=(this.state.schema[sec]||[]).filter(f=>!(sec==="donors"&&this.isDonorMoneyField(f))&&!(sec==="donors"&&f.k==="contactName"&&!this.donorIsOrg(rec))&&!(sec==="transactions"&&/^inst/.test(f.k)&&!rec.plan)&&!(sec==="transactions"&&f.k==="nextAction"&&this.isGrantAward(rec))).map(f=>{
+    const fields=(this.state.schema[sec]||[]).filter(f=>!(sec==="donors"&&this.isDonorMoneyField(f))&&!(sec==="donors"&&f.k==="contactName"&&!this.donorIsOrg(rec))&&!(sec==="transactions"&&/^inst/.test(f.k)&&!rec.plan)&&!(sec==="transactions"&&f.k==="nextAction"&&this.isGrantAward(rec))&&!(sec==="transactions"&&f.k==="grantName"&&!this.isGrantAward(rec))&&!(sec==="transactions"&&f.k==="title"&&this.isGrantAward(rec)&&!rec.title)).map(f=>{
       let value=this.fieldDisplay(f,rec);
       // An untyped task reads as General everywhere else; the detail must agree.
       if(sec==="tasks"&&f.k==="type"&&(value==="—"||!String(value).trim())) value="General";
@@ -7386,7 +7410,7 @@ tr{page-break-inside:avoid;break-inside:avoid}
           const sch=t.plan.installments.filter(x=>!x.extra), done=sch.filter(x=>x.txId).length, nx=this.planUnpaid(t).filter(x=>!x.extra)[0];
           return {title:t.title||"Pledge",sub:done+" of "+sch.length+" paid"+(nx?" · next due "+nx.due:" · fulfilled"),
             value:this.money(this.planPaid(t))+" of "+this.money(t.plan.total),open:()=>this.open("transactions",t.id)};
-        }),"None yet. Set Donation type to Installment on a donation to schedule payments."),
+        }),"None yet. Set Payment type to Installment on a donation to schedule payments."),
         grp("Contact history",this.contactsFor(rec.id).length+" entries",this.contactsFor(rec.id).map(c=>({title:c.date,sub:c.note,value:""})),"No contact logged yet. Use Edit entry → Log contact."),
         grp("Reminders",this.remindersFor(rec.id).length+" open",this.remindersFor(rec.id).map(r=>({title:r.date,sub:r.note,value:"Follow up"})),"No reminders set. Use Edit entry → Log reminder."),
         grp("Also on the crew",alsoWorker.length?"linked worker record":"none",alsoWorker.map(w=>({title:w.name,sub:w.trade+" · "+(w.company||"Independent"),value:w.rate?"$"+w.rate+"/hr":"Bid",open:()=>this.open("workers",w.id)})),"This donor is not on the worker roster.")
@@ -7510,7 +7534,7 @@ tr{page-break-inside:avoid;break-inside:avoid}
   formFieldList(){
     const sec=this.state.section, d=this.state.draft||{};
     const two=!this.mobile;
-    return this.secFields(sec).filter(f=>!(sec==="donors"&&this.isDonorMoneyField(f))&&!(sec==="donors"&&f.k==="contactName"&&!this.donorIsOrg(d))&&!(sec==="transactions"&&/^inst/.test(f.k)&&d.donationKind!=="Installment")&&!(sec==="transactions"&&f.k==="nextAction"&&this.isGrantAward(d))).map(f0=>{
+    return this.secFields(sec).filter(f=>!(sec==="donors"&&this.isDonorMoneyField(f))&&!(sec==="donors"&&f.k==="contactName"&&!this.donorIsOrg(d))&&!(sec==="transactions"&&/^inst/.test(f.k)&&d.donationKind!=="Installment")&&!(sec==="transactions"&&f.k==="nextAction"&&this.isGrantAward(d))&&!(sec==="transactions"&&f.k==="grantName"&&!this.isGrantAward(d))&&!(sec==="transactions"&&f.k==="title"&&this.isGrantAward(d))).map(f0=>{
       const f=sec==="donors"&&f0.k==="status"?Object.assign({},f0,{o:["New","Contacted"].concat(["New","Contacted"].indexOf(d.status)<0&&d.status?[d.status]:[]),
         help:"New or Contacted until the donor has a donation. After that it's set from their donations: Pledged, Promised, In Funding Progress or Received."}):f0;
       const base={key:f.k,label:f.l,req:f.req?"required":"",help:f.help||"",wrapStyle:(f.t==="Long text"||f.t==="Link")&&two?"grid-column:1 / -1":"",
@@ -9225,12 +9249,12 @@ tr{page-break-inside:avoid;break-inside:avoid}
         const lbl=(name,list)=>name+(list.length?(list.length===1?": "+list[0]:": "+list.length+" selected"):": All")+" ▾";
         return {
           showMultiFilters:multi,
-          statusPopLabel:lbl("Status",stSel), payPopLabel:lbl("Payment type",paySel),
+          statusPopLabel:lbl("Status",stSel), payPopLabel:lbl("Donation type",paySel),
           statusPopBtnStyle:btn(stSel.length,pop==="status"), payPopBtnStyle:btn(paySel.length,pop==="pay"),
           onStatusPop:()=>this.setState({filterPop:s.filterPop==="status"?null:"status"}),
           onPayPop:()=>this.setState({filterPop:s.filterPop==="pay"?null:"pay"}),
           filterPopOpen:!!pop,
-          filterPopTitle:pop==="pay"?"Payment type":"Status",
+          filterPopTitle:pop==="pay"?"Donation type":"Status",
           filterPopOpts:(pop==="pay"?payOpts:stOpts).map(v=>{ const on=sel.indexOf(v)>=0; return {label:v,on,
             toggle:()=>this.setState(st=>{ const cur=(Array.isArray(st[key])?st[key]:[]).slice(); const i=cur.indexOf(v); if(i>=0) cur.splice(i,1); else cur.push(v); return {[key]:cur}; }),
             style:"display:inline-flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;padding:4px 9px;border:1px solid "+(on?"#2e6b3e":"var(--color-divider)")+";background:"+(on?"#ffffff":"transparent")}; }),
