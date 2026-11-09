@@ -21,27 +21,43 @@ Google and Email/Password providers, add your Netlify domain to the authorized
 domains, create the Firestore database, publish `firestore.rules`, enable Cloud
 Storage and publish `storage.rules`, and create the two admin accounts. Until the
 rules are published Firestore refuses every read and the app sits empty; until
-`storage.rules` is published, event document uploads fail with a permission error.
+`storage.rules` is published, document uploads fail with a permission error.
 
 ## Files here
 
 | File | What it is |
 | --- | --- |
-| `index.html` | The app, bundled. Do not hand-edit — rebuilt from `source/` |
+| `index.html` | The app, bundled. Edit `source/app.html`, then run `python3 tools/bundle.py pack` from the repository root |
 | `firebase-sync.js` | Auth, live listeners, offline cache, diff-based writer |
 | `firestore.rules` | Paste into Firestore → Rules. Enforces per-section write operations and keeps amounts off devices without View $$ |
 | `storage.rules` | Paste into Storage → Rules. Uploads need Read / write on Events or Documents; everyone else reads |
 | `FIREBASE-SETUP.md` | Console setup, roles, where amounts live, offline behaviour, costs |
 | `_redirects` | Netlify SPA fallback |
-| `source/` | The Design Component sources `index.html` was built from |
+| `source/` | `app.html` is the app template packed into `index.html` (see `tools/bundle.py`). The `.dc.html` there is an older Design copy and is out of date |
 
-## Events
+## Donations: certificates, tax receipts and thank-yous
 
-Each event carries attendees (pulled from donors or added inline), a **Tasks to
-do** list with a free-text assignee that can be filled from the Workers roster,
-and a **Documents** section — pick a type (Flier, Guide, Custom), give it a title
-and upload any file. Images are downscaled to 1600px on the way to Cloud Storage.
-Both **Print attendee list** and **Print task list** print from the event.
+The Events section is retired. Gifts that used to hang under an event are
+ordinary donations now, titled and tagged **NKU Dinner Gala**, so they list,
+filter and report like any other donation. The move happens once, automatically,
+the first time an admin signs in after this version is deployed: each gift loses
+its link to the event, a thank-you already ticked on the event carries over as
+**Thank-you sent**, and the event record itself is left in place (hidden) so its
+attendees, tasks and documents are not lost.
+
+Each donation's header has **Donation / Pledge Certificate**, **Tax Receipt /
+Pledge Receipt** and **Thank you sent**. Receipts follow the certificate rules:
+a received gift prints what was received, a pledge prints as a pledge receipt
+(not a tax-deductible receipt), and each plan payment gets its own receipt with
+the pledge progress line (**Payment Tax Receipt** on the pledge). A single
+receipt can state the value of goods or services the donor received (a gala
+dinner, say) so it shows the deductible amount.
+
+The top of Donations has **Print out Certificates**, **Print out Receipts**
+(same filters as certificates) and **Thank you List**, which shows every
+Received or Pledged donation still waiting on a thank-you and marks them in
+bulk. Plan payments are covered by their pledge's thank-you. The Overview's
+**Thank-yous due** panel replaces Upcoming events.
 
 ## Upgrading to roles & operations
 
@@ -81,8 +97,8 @@ can also be created inline while entering a task.
 
 ## The app in one paragraph
 
-Eight sections — Donors, Donations, Phases, Workers, Tasks, Calendar, Reports,
-Admin. Desktop gets a sidebar plus list/detail panes; phones get a drawer and a
+Sections — Donors, Donations, Phases, Workers, Tasks, Documents, Calendar,
+Reports, Admin. Desktop gets a sidebar plus list/detail panes; phones get a drawer and a
 bottom bar. Everything writes straight to Firestore and appears on every other
 signed-in device within about a second, offline edits included. Access is set by
 operations (one per section, Off / View only / Read / write, plus View $$) grouped

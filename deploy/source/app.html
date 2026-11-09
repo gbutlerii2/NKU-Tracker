@@ -629,6 +629,10 @@ body{margin:0;background:#e7dfcc;font-family:var(--font-body)}
 </sc-if>
 <sc-if value="{{ showBulkCert }}" hint-placeholder-val="{{ false }}">
 <button class="nkt-tap btn btn-secondary" sc-camel-on-click="{{ onBulkCert }}" style="flex:none;height:34px;padding:0 14px;font-size:13px">{{ bulkCertBtn }}</button>
+<button class="nkt-tap btn btn-secondary" sc-camel-on-click="{{ onBulkReceipt }}" style="flex:none;height:34px;padding:0 14px;font-size:13px">{{ bulkReceiptBtn }}</button>
+</sc-if>
+<sc-if value="{{ showThanksList }}" hint-placeholder-val="{{ false }}">
+<button class="nkt-tap btn btn-secondary" sc-camel-on-click="{{ onThanksList }}" style="flex:none;height:34px;padding:0 14px;font-size:13px">{{ thanksListBtn }}</button>
 </sc-if>
 <sc-if value="{{ showAdd }}" hint-placeholder-val="{{ true }}">
 <button class="nkt-tap btn btn-primary" sc-camel-on-click="{{ onAdd }}" style="flex:none;height:34px;padding:0 14px;font-size:13px">{{ addLabel }}</button>
@@ -699,8 +703,11 @@ body{margin:0;background:#e7dfcc;font-family:var(--font-body)}
 </sc-if>
 </div>
 <div style="background:var(--color-bg);padding:14px 16px 18px">
-<div style="font-family:var(--font-heading);font-weight:800;font-size:13px;text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px">Upcoming events</div>
-<sc-for list="{{ upcomingEvents }}" as="e" hint-placeholder-count="4">
+<div style="display:flex;align-items:baseline;gap:8px;margin-bottom:8px">
+<div style="flex:1;font-family:var(--font-heading);font-weight:800;font-size:13px;text-transform:uppercase;letter-spacing:.04em">Thank-yous due</div>
+<sc-if value="{{ showOvThanksLink }}" hint-placeholder-val="{{ false }}"><button class="nkt-tap" sc-camel-on-click="{{ onOvThanksList }}" style="flex:none;border:0;background:transparent;cursor:pointer;font-size:11.5px;text-decoration:underline;color:var(--color-text);padding:0">{{ ovThanksLinkLabel }}</button></sc-if>
+</div>
+<sc-for list="{{ ovThanks }}" as="e" hint-placeholder-count="4">
 <button class="nkt-row" sc-camel-on-click="{{ e.open }}" style="padding:9px 0">
 <span style="flex:none;width:5px;height:26px;background:{{ e.mark }}"></span>
 <span style="flex:1;min-width:0">
@@ -710,8 +717,8 @@ body{margin:0;background:#e7dfcc;font-family:var(--font-body)}
 <span style="flex:none;font-family:var(--font-heading);font-weight:800;font-size:12.5px">{{ e.value }}</span>
 </button>
 </sc-for>
-<sc-if value="{{ upcomingEventsEmpty }}" hint-placeholder-val="{{ true }}">
-<div style="padding:10px 0 4px;font-size:12.5px;line-height:1.6;color:color-mix(in srgb,var(--color-text) 55%,transparent);text-wrap:pretty">Nothing on the calendar. Events appear here from the day they are created until the day they are held.</div>
+<sc-if value="{{ ovThanksEmpty }}" hint-placeholder-val="{{ true }}">
+<div style="padding:10px 0 4px;font-size:12.5px;line-height:1.6;color:color-mix(in srgb,var(--color-text) 55%,transparent);text-wrap:pretty">{{ ovThanksEmptyText }}</div>
 </sc-if>
 </div>
 <div style="background:var(--color-bg);padding:14px 16px 18px">
@@ -1431,6 +1438,63 @@ Required
 </div>
 </sc-if>
 
+<sc-if value="{{ isReceipt }}" hint-placeholder-val="{{ false }}">
+<div style="padding:22px;display:flex;flex-direction:column;align-items:center;gap:16px;animation:nktFade .18s ease">
+<div style="display:flex;gap:8px;align-self:flex-start;align-items:center;flex-wrap:wrap">
+<button class="btn btn-primary nkt-tap" sc-camel-on-click="{{ onPrintReceipt }}" style="height:36px;padding:0 14px">{{ rcptPrintLabel }}</button>
+<button class="btn btn-secondary nkt-tap" sc-camel-on-click="{{ onCloseCert }}" style="height:36px;padding:0 14px">Back to transaction</button>
+<span style="font-size:11px;color:color-mix(in srgb,var(--color-text) 60%,transparent)">{{ rcptPrintedNote }}</span>
+</div>
+<div style="align-self:flex-start;display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap">
+<sc-if value="{{ certPayMulti }}" hint-placeholder-val="{{ false }}"><div class="field" style="margin:0"><label>Payment received</label>
+<sc-raw-select class="input" value="{{ certPayVal }}" sc-camel-on-change="{{ onCertPay }}" style="height:34px;min-height:34px;min-width:220px"><sc-for list="{{ certPayOpts }}" as="o" hint-placeholder-count="2"><option value="{{ o.value }}">{{ o.label }}</option></sc-for></sc-raw-select></div></sc-if>
+<div class="field" style="margin:0"><label>Amount on receipt</label>
+<input class="input" sc-camel-input-mode="decimal" value="{{ certAmtIn }}" sc-camel-on-change="{{ onCertAmt }}" sc-camel-read-only="{{ certAmtLocked }}" style="width:150px;height:34px;min-height:34px;text-align:right;font-weight:700"></div>
+<sc-if value="{{ rcptShowGoods }}" hint-placeholder-val="{{ true }}"><div class="field" style="margin:0"><label>Goods / services value</label>
+<input class="input" sc-camel-input-mode="decimal" value="{{ rcptGoodsIn }}" sc-camel-on-change="{{ onRcptGoods }}" sc-camel-read-only="{{ rcptGoodsLocked }}" placeholder="0" style="width:150px;height:34px;min-height:34px;text-align:right;font-weight:700"></div></sc-if>
+<div style="font-size:11.5px;max-width:360px;padding-bottom:8px;color:color-mix(in srgb,var(--color-text) 60%,transparent);text-wrap:pretty">{{ certAmtHelp }} For a dinner or other benefit the donor received, enter its fair market value so the receipt states the deductible amount.</div>
+<sc-if value="{{ certHasPledgeLine }}" hint-placeholder-val="{{ false }}"><label style="display:flex;align-items:center;gap:8px;padding-bottom:10px;font-size:12px;cursor:pointer"><input type="checkbox" checked="{{ certPledgeOn }}" sc-camel-on-change="{{ onCertPledgeToggle }}" style="width:16px;height:16px;accent-color:var(--color-accent)">Show pledge progress line</label></sc-if>
+</div>
+<div style="width:620px;max-width:100%;aspect-ratio:8.5/11;background:#ffffff;border:1px solid var(--color-divider);box-shadow:var(--shadow-md);padding:44px 46px 34px;display:flex;flex-direction:column;font-size:12px;line-height:1.5;color:#201e1d">
+<div style="display:flex;align-items:center;justify-content:space-between;gap:16px;padding-bottom:12px;border-bottom:3px solid var(--color-accent-700)">
+<img src="https://rotaryknk.org/images/nku/NKU-800x378.png" alt="North Kitsap United" style="width:130px;height:auto">
+<div style="text-align:right;font-size:11px;line-height:1.5;color:#4a473f"><b style="color:#201e1d">Kingston-North Kitsap Rotary Foundation</b><br>EIN 20-2960627<br>North Kitsap United</div>
+</div>
+<div style="font-family:var(--font-heading);font-weight:800;font-size:24px;letter-spacing:-.01em;margin-top:20px;color:var(--color-accent-800)">{{ rcptTitle }}</div>
+<div style="font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--color-accent-700)">{{ rcptSub }}</div>
+<div style="display:flex;margin-top:14px;border:1px solid var(--color-accent-300)">
+<div style="flex:1;padding:6px 10px;border-right:1px solid var(--color-accent-300)"><div style="font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:#6b675e">Receipt no.</div><div style="font-weight:600">{{ rcptNo }}</div></div>
+<div style="flex:1;padding:6px 10px"><div style="font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:#6b675e">Date issued</div><div style="font-weight:600">{{ rcptIssued }}</div></div>
+</div>
+<div style="font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:#6b675e;margin-top:16px">Received from</div>
+<div style="font-family:var(--font-heading);font-weight:800;font-size:16px">{{ rcptName }}</div>
+<sc-if value="{{ rcptContact }}" hint-placeholder-val="{{ false }}"><div style="color:#4a473f">{{ rcptContact }}</div></sc-if>
+<sc-if value="{{ rcptAddress }}" hint-placeholder-val="{{ false }}"><div style="color:#4a473f;white-space:pre-line">{{ rcptAddress }}</div></sc-if>
+<div style="display:grid;grid-template-columns:1fr 2fr 1.2fr 1fr;margin-top:16px;font-size:11.5px">
+<div style="background:var(--color-accent-700);color:#fff;padding:5px 8px;font-size:9px;letter-spacing:.1em;text-transform:uppercase">{{ rcptDateLabel }}</div>
+<div style="background:var(--color-accent-700);color:#fff;padding:5px 8px;font-size:9px;letter-spacing:.1em;text-transform:uppercase">Description</div>
+<div style="background:var(--color-accent-700);color:#fff;padding:5px 8px;font-size:9px;letter-spacing:.1em;text-transform:uppercase">Payment method</div>
+<div style="background:var(--color-accent-700);color:#fff;padding:5px 8px;font-size:9px;letter-spacing:.1em;text-transform:uppercase;text-align:right">Amount</div>
+<div style="padding:8px;border-bottom:1px solid var(--color-accent-300)">{{ rcptDate }}</div>
+<div style="padding:8px;border-bottom:1px solid var(--color-accent-300)">{{ rcptDesc }}</div>
+<div style="padding:8px;border-bottom:1px solid var(--color-accent-300)">{{ rcptMethod }}</div>
+<div style="padding:8px;border-bottom:1px solid var(--color-accent-300);text-align:right">{{ rcptAmount }}</div>
+<div style="grid-column:1/4;padding:8px;font-family:var(--font-heading);font-weight:800;font-size:13px;border-bottom:2px solid var(--color-accent-700)">{{ rcptTotalLabel }}</div>
+<div style="padding:8px;font-family:var(--font-heading);font-weight:800;font-size:13px;text-align:right;border-bottom:2px solid var(--color-accent-700)">{{ rcptAmount }}</div>
+</div>
+<sc-if value="{{ rcptNote }}" hint-placeholder-val="{{ false }}"><div style="margin-top:8px;color:#4a473f">{{ rcptNote }}</div></sc-if>
+<div style="margin-top:14px;padding:10px 12px;background:#f6f2e7;border-left:3px solid var(--color-accent-700);text-wrap:pretty">{{ rcptStatement }}</div>
+<div style="margin-top:12px">Thank you for your generous support of North Kitsap United.</div>
+<div style="flex:1"></div>
+<div style="display:flex;gap:40px;margin-top:18px">
+<div style="flex:1;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:#6b675e"><div style="height:26px;border-bottom:1px solid #4a473f;margin-bottom:5px"></div>Authorized signature</div>
+<div style="flex:1;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:#6b675e"><div style="height:26px;border-bottom:1px solid #4a473f;margin-bottom:5px"></div>Date</div>
+</div>
+<div style="margin-top:14px;padding-top:8px;border-top:1px solid var(--color-accent-300);font-size:9.5px;color:#6b675e;text-align:center">Please keep this receipt for your tax records. Kingston-North Kitsap Rotary Foundation is a 501(c)(3) tax-exempt organization, EIN 20-2960627.</div>
+</div>
+</div>
+</sc-if>
+
 <sc-if value="{{ isReports }}" hint-placeholder-val="{{ false }}">
 <div style="animation:nktFade .16s ease">
 <div style="{{ reportsGridStyle }}">
@@ -2045,7 +2109,7 @@ Required
 <div style="background:var(--color-bg);border:2px solid var(--color-text);width:100%;max-width:600px;max-height:100%;display:flex;flex-direction:column">
 <div style="display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:2px solid var(--color-divider);background:#d9c9a3">
 <div style="flex:1;min-width:0">
-<div style="font-family:var(--font-heading);font-weight:800;font-size:13px;letter-spacing:.04em;text-transform:uppercase">Print out certificates</div>
+<div style="font-family:var(--font-heading);font-weight:800;font-size:13px;letter-spacing:.04em;text-transform:uppercase">{{ bulkCertTitle }}</div>
 <div style="font-size:11.5px;margin-top:2px">{{ bulkCertSub }}</div>
 </div>
 <button class="nkt-tap" sc-camel-on-click="{{ onBulkCertCancel }}" title="Close" style="flex:none;width:26px;height:26px;border:1px solid #5c5850;background:transparent;cursor:pointer;font-size:12px;line-height:1;padding:0">✕</button>
@@ -2085,6 +2149,64 @@ Required
 <div style="display:flex;gap:8px;flex-wrap:wrap;padding:12px 16px">
 <button class="btn btn-primary nkt-tap" sc-camel-on-click="{{ onBulkCertPrint }}" disabled="{{ bulkCertNone }}" style="height:38px;padding:0 16px">{{ bulkCertLabel }}</button>
 <button class="btn btn-ghost nkt-tap" sc-camel-on-click="{{ onBulkCertCancel }}" style="height:38px">Cancel</button>
+</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ thanksOpen }}" hint-placeholder-val="{{ false }}">
+<div style="position:fixed;inset:0;z-index:40;display:flex;align-items:center;justify-content:center;padding:22px;background:color-mix(in srgb,#1e2a20 55%,transparent);animation:nktFade .15s ease">
+<div style="background:var(--color-bg);border:2px solid var(--color-text);width:100%;max-width:680px;max-height:100%;display:flex;flex-direction:column">
+<div style="display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:2px solid var(--color-divider);background:#d9c9a3">
+<div style="flex:1;min-width:0">
+<div style="font-family:var(--font-heading);font-weight:800;font-size:13px;letter-spacing:.04em;text-transform:uppercase">Thank you list</div>
+<div style="font-size:11.5px;margin-top:2px">{{ thanksSub }}</div>
+</div>
+<button class="nkt-tap" sc-camel-on-click="{{ onThanksClose }}" title="Close" style="flex:none;width:26px;height:26px;border:1px solid #5c5850;background:transparent;cursor:pointer;font-size:12px;line-height:1;padding:0">✕</button>
+</div>
+<div style="padding:14px 16px 10px;display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px 12px;border-bottom:1px solid var(--color-divider)">
+<div class="field" style="margin:0;grid-column:1/-1"><label>Show</label>
+<div style="display:flex;border:1px solid var(--color-divider)">
+<sc-for list="{{ thanksShowOpts }}" as="o" hint-placeholder-count="3"><button class="nkt-tap" sc-camel-on-click="{{ o.on }}" style="{{ o.style }}">{{ o.label }}</button></sc-for>
+</div></div>
+<div class="field" style="margin:0"><label>Status</label>
+<div style="display:flex;border:1px solid var(--color-divider)">
+<sc-for list="{{ thanksStatusOpts }}" as="o" hint-placeholder-count="3"><button class="nkt-tap" sc-camel-on-click="{{ o.on }}" style="{{ o.style }}">{{ o.label }}</button></sc-for>
+</div></div>
+<div class="field" style="margin:0"><label>Date from</label><input class="input" type="date" value="{{ thanksFrom }}" sc-camel-on-change="{{ onThanksFrom }}" style="height:34px;min-height:34px"></div>
+<div class="field" style="margin:0"><label>Date to</label><input class="input" type="date" value="{{ thanksTo }}" sc-camel-on-change="{{ onThanksTo }}" style="height:34px;min-height:34px"></div>
+<div style="grid-column:1/-1;display:flex;gap:12px;align-items:center;font-size:11.5px;color:color-mix(in srgb,var(--color-text) 60%,transparent)">
+<span style="flex:1;text-wrap:pretty">{{ thanksNote }}</span>
+<sc-if value="{{ canMarkThanks }}" hint-placeholder-val="{{ true }}">
+<button class="nkt-tap" sc-camel-on-click="{{ onThanksAll }}" style="flex:none;border:0;background:transparent;cursor:pointer;font-size:11.5px;text-decoration:underline;color:var(--color-text);padding:0">All</button>
+<button class="nkt-tap" sc-camel-on-click="{{ onThanksNone }}" style="flex:none;border:0;background:transparent;cursor:pointer;font-size:11.5px;text-decoration:underline;color:var(--color-text);padding:0">None</button>
+</sc-if>
+</div>
+</div>
+<div class="nkt-scroll" style="overflow-y:auto;flex:1;min-height:0">
+<sc-for list="{{ thanksRows }}" as="r" hint-placeholder-count="4">
+<div style="display:flex;align-items:center;gap:10px;padding:8px 16px;border-bottom:1px solid var(--color-divider)">
+<sc-if value="{{ r.canCheck }}" hint-placeholder-val="{{ true }}"><input type="checkbox" checked="{{ r.checked }}" sc-camel-on-change="{{ r.onToggle }}" style="flex:none;width:18px;height:18px;accent-color:#2e6b3e;cursor:pointer"></sc-if>
+<button class="nkt-tap" sc-camel-on-click="{{ r.open }}" title="Open this donation" style="flex:1;min-width:0;text-align:left;border:0;background:transparent;cursor:pointer;padding:0;font-family:var(--font-body);color:var(--color-text)">
+<div style="font-size:13px;font-weight:600">{{ r.name }}</div>
+<div style="font-size:11px;margin-top:2px;color:color-mix(in srgb,var(--color-text) 58%,transparent)">{{ r.sub }}</div>
+</button>
+<span style="flex:none;font-family:var(--font-heading);font-weight:800;font-size:12.5px">{{ r.amt }}</span>
+<span style="{{ r.stateStyle }}">{{ r.state }}</span>
+</div>
+</sc-for>
+<sc-if value="{{ thanksEmpty }}" hint-placeholder-val="{{ false }}">
+<div style="padding:22px 16px;font-size:12.5px;color:color-mix(in srgb,var(--color-text) 60%,transparent)">{{ thanksEmptyText }}</div>
+</sc-if>
+</div>
+<div style="display:flex;gap:8px;flex-wrap:wrap;padding:12px 16px">
+<sc-if value="{{ canMarkThanks }}" hint-placeholder-val="{{ true }}">
+<button class="btn btn-primary nkt-tap" sc-camel-on-click="{{ onThanksMark }}" disabled="{{ thanksMarkNone }}" style="height:38px;padding:0 16px">{{ thanksMarkLabel }}</button>
+</sc-if>
+<sc-if value="{{ showThanksClear }}" hint-placeholder-val="{{ false }}">
+<button class="btn btn-secondary nkt-tap" sc-camel-on-click="{{ onThanksClear }}" style="height:38px;padding:0 16px">{{ thanksClearLabel }}</button>
+</sc-if>
+<button class="btn btn-ghost nkt-tap" sc-camel-on-click="{{ onThanksClose }}" style="height:38px">Close</button>
 </div>
 </div>
 </div>
@@ -2582,10 +2704,28 @@ Required
 <div style="font-size:10.5px;letter-spacing:.02em;color:color-mix(in srgb,var(--color-text) 60%,transparent)">{{ certPrintedNote }}</div>
 </div>
 </sc-if>
+<sc-if value="{{ showReceipt }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;flex-direction:column;gap:3px">
+<button class="btn btn-secondary nkt-tap" sc-camel-on-click="{{ onReceipt }}" style="height:36px;padding:0 14px">{{ receiptBtnLabel }}</button>
+<div style="font-size:10.5px;letter-spacing:.02em;color:color-mix(in srgb,var(--color-text) 60%,transparent)">{{ receiptPrintedNote }}</div>
+</div>
+</sc-if>
+<sc-if value="{{ showThanksBtn }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;flex-direction:column;align-items:flex-start;gap:3px">
+<button class="nkt-tap" sc-camel-on-click="{{ onThanksBtn }}" style="{{ thanksBtnStyle }}">{{ thanksBtnLabel }}</button>
+<div style="font-size:10.5px;letter-spacing:.02em;color:color-mix(in srgb,var(--color-text) 60%,transparent)">{{ thanksBtnNote }}</div>
+</div>
+</sc-if>
 <sc-if value="{{ showPayCert }}" hint-placeholder-val="{{ false }}">
 <div style="display:flex;flex-direction:column;gap:3px">
 <button class="btn btn-secondary nkt-tap" sc-camel-on-click="{{ onPayCertificate }}" style="height:36px;padding:0 14px">Donation Certificate</button>
 <div style="font-size:10.5px;letter-spacing:.02em;color:color-mix(in srgb,var(--color-text) 60%,transparent)">{{ payCertNote }}</div>
+</div>
+</sc-if>
+<sc-if value="{{ showPayReceipt }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;flex-direction:column;gap:3px">
+<button class="btn btn-secondary nkt-tap" sc-camel-on-click="{{ onPayReceipt }}" style="height:36px;padding:0 14px">Payment Tax Receipt</button>
+<div style="font-size:10.5px;letter-spacing:.02em;color:color-mix(in srgb,var(--color-text) 60%,transparent)">{{ payReceiptNote }}</div>
 </div>
 </sc-if>
 <button class="btn btn-ghost nkt-tap" sc-camel-on-click="{{ onBack }}" style="height:36px">Close</button>
@@ -3619,20 +3759,25 @@ const SECTIONS = [
   {key:"overview", label:"Overview", num:"—"},
   {key:"donors", label:"Donors", num:"01"},
   {key:"transactions", label:"Donations", num:"02"},
-  {key:"events", label:"Events", num:"03"},
-  {key:"phases", label:"Phases of work", num:"04"},
-  {key:"workers", label:"Workers & contractors", num:"05"},
-  {key:"tasks", label:"Work to do / tasks", num:"06"},
-  {key:"admin", label:"Admin", num:"07"},
-  {key:"reports", label:"Reports", num:"08"},
-  {key:"documents", label:"Documents", num:"09"},
-  {key:"calendar", label:"Calendar", num:"10"}
+  // Events is retired: its gifts now live in Donations (see
+  // migrateEventsToDonations). The key stays so stored role permissions and
+  // the events collection keep lining up; hidden keeps it out of every menu.
+  {key:"events", label:"Events", num:"03", hidden:true},
+  {key:"phases", label:"Phases of work", num:"03"},
+  {key:"workers", label:"Workers & contractors", num:"04"},
+  {key:"tasks", label:"Work to do / tasks", num:"05"},
+  {key:"admin", label:"Admin", num:"06"},
+  {key:"reports", label:"Reports", num:"07"},
+  {key:"documents", label:"Documents", num:"08"},
+  {key:"calendar", label:"Calendar", num:"09"}
 ];
 
 const GREEN="#2e6b3e", DEEP="#1b4127", TAN="#d9c9a3", YELLOW="#c9a227", RED="#b3261e", CHART="#2f3a31";
 const DEFAULT_TIERS=[["Legacy Partner",1000000],["Founders Circle",500000],["Hall of Fame",250000],["Championship Sponsor",100000],
   ["Gold Medal",50000],["MVP Sponsor",25000],["Community Champion",10000],["Team Builder",5000],["Rising Star",1000]]
   .map(([name,min],i)=>({id:"tier"+(i+1),name,min}));
+// Title and tag given to the donations moved out of the retired Events section.
+const EVENT_DONATION_TITLE="NKU Dinner Gala";
 const MONTHS=["January","February","March","April","May","June","July","August","September","October","November","December"];
 
 const SCHEMA = {
@@ -3668,6 +3813,7 @@ const SCHEMA = {
     {k:"date",l:"Date entered",t:"Date",req:true},
     {k:"deadline",l:"Deadline",t:"Date",help:"Application or pledge deadline"},
     {k:"completedAt",l:"Date received",t:"Date",help:"Filled in automatically when a donation is marked Received"},
+    {k:"thankedAt",l:"Thank-you sent",t:"Date",help:"Filled in by the Thank you sent button or the Thank-you list. Clear it to put the donation back on the list"},
     {k:"status",l:"Status",t:"Select",req:true,o:["Received","Pledged","Promised","Potential","Throwing darts"],help:"For an installment donation this is the status of the payments not yet received. Throwing darts counts as Potential in the totals"},
     {k:"donationKind",l:"Donation type",t:"Select",o:["One-time","Installment"],help:"Installment splits the amount into payments you check off as they're received"},
     {k:"instEvery",l:"Installment frequency",t:"Select",o:["Monthly","Annual"]},
@@ -4099,6 +4245,10 @@ class Component extends DCLogic {
             this._evMigrated=true;
             setTimeout(()=>this.migrateEventGifts(),0);
           }
+          if(this.canEditSec("events")&&this.canEditSec("transactions")&&!this.hideAmounts&&!this._evRetired){
+            this._evRetired=true;
+            setTimeout(()=>this.migrateEventsToDonations(),40);
+          }
           if(!this._rcvMoved){ this._rcvMoved=true; setTimeout(()=>this.migrateReceivedLabel(),120); }
           if(!this._plansSynced){ this._plansSynced=true; setTimeout(()=>this.syncPlans(),50); }
           if(!this._amtMoved&&this.canEditSec("donors")&&this.canEditSec("transactions")&&!this.hideAmounts){ this._amtMoved=true; setTimeout(()=>this.migrateDonorAmounts(),80); }
@@ -4281,7 +4431,7 @@ class Component extends DCLogic {
   get role(){ return this.state.me?(this.state.me.roles||[]).join(" + "):"General"; }
   get perms(){ const me=this.state.me; if(!me) return emptyPerms(); return me.perms||permsFor(me,this.state.roles); }
   lvl(sec){ return this.perms[sec]||"none"; }
-  canSee(sec){ return this.lvl(sec)!=="none"; }
+  canSee(sec){ const d=SECTIONS.find(x=>x.key===sec); if(d&&d.hidden) return false; return this.lvl(sec)!=="none"; }
   canEditSec(sec){ return this.lvl(sec)==="write"||this.perms.admin==="write"; }
   get isAdminUser(){ return this.perms.admin==="write"; }
   get canWrite(){ const p=this.perms; return OPS.some(k=>p[k]==="write"); }
@@ -5120,12 +5270,223 @@ body{margin:0;font-family:Archivo,system-ui,sans-serif;color:#201e1d;-webkit-pri
     this.setState(s=>({data:Object.assign({},s.data,{transactions:s.data.transactions.map(t=>set[t.id]?Object.assign({},t,{certPrints:(Array.isArray(t.certPrints)?t.certPrints:[]).concat(day)}):t)})}));
   }
   certPrintedText(t){ const p=Array.isArray(t&&t.certPrints)?t.certPrints:[]; return p.length?"Last printed "+p[p.length-1]+(p.length>1?" · "+p.length+" times":""):"Certificate never printed"; }
+  receiptPrintedText(t){ const p=Array.isArray(t&&t.receiptPrints)?t.receiptPrints:[]; return p.length?"Receipt printed "+p[p.length-1]+(p.length>1?" · "+p.length+" times":""):"Receipt never printed"; }
+  markReceiptPrinted(ids){
+    if(!ids.length||!this.canEditSec("transactions")) return;
+    const day=this.today(), set={}; ids.forEach(id=>{set[id]=1;});
+    this.setState(s=>({data:Object.assign({},s.data,{transactions:s.data.transactions.map(t=>set[t.id]?Object.assign({},t,{receiptPrints:(Array.isArray(t.receiptPrints)?t.receiptPrints:[]).concat(day)}):t)})}));
+  }
+  // ---- Tax receipts --------------------------------------------------------
+  // A receipt follows the certificate's rules: a Received gift prints what was
+  // received (a fulfilled plan prints what was paid), a Pledged gift prints as
+  // a pledge receipt, and each plan payment gets its own receipt with the
+  // pledge progress line.
+  receiptItem(t,amount,goods,note){
+    const dn=this.donor(t.donorId)||{}, pl=this.statusIs(t.status,"Pledged");
+    return {name:dn.name||"Donor",contact:this.certContact(t.donorId),address:String(dn.address||"").trim(),
+      amount:Number(amount)||0,goods:this.num(goods),method:t.method||"",pledge:pl,
+      date:String((pl?t.date:(t.completedAt||t.date))||"").slice(0,10)||"—",
+      desc:(t.pledgeId?"Pledge payment":(pl||t.plan?"Pledge":"Donation"))+(t.title?" — "+t.title:""),
+      no:"NKU-"+String(t.id||"").toUpperCase(),note:note||""};
+  }
+  receiptCash(n){ return "$"+(Math.round((Number(n)||0)*100)/100).toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2}); }
+  receiptStatement(b){
+    if(b.pledge) return "This acknowledges a pledge. It is not a receipt for a tax-deductible payment; a receipt is issued as each payment is received.";
+    const noncash=/in-kind|stock/i.test(b.method||"");
+    if(b.goods>0) return "In exchange for this contribution the donor received goods or services with an estimated fair market value of "+this.receiptCash(b.goods)
+      +". The amount deductible for federal income tax purposes is limited to the contribution less that value: "+this.receiptCash(Math.max(0,b.amount-b.goods))+".";
+    return "No goods or services were provided in exchange for this contribution."+(noncash?" For a non-cash gift the value shown is as recorded; it is not an appraisal.":"");
+  }
+  printReceipts(list,opts){
+    if(!list||!list.length) return;
+    const esc=v=>String(v==null?"":v).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"})[c]);
+    const cs=getComputedStyle(document.documentElement), cv=(k,f)=>(cs.getPropertyValue(k)||"").trim()||f;
+    const a3=cv("--color-accent-300","#a9c5b1"), a7=cv("--color-accent-700","#1b4127"), a8=cv("--color-accent-800","#14301d"), fh=cv("--font-heading","Archivo,sans-serif");
+    const issued=this.today();
+    const pages=list.map(b=>`<section class="pg">
+<div class="hd"><img src="https://rotaryknk.org/images/nku/NKU-800x378.png" alt="North Kitsap United" style="width:170px;height:auto">
+<div class="org"><b>Kingston-North Kitsap Rotary Foundation</b><br>EIN 20-2960627<br>North Kitsap United</div></div>
+<div class="ttl">${b.pledge?"Pledge Receipt":"Donation Receipt"}</div>
+<div class="sb">${b.pledge?"Acknowledgment of a pledge":"Official receipt for income tax purposes"}</div>
+<table class="meta"><tr><td><span>Receipt no.</span>${esc(b.no)}</td><td><span>Date issued</span>${esc(issued)}</td></tr></table>
+<div class="lb">Received from</div>
+<div class="nm">${esc(b.name)}</div>${b.contact?`<div class="ad">${esc(b.contact)}</div>`:""}${b.address?`<div class="ad">${esc(b.address).replace(/\n/g,"<br>")}</div>`:""}
+<table class="it"><thead><tr><th>${b.pledge?"Date pledged":"Date received"}</th><th>Description</th><th>Payment method</th><th class="r">Amount</th></tr></thead>
+<tbody><tr><td>${esc(b.date)}</td><td>${esc(b.desc)}</td><td>${esc(b.method||"—")}</td><td class="r">${esc(this.receiptCash(b.amount))}</td></tr></tbody>
+<tfoot><tr><td colspan="3">${b.pledge?"Total pledged":"Total received"}</td><td class="r">${esc(this.receiptCash(b.amount))}</td></tr></tfoot></table>
+${b.note?`<div class="pn">${esc(b.note)}</div>`:""}
+<div class="st">${esc(this.receiptStatement(b))}</div>
+<div class="ty">Thank you for your generous support of North Kitsap United.</div>
+<div style="flex:1"></div>
+<div class="sig"><div><span></span>Authorized signature</div><div><span></span>Date</div></div>
+<div class="ft">Please keep this receipt for your tax records. Kingston-North Kitsap Rotary Foundation is a 501(c)(3) tax-exempt organization, EIN 20-2960627.</div>
+</section>`).join("");
+    const doc=`<!DOCTYPE html><html><head><meta charset="utf-8"><title>${esc((opts&&opts.title)||"Tax receipts")}</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800&display=swap">
+<style>
+@page{size:letter portrait;margin:0}
+*{box-sizing:border-box}
+body{margin:0;font-family:Archivo,system-ui,sans-serif;color:#201e1d;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.pg{width:8.5in;height:11in;padding:.7in .75in .6in;background:#fff;page-break-after:always;break-after:page;overflow:hidden;display:flex;flex-direction:column;font-size:13px;line-height:1.5}
+.pg:last-child{page-break-after:auto;break-after:auto}
+.hd{display:flex;align-items:center;justify-content:space-between;gap:20px;padding-bottom:16px;border-bottom:3px solid ${a7}}
+.org{text-align:right;font-size:12px;line-height:1.55;color:#4a473f}.org b{color:#201e1d;font-size:13px}
+.ttl{font-family:${fh};font-weight:800;font-size:28px;letter-spacing:-.01em;margin-top:26px;color:${a8}}
+.sb{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:${a7};margin-top:2px}
+.meta{width:100%;border-collapse:collapse;margin-top:18px}.meta td{border:1px solid ${a3};padding:8px 12px;font-weight:600;width:50%}
+.meta span,.lb{display:block;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#6b675e;font-weight:400}
+.lb{margin-top:22px}
+.nm{font-family:${fh};font-weight:800;font-size:19px;margin-top:3px}
+.ad{color:#4a473f}
+.it{width:100%;border-collapse:collapse;margin-top:22px}
+.it th{text-align:left;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#fff;background:${a7};padding:7px 10px;font-weight:600}
+.it td{padding:10px;border-bottom:1px solid ${a3};vertical-align:top}
+.it tfoot td{font-family:${fh};font-weight:800;font-size:15px;border-bottom:2px solid ${a7}}
+.r{text-align:right;white-space:nowrap}
+.pn{margin-top:10px;color:#4a473f}
+.st{margin-top:20px;padding:12px 14px;background:#f6f2e7;border-left:3px solid ${a7}}
+.ty{margin-top:18px}
+.sig{display:flex;gap:50px;margin-top:26px}
+.sig div{flex:1;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#6b675e}
+.sig span{display:block;height:34px;border-bottom:1px solid #4a473f;margin-bottom:6px}
+.ft{margin-top:22px;padding-top:10px;border-top:1px solid ${a3};font-size:10.5px;color:#6b675e;text-align:center}
+</style></head><body>${pages}</body></html>`;
+    const fr=document.createElement("iframe");
+    fr.setAttribute("aria-hidden","true");
+    fr.style.cssText="position:fixed;left:-10000px;top:0;width:850px;height:1100px;border:0";
+    document.body.appendChild(fr);
+    fr.onload=()=>{
+      const go=()=>{ try{ fr.contentWindow.focus(); fr.contentWindow.print(); }catch(e){} setTimeout(()=>{ if(fr.parentNode) fr.parentNode.removeChild(fr); },2000); };
+      const d=fr.contentDocument, imgs=Array.from(d.images).map(i=>i.complete?null:new Promise(r=>{i.onload=i.onerror=r;})).filter(Boolean);
+      Promise.race([Promise.all(imgs.concat(d.fonts?[d.fonts.ready]:[])),new Promise(r=>setTimeout(r,2500))]).then(go);
+    };
+    fr.srcdoc=doc;
+  }
+  // ---- Thank-yous ----------------------------------------------------------
+  // A donation is thanked once thankedAt holds a date. Received and Pledged
+  // gifts need one; a plan payment is covered by its pledge's thank-you.
+  needsThanks(t){ return !!(t&&t.donorId&&!t.pledgeId&&!t.eventLines&&(this.statusIs(t.status,"Received")||this.statusIs(t.status,"Pledged"))); }
+  thankDue(t){ return this.needsThanks(t)&&!t.thankedAt; }
+  setThanked(ids,on){
+    if(!ids.length||!this.canEditSec("transactions")) return;
+    const day=this.today(), by=((this.state.me||{}).email||""), set={}; ids.forEach(id=>{set[id]=1;});
+    this.setState(s=>({data:Object.assign({},s.data,{transactions:s.data.transactions.map(t=>set[t.id]
+      ?Object.assign({},t,on?{thankedAt:t.thankedAt||day,thankedBy:t.thankedAt?(t.thankedBy||""):by}:{thankedAt:"",thankedBy:""}):t)})}));
+  }
+  receiptVals(b,t){
+    const can=this.canEditSec("transactions");
+    if(!b||!t) return {rcptTitle:"",rcptSub:"",rcptNo:"",rcptIssued:"",rcptName:"",rcptContact:"",rcptAddress:"",rcptDateLabel:"",rcptDate:"",rcptDesc:"",rcptMethod:"",rcptAmount:"",rcptTotalLabel:"",rcptNote:"",rcptStatement:"",rcptGoodsIn:"",rcptShowGoods:false,rcptPrintLabel:"",rcptPrintedNote:""};
+    return {rcptTitle:b.pledge?"Pledge Receipt":"Donation Receipt",
+      rcptSub:b.pledge?"Acknowledgment of a pledge":"Official receipt for income tax purposes",
+      rcptNo:b.no, rcptIssued:this.today(), rcptName:b.name, rcptContact:b.contact, rcptAddress:b.address,
+      rcptDateLabel:b.pledge?"Date pledged":"Date received", rcptDate:b.date, rcptDesc:b.desc, rcptMethod:b.method||"—",
+      rcptAmount:this.receiptCash(b.amount), rcptTotalLabel:b.pledge?"Total pledged":"Total received",
+      rcptNote:b.note, rcptStatement:this.receiptStatement(b),
+      rcptGoodsIn:this.state.receiptGoods||"", rcptShowGoods:!b.pledge, rcptGoodsLocked:!can,
+      onRcptGoods:e=>{ if(can) this.setState({receiptGoods:e.target.value}); },
+      rcptPrintLabel:b.pledge?"Print pledge receipt":"Print tax receipt",
+      rcptPrintedNote:this.receiptPrintedText(t),
+      onPrintReceipt:()=>{ this.printReceipts([b],{title:b.pledge?"Pledge receipt":"Tax receipt"}); this.markReceiptPrinted([t.id]); }};
+  }
+  openThanksList(){ this.setState({thanksList:{show:"Needs a thank-you",status:"All",from:"",to:"",sel:{}}}); }
+  thanksVals(){
+    const s=this.state, tl=s.thanksList;
+    if(!tl) return {thanksOpen:false,thanksRows:[],thanksShowOpts:[],thanksStatusOpts:[]};
+    const canEdit=this.canEditSec("transactions");
+    const when=t=>String(t.completedAt||t.date||"").slice(0,10);
+    const rows=this.d().transactions.filter(t=>this.needsThanks(t)&&this.donor(t.donorId))
+      .filter(t=>tl.status==="All"||this.statusIs(t.status,tl.status))
+      .filter(t=>tl.show==="All"||(tl.show==="Thanked"?!!t.thankedAt:!t.thankedAt))
+      .filter(t=>(!tl.from||when(t)>=tl.from)&&(!tl.to||when(t)<=tl.to))
+      .map(t=>({t,name:this.donor(t.donorId).name||"Donor",checked:!!tl.sel[t.id]}))
+      .sort((a,b)=>when(b.t).localeCompare(when(a.t))||a.name.localeCompare(b.name));
+    const up=o=>this.setState(st=>({thanksList:Object.assign({},st.thanksList,o)}));
+    const seg=(cur,v)=>"flex:1;height:34px;border:0;cursor:pointer;font-size:12px;font-family:var(--font-body);font-weight:600;white-space:nowrap;padding:0 8px;background:"+(cur===v?GREEN:"transparent")+";color:"+(cur===v?"#ffffff":"var(--color-text)");
+    const picked=rows.filter(r=>r.checked), toMark=picked.filter(r=>!r.t.thankedAt), toClear=picked.filter(r=>r.t.thankedAt);
+    const all=v=>this.setState(st=>{ const sel={}; if(v) rows.forEach(r=>{sel[r.t.id]=true;}); return {thanksList:Object.assign({},st.thanksList,{sel})}; });
+    const due=this.d().transactions.filter(t=>this.thankDue(t)&&this.donor(t.donorId)).length;
+    return {
+      thanksOpen:true,
+      thanksSub:due+" donation"+(due===1?"":"s")+" still to thank · "+rows.length+" shown · "+picked.length+" selected",
+      thanksShowOpts:["Needs a thank-you","Thanked","All"].map(v=>({label:v,style:seg(tl.show,v),on:()=>up({show:v,sel:{}})})),
+      thanksStatusOpts:["All","Received","Pledged"].map(v=>({label:v,style:seg(tl.status,v),on:()=>up({status:v,sel:{}})})),
+      thanksFrom:tl.from, thanksTo:tl.to, onThanksFrom:e=>up({from:e.target.value}), onThanksTo:e=>up({to:e.target.value}),
+      thanksNote:canEdit?"Tick the donations a thank-you has gone out for, then mark them. Plan payments are covered by their pledge's thank-you."
+        :"View only. Marking thank-yous needs Read / write on Donations.",
+      thanksRows:rows.map(r=>({name:r.name,checked:r.checked,canCheck:canEdit,
+        onToggle:()=>this.setState(st=>({thanksList:Object.assign({},st.thanksList,{sel:Object.assign({},st.thanksList.sel,{[r.t.id]:!r.checked})})})),
+        sub:[r.t.title||"",this.txStatusLabel(r.t),when(r.t)||"No date",this.donationOwner(r.t)||"Unassigned"].filter(Boolean).join(" · "),
+        amt:this.hideAmounts?"":F.full(r.t.plan?Number(r.t.plan.total)||0:Number(r.t.amount)||0),
+        state:r.t.thankedAt?"Thanked "+r.t.thankedAt:"Thank-you due",
+        stateStyle:"font-size:10px;letter-spacing:.06em;text-transform:uppercase;font-weight:700;padding:2px 7px;white-space:nowrap;border:1px solid "+(r.t.thankedAt?GREEN:YELLOW)+";color:"+(r.t.thankedAt?GREEN:"#7a5f10"),
+        open:()=>{ this.setState({thanksList:null}); this.open("transactions",r.t.id); }})),
+      thanksEmpty:rows.length===0,
+      thanksEmptyText:tl.show==="Needs a thank-you"?"Every donation in this filter has been thanked.":"Nothing in this filter.",
+      canMarkThanks:canEdit,
+      thanksMarkLabel:"Mark "+toMark.length+" thanked", thanksMarkNone:toMark.length===0,
+      showThanksClear:canEdit&&toClear.length>0, thanksClearLabel:"Clear "+toClear.length+" thank-you"+(toClear.length===1?"":"s"),
+      onThanksMark:()=>{ this.setThanked(toMark.map(r=>r.t.id),true); up({sel:{}}); },
+      onThanksClear:()=>{ this.setThanked(toClear.map(r=>r.t.id),false); up({sel:{}}); },
+      onThanksAll:()=>all(true), onThanksNone:()=>all(false),
+      onThanksClose:()=>this.setState({thanksList:null})
+    };
+  }
+  // Overview panel: the newest donations still waiting on a thank-you.
+  overviewThanks(){
+    if(this.state.me&&!this.canSee("transactions")) return [];
+    return this.d().transactions.filter(t=>this.thankDue(t)&&this.donor(t.donorId))
+      .sort((a,b)=>String(b.completedAt||b.date||"").localeCompare(String(a.completedAt||a.date||"")))
+      .slice(0,5).map(t=>({title:this.donor(t.donorId).name||"Donor",
+        sub:[t.title||"Donation",String(t.completedAt||t.date||"").slice(0,10),this.donationOwner(t)||"Unassigned"].filter(Boolean).join(" · "),
+        value:this.hideAmounts?"":this.money(t.plan?Number(t.plan.total)||0:Number(t.amount)||0),
+        mark:this.statusIs(t.status,"Pledged")?TAN:GREEN,
+        open:()=>this.open("transactions",t.id)}));
+  }
+  // One-time move off the retired Events section. Every gift that hung under
+  // an event becomes an ordinary donation titled and tagged with
+  // EVENT_DONATION_TITLE, a thank-you already ticked on the event carries over
+  // as Thank-you sent, and the link to the event is dropped. The event record
+  // itself is left as it is (hidden), so its attendees, tasks and documents
+  // are not lost. Once no donation carries an eventId this does nothing.
+  migrateEventsToDonations(){
+    const NAME=EVENT_DONATION_TITLE;
+    this.setState(s=>{
+      const evs0=s.data.events||[], tx0=s.data.transactions||[];
+      const pending=evs0.filter(ev=>(ev.attendees||[]).some(a=>this.num(a.amount)>0)||tx0.some(t=>t.eventId===ev.id&&t.eventLines));
+      if(!pending.length&&!tx0.some(t=>t.eventId)) return null;
+      const data=Object.assign({},s.data,{events:evs0.slice(),transactions:tx0.slice()});
+      let lists=Object.assign({},s.lists);
+      // Bring across any attendee amounts or old rolled-up entries first.
+      pending.forEach(ev0=>{
+        const i=data.events.indexOf(ev0);
+        const ev=Object.assign({},ev0,{todos:(ev0.todos||[]).slice()});
+        lists=this.rollupEvent(data,ev,lists,true);
+        data.events[i]=ev;
+      });
+      const day=this.today();
+      data.transactions=data.transactions.map(t=>{
+        if(!t.eventId) return t;
+        const ev=data.events.find(e=>e.id===t.eventId);
+        const old=String(t.title||"").trim(), evName=ev?String(ev.name||"").trim():"";
+        const out=Object.assign({},t,{eventId:"",title:NAME,
+          tags:[NAME].concat((t.tags||[]).filter(x=>x!==NAME&&x!==old&&x!==evName))});
+        const todo=ev&&!t.pledgeId&&(ev.todos||[]).find(x=>x.thankDonorId===t.donorId&&x.done);
+        if(todo&&!t.thankedAt){ out.thankedAt=day; out.thankedBy="Moved from Events"; }
+        return out;
+      });
+      const titles=(lists.donationTitles||[]).filter(x=>x!==NAME).concat([NAME]).sort();
+      const tags=(lists.tags||[]).indexOf(NAME)<0?(lists.tags||[]).concat([NAME]):(lists.tags||[]);
+      lists=Object.assign({},lists,{donationTitles:titles,tags});
+      console.info("[NKU] moved event gifts into Donations as “"+NAME+"”");
+      return {data,lists,evGroupOpen:{}};
+    });
+  }
   bulkCertVals(){
     const s=this.state, bc=s.bulkCert;
     if(!bc) return {bulkCertOpen:false,bulkCertRows:[],bulkStatusOpts:[],bulkPrintedOpts:[]};
-    const admin=this.isAdminUser, pl=bc.status==="Pledged";
+    const admin=this.isAdminUser, pl=bc.status==="Pledged", rc=bc.kind==="receipt", word=rc?"receipt":"certificate";
     const rows=this.d().transactions.filter(t=>(!t.pledgeId||bc.status==="Received")&&t.donorId&&this.donor(t.donorId)&&this.statusIs(t.status,bc.status))
-      .filter(t=>{ const n=(t.certPrints||[]).length; return bc.printed==="All"||(bc.printed==="Printed"?n>0:n===0); })
+      .filter(t=>{ const n=((rc?t.receiptPrints:t.certPrints)||[]).length; return bc.printed==="All"||(bc.printed==="Printed"?n>0:n===0); })
       .filter(t=>(!bc.from||String(t.date||"")>=bc.from)&&(!bc.to||String(t.date||"")<=bc.to))
       .map(t=>{ const def=Math.round(this.certDefault(t)*100)/100, raw=bc.amt[t.id], amt=raw!=null&&raw!==""?this.num(raw):def;
         return {t,def,raw,amt,name:this.donor(t.donorId).name||"Donor",checked:bc.sel[t.id]!=null?bc.sel[t.id]:false}; })
@@ -5137,20 +5498,23 @@ body{margin:0;font-family:Archivo,system-ui,sans-serif;color:#201e1d;-webkit-pri
     const all=v=>this.setState(st=>{const sel=Object.assign({},st.bulkCert.sel);rows.forEach(r=>{sel[r.t.id]=v;});return {bulkCert:Object.assign({},st.bulkCert,{sel})};});
     return {
       bulkCertOpen:true,
+      bulkCertTitle:rc?"Print out receipts":"Print out certificates",
       bulkCertSub:rows.length+" "+(pl?"pledge":"donation")+(rows.length===1?"":"s")+" match · "+n+" selected",
       bulkStatusOpts:["Received","Pledged"].map(v=>({label:v,style:seg(bc.status,v),on:()=>up({status:v,sel:{},amt:{}})})),
       bulkPrintedOpts:["All","Never printed","Printed"].map(v=>({label:v,style:seg(bc.printed,v),on:()=>up({printed:v})})),
       bulkFrom:bc.from, bulkTo:bc.to, onBulkFrom:e=>up({from:e.target.value}), onBulkTo:e=>up({to:e.target.value}),
-      bulkCertNote:(pl?"Pledge certificates are marked Pledge. ":"Received donations only. Switch to Pledged to print pledges separately. ")+(admin?"Amounts can be changed for the printout; the records stay as they are.":"An admin can change amounts before printing."),
+      bulkCertNote:(rc?(pl?"Pledge receipts acknowledge the pledge; a tax receipt follows each payment. ":"Received donations only, one receipt each, stating no goods or services were provided. Use a donation's own Tax Receipt to state a value. "):(pl?"Pledge certificates are marked Pledge. ":"Received donations only. Switch to Pledged to print pledges separately. "))+(admin?"Amounts can be changed for the printout; the records stay as they are.":"An admin can change amounts before printing."),
       bulkAmtLocked:!admin,
       bulkCertRows:rows.map(r=>({name:r.name,checked:r.checked,onToggle:()=>set("sel",r.t.id,!r.checked),
-        sub:[(r.t.title||""),"Entered "+(r.t.date||"—"),this.certPrintedText(r.t)].filter(Boolean).join(" · "),
+        sub:[(r.t.title||""),"Entered "+(r.t.date||"—"),rc?this.receiptPrintedText(r.t):this.certPrintedText(r.t)].filter(Boolean).join(" · "),
         amt:this.fmtMoneyIn(r.raw!=null?r.raw:String(r.def)),onAmt:e=>{ if(admin) set("amt",r.t.id,e.target.value); }})),
       bulkCertEmpty:rows.length===0,
       bulkCertNone:n===0,
-      bulkCertLabel:"Print "+n+" "+(pl?"pledge ":"")+"certificate"+(n===1?"":"s"),
+      bulkCertLabel:"Print "+n+" "+(pl?"pledge ":"")+word+(n===1?"":"s"),
       onBulkAll:()=>all(true), onBulkNone:()=>all(false),
-      onBulkCertPrint:()=>{ if(!n) return; this.printEventCerts(picked.map(r=>({name:r.name,contact:this.certContact(r.t.donorId),method:r.t.method,amount:r.amt,note:this.certPledgeLine(r.t)})),pl?"pledge":"at",{noEvent:true,title:pl?"Pledge certificates":"Donation certificates"}); this.markCertPrinted(picked.map(r=>r.t.id)); this.setState({bulkCert:null}); },
+      onBulkCertPrint:()=>{ if(!n) return;
+        if(rc){ this.printReceipts(picked.map(r=>this.receiptItem(r.t,r.amt,0,this.certPledgeLine(r.t))),{title:pl?"Pledge receipts":"Tax receipts"}); this.markReceiptPrinted(picked.map(r=>r.t.id)); this.setState({bulkCert:null}); return; }
+        this.printEventCerts(picked.map(r=>({name:r.name,contact:this.certContact(r.t.donorId),method:r.t.method,amount:r.amt,note:this.certPledgeLine(r.t)})),pl?"pledge":"at",{noEvent:true,title:pl?"Pledge certificates":"Donation certificates"}); this.markCertPrinted(picked.map(r=>r.t.id)); this.setState({bulkCert:null}); },
       onBulkCertCancel:()=>this.setState({bulkCert:null})
     };
   }
@@ -7017,11 +7381,11 @@ tr{page-break-inside:avoid;break-inside:avoid}
           const sc=t.plan?t.plan.installments.filter(x=>!x.extra):null;
           const kind=sc?("Installment · "+sc.filter(x=>x.txId).length+" of "+sc.length+" received · "+(t.plan.every||"").toLowerCase()):"One-time";
           return {title:(t.title||t.date||"Donation")+(t.date&&t.title?" · "+t.date:""),
-            sub:[kind,sc?this.txStatusLabel(t):t.status,t.method||(t.eventId?"event gift":"")].filter(Boolean).join(" · "),
+            sub:[kind,sc?this.txStatusLabel(t):t.status,t.method||(t.eventId?"event gift":""),t.thankedAt?"thanked":(this.thankDue(t)?"thank-you due":"")].filter(Boolean).join(" · "),
             value:sc?(this.money(this.planPaid(t))+" of "+this.money(t.plan.total)):this.money(t.amount),open:()=>this.open("transactions",t.id)};
         })
           .concat(evLines.map(l=>({title:(l.ev.date||"")+" · event gift",sub:"Received · "+l.ev.name,value:this.money(l.amount),open:()=>this.open("events",l.ev.id)}))),"No transactions recorded for this donor."),
-        (()=>{
+        this.canSee("events")&&(()=>{
           const evs=this.evts().filter(ev=>(ev.attendees||[]).some(a=>a.donorId===rec.id)||this.eventGifts(ev).some(t=>t.donorId===rec.id))
             .sort((a,b)=>String(this.evDay(b)||"")<String(this.evDay(a)||"")?-1:1);
           return grp("Events",evs.length+" event"+(evs.length===1?"":"s"),evs.map(ev=>{
@@ -7125,7 +7489,7 @@ tr{page-break-inside:avoid;break-inside:avoid}
         grp("Phase",ph.code||"",ph.id?[{title:ph.name,sub:ph.status+" · "+ph.start+" → "+ph.end,value:this.money(ph.budget),open:()=>this.open("phases",ph.id)}]:[])
       ];
     }
-    return {head,stats,fields,groups};
+    return {head,stats,fields,groups:groups.filter(Boolean)};
   }
 
   // A donation needs a donor that may not exist yet. Rather than sending the
@@ -7597,7 +7961,7 @@ tr{page-break-inside:avoid;break-inside:avoid}
       push(t.deadline,{kind:"reminder",label:(d?d.name:(t.title||"Donation"))+" — "+fu,people:own?[own]:[],sub:[fu,t.title||"",own||"Unassigned"].filter(Boolean).join(" · "),open:()=>this.open("transactions",t.id)});
     });
     this.d().phases.forEach(p=>push(p.end,{kind:"phase",label:p.code+" target finish",people:[],sub:p.name||"",open:()=>this.open("phases",p.id)}));
-    this.evts().forEach(e=>{
+    if(this.canSee("events")) this.evts().forEach(e=>{
       const t=String(e.date||"").length>10?this.fmtTime(String(e.date).slice(11,16)):(e.time||"");
       push(this.evDay(e),{kind:"event",label:(t?t+" ":"")+(e.name||"Event"),people:[],
         sub:[e.host||"",this.eventHeadcount(e)+" attending"].filter(Boolean).join(" · "),
@@ -7769,7 +8133,7 @@ tr{page-break-inside:avoid;break-inside:avoid}
   // `inherited` (users only) is what their roles already give.
   opRows(cur,set,inherited,locked){
     const seg=(on)=>"height:28px;padding:0 10px;border:0;border-right:1px solid var(--color-divider);cursor:"+(locked?"default":"pointer")+";font-size:11.5px;white-space:nowrap;font-family:var(--font-body);background:"+(on?GREEN:"transparent")+";color:"+(on?"#ffffff":"var(--color-text)")+(locked&&!on?";opacity:.45":"");
-    return OPS.concat(["money"]).map(k=>{
+    return OPS.filter(k=>!(SECTIONS.find(x=>x.key===k)||{}).hidden).concat(["money"]).map(k=>{
       const money=k==="money", adm=k==="admin";
       const choices=money?[[false,"Hidden"],[true,"Visible"]]:adm?[["none","Off"],["write","Full access"]]:[["none","Off"],["view","View only"],["write","Read / write"]];
       const c=money?(cur.money===true):(cur[k]||"none");
@@ -8293,7 +8657,7 @@ tr{page-break-inside:avoid;break-inside:avoid}
         sub:[(t.deadline<today?"Deadline passed":"Deadline"),t.title||"",this.donationOwner(t)||"Unassigned"].filter(Boolean).join(" · "),
         value:this.money(t.amount),mark:t.deadline<today?RED:YELLOW,open:()=>this.open("transactions",t.id)});
     });
-    this.d().events.forEach(e=>{
+    if(this.canSee("events")) this.d().events.forEach(e=>{
       const d=String(e.date||"").slice(0,10);
       if(d>=today) return; // upcoming events have their own panel
       push(d,{title:e.name+" — event passed",sub:"Wrap-up: confirm gifts taken and tasks closed",
@@ -8554,7 +8918,8 @@ tr{page-break-inside:avoid;break-inside:avoid}
         style:"flex:1;min-height:54px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;border:0;border-right:1px solid var(--color-divider);font-family:var(--font-body);padding:8px 4px;background:"+(sec===t.k?GREEN:"transparent")+";color:"+(sec===t.k?"#ffffff":"var(--color-text)")})),
 
       isCalendar:sec==="calendar",
-      isCertificate:!!s.certTxId,
+      isCertificate:!!s.certTxId&&s.certKind!=="receipt",
+      isReceipt:!!s.certTxId&&s.certKind==="receipt",
       calTitle:cal.title, calDays:cal.days,
       weekdayNames:["Sun","Mon","Tue","Wed","Thu","Fri","Sat"],
       onCalPrev:()=>this.calShift(-1), onCalNext:()=>this.calShift(1),
@@ -8589,7 +8954,8 @@ tr{page-break-inside:avoid;break-inside:avoid}
         const ov=s.certAmt, amt=ov!=null&&ov!==""?this.num(ov):def, admin=this.isAdminUser;
         const pLine=certTx?this.certPledgeLine(certTx):"", pOn=s.certPledgeOn!==false, note=pLine&&pOn?pLine:"";
         const sibs=certTx&&certTx.pledgeId?this.pledgePayments(this.d().transactions.find(x=>x.id===certTx.pledgeId)):[];
-        return {certPayMulti:sibs.length>1, certPayVal:certTx?certTx.id:"", certPayOpts:sibs.map(x=>({value:x.id,label:(String(x.completedAt||x.date||"").slice(0,10)||"No date")+" · "+F.full(Number(x.amount)||0)})),
+        const rItem=certTx?this.receiptItem(certTx,amt,s.receiptGoods,note):null;
+        return {...this.receiptVals(rItem,certTx), certPayMulti:sibs.length>1, certPayVal:certTx?certTx.id:"", certPayOpts:sibs.map(x=>({value:x.id,label:(String(x.completedAt||x.date||"").slice(0,10)||"No date")+" · "+F.full(Number(x.amount)||0)})),
           onCertPay:e=>this.setState({certTxId:e.target.value,certAmt:null}),
           certIsPledge:pl, certPledgeLine:note, certHasPledgeLine:!!pLine, certPledgeOn:pOn, onCertPledgeToggle:e=>this.setState({certPledgeOn:e.target.checked}), certKick:pl?"Certificate of Pledge":"Certificate of Appreciation",
           certLead:this.certLeadText(certTx&&certTx.method,pl),
@@ -8597,7 +8963,7 @@ tr{page-break-inside:avoid;break-inside:avoid}
           certAmtLocked:!admin, onCertAmt:e=>{ if(admin) this.setState({certAmt:e.target.value}); },
           onPrintCert:()=>{ if(certTx){ this.printEventCerts([{name:(this.donor(certTx.donorId)||{}).name||"Donor",contact:this.certContact(certTx.donorId),method:certTx.method,amount:amt,note}],pl?"pledge":"at",{noEvent:true,title:pl?"Pledge certificate":"Donation certificate"}); this.markCertPrinted([certTx.id]); } },
           certAmtHelp:admin?(pl?"Pledged amount from the record. Change it here for this printout only; the record stays as is.":"From the record. Change it here for this printout only (for example, an estimated value for in-kind goods). The record stays as is."):"From the record. An admin can change the amount for a printout."}; })(),
-      onCloseCert:()=>this.setState({certTxId:null,certAmt:null,certPledgeOn:true}),
+      onCloseCert:()=>this.setState({certTxId:null,certAmt:null,certPledgeOn:true,certKind:null,receiptGoods:""}),
 
       showOwnerFilter:sec==="donors"||sec==="transactions",
       ownerFilter:s.ownerFilter||"",
@@ -8687,14 +9053,31 @@ tr{page-break-inside:avoid;break-inside:avoid}
       showCertificate:isDetail&&sec==="transactions",
       ...(()=>{ const r=isDetail&&sec==="transactions"?this.currentRecord():null, pays=r&&!r.pledgeId?this.pledgePayments(r):[], last=pays[pays.length-1];
         return {showPayCert:!!last, payCertNote:last?(pays.length+" payment"+(pays.length===1?"":"s")+" received · "+this.certPrintedText(last).replace("Certificate never printed","latest never printed")):"",
-          onPayCertificate:()=>{ if(last) this.setState({certTxId:last.id,certAmt:null}); }}; })(),
+          onPayCertificate:()=>{ if(last) this.setState({certTxId:last.id,certAmt:null,certKind:null}); },
+          showPayReceipt:!!last, payReceiptNote:last?this.receiptPrintedText(last).replace("Receipt never printed","latest never printed"):"",
+          onPayReceipt:()=>{ if(last) this.setState({certTxId:last.id,certAmt:null,certKind:"receipt",receiptGoods:""}); }}; })(),
+      ...(()=>{ const r=isDetail&&sec==="transactions"?this.currentRecord():null, on=!!(r&&r.thankedAt);
+        return {showReceipt:!!r, receiptBtnLabel:r&&this.statusIs(r.status,"Pledged")?"Pledge Receipt":"Tax Receipt",
+          receiptPrintedNote:r?this.receiptPrintedText(r):"",
+          onReceipt:()=>{ if(r) this.setState({certTxId:r.id,certAmt:null,certKind:"receipt",receiptGoods:""}); },
+          showThanksBtn:!!r&&canEditHere,
+          thanksBtnLabel:on?"Thank you sent \u2713":"Thank you sent",
+          thanksBtnNote:on?("Marked "+r.thankedAt+(r.thankedBy?" · "+r.thankedBy:"")+" · click to undo"):(r&&this.needsThanks(r)?"Thank-you not sent yet":"Click once a thank-you goes out"),
+          thanksBtnStyle:"height:36px;padding:0 14px;cursor:pointer;font-family:var(--font-heading);font-weight:800;font-size:13px;border:2px solid "+(on?GREEN:"var(--color-text)")+";background:"+(on?GREEN:"transparent")+";color:"+(on?"#ffffff":"var(--color-text)"),
+          onThanksBtn:()=>{ if(r) this.setThanked([r.id],!on); }}; })(),
       certPrintedNote:isDetail&&sec==="transactions"?this.certPrintedText(this.currentRecord()):"",
       showBulkCert:sec==="transactions"&&!isForm&&!s.certTxId&&!this.hideAmounts,
       bulkCertBtn:mobile?"Certificates":"Print out Certificates",
-      onBulkCert:()=>this.setState({bulkCert:{status:"Received",printed:"Never printed",from:"",to:"",sel:{},amt:{}}}),
+      onBulkCert:()=>this.setState({bulkCert:{kind:"cert",status:"Received",printed:"Never printed",from:"",to:"",sel:{},amt:{}}}),
+      bulkReceiptBtn:mobile?"Receipts":"Print out Receipts",
+      onBulkReceipt:()=>this.setState({bulkCert:{kind:"receipt",status:"Received",printed:"Never printed",from:"",to:"",sel:{},amt:{}}}),
+      showThanksList:sec==="transactions"&&!isForm&&!s.certTxId,
+      thanksListBtn:(()=>{ const n=this.d().transactions.filter(t=>this.thankDue(t)&&this.donor(t.donorId)).length; return (mobile?"Thank-yous":"Thank you List")+(n?" ("+n+")":""); })(),
+      onThanksList:()=>this.openThanksList(),
+      ...this.thanksVals(),
       ...this.bulkCertVals(),
       certBtnLabel:isDetail&&sec==="transactions"&&this.statusIs((this.currentRecord()||{}).status,"Pledged")?"Pledge Certificate":"Donation Certificate",
-      onCertificate:()=>this.setState({certTxId:s.recordId,certAmt:null}),
+      onCertificate:()=>this.setState({certTxId:s.recordId,certAmt:null,certKind:null}),
       onLogContact:()=>this.setState({logOpen:true,logKind:"contact",logNote:"",logDate:""}),
       onLogReminder:()=>this.setState({logOpen:true,logKind:"reminder",logNote:"",logDate:"",logOwner:""}),
       logOpen:s.logOpen,
@@ -8821,8 +9204,11 @@ tr{page-break-inside:avoid;break-inside:avoid}
       onCancelWorkerAdd:()=>this.setState({workerAddOpen:false,workerAddError:"",workerAddMode:""}),
 
       blockedMsg:s.blockedMsg||"",
-      upcomingEvents:this.upcomingEvents(),
-      upcomingEventsEmpty:this.upcomingEvents().length===0,
+      ...(()=>{ const rows=this.overviewThanks(), n=this.d().transactions.filter(t=>this.thankDue(t)&&this.donor(t.donorId)).length, can=!s.me||this.canSee("transactions");
+        return {ovThanks:rows, ovThanksEmpty:rows.length===0,
+          ovThanksEmptyText:can?"Every Received and Pledged donation has been thanked.":"Thank-yous show here for people who can see Donations.",
+          showOvThanksLink:can&&n>0, ovThanksLinkLabel:n>5?"All "+n+" \u2192":"Open list \u2192",
+          onOvThanksList:()=>{ this.go("transactions"); this.openThanksList(); }}; })(),
       attention:this.attentionItems(),
       attentionEmpty:this.attentionItems().length===0,
       activity:this.activityItems(),
@@ -9369,7 +9755,7 @@ tr{page-break-inside:avoid;break-inside:avoid}
       onNewGroupName:e=>this.setState({newGroupName:e.target.value}),
       onAddGroup:()=>this.addGroup(s.newGroupName),
 
-      importTargets:[["donors","Donors"],["transactions","Donations"],["events","Events"],["phases","Phases"],["workers","Workers"],["tasks","Tasks"]].map(t=>({
+      importTargets:[["donors","Donors"],["transactions","Donations"],["phases","Phases"],["workers","Workers"],["tasks","Tasks"]].map(t=>({
         label:t[1],
         on:s.importTarget===t[0],
         style:"cursor:pointer;font-family:var(--font-heading);font-weight:800;font-size:12px;padding:7px 13px;border:1px solid "+(s.importTarget===t[0]?"var(--color-accent)":"var(--color-divider)")+";background:"+(s.importTarget===t[0]?"var(--color-accent-100)":"transparent")+";color:"+(s.importTarget===t[0]?"var(--color-accent-800)":"var(--color-text)"),
@@ -9387,7 +9773,7 @@ tr{page-break-inside:avoid;break-inside:avoid}
       importSample:s.importPreview?s.importPreview.rows.slice(0,4).map(r=>({text:s.importPreview.header.slice(0,4).map(h=>r[h]).filter(Boolean).join("  ·  ")})):[],
       onCommitImport:()=>this.commitImport(),
       onCancelImport:()=>this.setState({importPreview:null,importMsg:""}),
-      resetTargets:[["donors","Donors"],["transactions","Donations"],["events","Events"],["phases","Phases of work"],["workers","Workers & contractors"],["tasks","Work to do / tasks"]].map(t=>({
+      resetTargets:[["donors","Donors"],["transactions","Donations"],["phases","Phases of work"],["workers","Workers & contractors"],["tasks","Work to do / tasks"]].map(t=>({
         label:t[1], on:!!s.resetPick[t[0]], count:(this.d()[t[0]]||[]).length+" records",
         toggle:()=>this.setState(st=>({resetPick:Object.assign({},st.resetPick,{[t[0]]:!st.resetPick[t[0]]})}))})),
       resetIdle:s.resetStage!=="armed", resetArmed:s.resetStage==="armed",
@@ -9432,7 +9818,7 @@ tr{page-break-inside:avoid;break-inside:avoid}
         }; }),
       roleCards:s.roles.map(r=>{ const open=s.roleOpenId===r.id, n=s.users.filter(u=>(u.roles||[]).includes(r.name)).length;
         const p=Object.assign(emptyPerms(),r.perms||{});
-        const w=OPS.filter(k=>p[k]==="write").map(k=>SECTIONS.find(x=>x.key===k).label), v=OPS.filter(k=>p[k]==="view").map(k=>SECTIONS.find(x=>x.key===k).label);
+        const vis=OPS.filter(k=>!SECTIONS.find(x=>x.key===k).hidden), w=vis.filter(k=>p[k]==="write").map(k=>SECTIONS.find(x=>x.key===k).label), v=vis.filter(k=>p[k]==="view").map(k=>SECTIONS.find(x=>x.key===k).label);
         return {name:r.name, members:n+" user"+(n===1?"":"s"), locked:!!r.locked, canRename:!r.builtin, canDelete:!r.builtin, open,
           summary:r.locked?"Every operation, including Admin and View $$":([w.length?"Read / write: "+w.join(", "):"",v.length?"View only: "+v.join(", "):"","$$ "+(p.money?"visible":"hidden")].filter(Boolean).join(" · ")),
           toggleLabel:open?"Close":(r.locked?"View":"Edit"),
@@ -9472,7 +9858,7 @@ tr{page-break-inside:avoid;break-inside:avoid}
         })})),
       noTeamExtras:(s.lists.team||[]).length===0,
 
-      schemaTabs:Object.keys(this.state.schema).map(k=>({label:(SECTIONS.find(x=>x.key===k)||{}).label||k,on:()=>this.setState({schemaTarget:k}),style:chip(s.schemaTarget===k)})),
+      schemaTabs:Object.keys(this.state.schema).filter(k=>!(SECTIONS.find(x=>x.key===k)||{}).hidden).map(k=>({label:(SECTIONS.find(x=>x.key===k)||{}).label||k,on:()=>this.setState({schemaTarget:k}),style:chip(s.schemaTarget===k)})),
       schemaTargetLabel:(SECTIONS.find(x=>x.key===s.schemaTarget)||{}).label||s.schemaTarget,
       schemaFields:(this.state.schema[s.schemaTarget]||[]).map((f,i)=>({label:f.l,
         meta:f.t+(f.req?" · required":"")+(f.link?" → "+f.link:"")+(f.dyn?" · managed list":"")+(f.o?" · "+f.o.length+" choices":""),
