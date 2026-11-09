@@ -703,11 +703,8 @@ body{margin:0;background:#e7dfcc;font-family:var(--font-body)}
 </sc-if>
 </div>
 <div style="background:var(--color-bg);padding:14px 16px 18px">
-<div style="display:flex;align-items:baseline;gap:8px;margin-bottom:8px">
-<div style="flex:1;font-family:var(--font-heading);font-weight:800;font-size:13px;text-transform:uppercase;letter-spacing:.04em">Thank-yous due</div>
-<sc-if value="{{ showOvThanksLink }}" hint-placeholder-val="{{ false }}"><button class="nkt-tap" sc-camel-on-click="{{ onOvThanksList }}" style="flex:none;border:0;background:transparent;cursor:pointer;font-size:11.5px;text-decoration:underline;color:var(--color-text);padding:0">{{ ovThanksLinkLabel }}</button></sc-if>
-</div>
-<sc-for list="{{ ovThanks }}" as="e" hint-placeholder-count="4">
+<div style="font-family:var(--font-heading);font-weight:800;font-size:13px;text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px">Upcoming events</div>
+<sc-for list="{{ upcomingEvents }}" as="e" hint-placeholder-count="4">
 <button class="nkt-row" sc-camel-on-click="{{ e.open }}" style="padding:9px 0">
 <span style="flex:none;width:5px;height:26px;background:{{ e.mark }}"></span>
 <span style="flex:1;min-width:0">
@@ -717,8 +714,8 @@ body{margin:0;background:#e7dfcc;font-family:var(--font-body)}
 <span style="flex:none;font-family:var(--font-heading);font-weight:800;font-size:12.5px">{{ e.value }}</span>
 </button>
 </sc-for>
-<sc-if value="{{ ovThanksEmpty }}" hint-placeholder-val="{{ true }}">
-<div style="padding:10px 0 4px;font-size:12.5px;line-height:1.6;color:color-mix(in srgb,var(--color-text) 55%,transparent);text-wrap:pretty">{{ ovThanksEmptyText }}</div>
+<sc-if value="{{ upcomingEventsEmpty }}" hint-placeholder-val="{{ true }}">
+<div style="padding:10px 0 4px;font-size:12.5px;line-height:1.6;color:color-mix(in srgb,var(--color-text) 55%,transparent);text-wrap:pretty">Nothing on the calendar. Events appear here from the day they are created until the day they are held.</div>
 </sc-if>
 </div>
 <div style="background:var(--color-bg);padding:14px 16px 18px">
@@ -5431,17 +5428,6 @@ body{margin:0;font-family:Archivo,system-ui,sans-serif;color:#201e1d;-webkit-pri
       onThanksClose:()=>this.setState({thanksList:null})
     };
   }
-  // Overview panel: the newest donations still waiting on a thank-you.
-  overviewThanks(){
-    if(this.state.me&&!this.canSee("transactions")) return [];
-    return this.d().transactions.filter(t=>this.thankDue(t)&&this.donor(t.donorId))
-      .sort((a,b)=>String(b.completedAt||b.date||"").localeCompare(String(a.completedAt||a.date||"")))
-      .slice(0,5).map(t=>({title:this.donor(t.donorId).name||"Donor",
-        sub:[t.title||"Donation",String(t.completedAt||t.date||"").slice(0,10),this.donationOwner(t)||"Unassigned"].filter(Boolean).join(" · "),
-        value:this.hideAmounts?"":this.money(t.plan?Number(t.plan.total)||0:Number(t.amount)||0),
-        mark:this.statusIs(t.status,"Pledged")?TAN:GREEN,
-        open:()=>this.open("transactions",t.id)}));
-  }
   // One-time move off the retired Events section. Every gift that hung under
   // an event becomes an ordinary donation titled and tagged with
   // EVENT_DONATION_TITLE, a thank-you already ticked on the event carries over
@@ -8657,7 +8643,7 @@ tr{page-break-inside:avoid;break-inside:avoid}
         sub:[(t.deadline<today?"Deadline passed":"Deadline"),t.title||"",this.donationOwner(t)||"Unassigned"].filter(Boolean).join(" · "),
         value:this.money(t.amount),mark:t.deadline<today?RED:YELLOW,open:()=>this.open("transactions",t.id)});
     });
-    if(this.canSee("events")) this.d().events.forEach(e=>{
+    this.d().events.forEach(e=>{
       const d=String(e.date||"").slice(0,10);
       if(d>=today) return; // upcoming events have their own panel
       push(d,{title:e.name+" — event passed",sub:"Wrap-up: confirm gifts taken and tasks closed",
@@ -9204,11 +9190,8 @@ tr{page-break-inside:avoid;break-inside:avoid}
       onCancelWorkerAdd:()=>this.setState({workerAddOpen:false,workerAddError:"",workerAddMode:""}),
 
       blockedMsg:s.blockedMsg||"",
-      ...(()=>{ const rows=this.overviewThanks(), n=this.d().transactions.filter(t=>this.thankDue(t)&&this.donor(t.donorId)).length, can=!s.me||this.canSee("transactions");
-        return {ovThanks:rows, ovThanksEmpty:rows.length===0,
-          ovThanksEmptyText:can?"Every Received and Pledged donation has been thanked.":"Thank-yous show here for people who can see Donations.",
-          showOvThanksLink:can&&n>0, ovThanksLinkLabel:n>5?"All "+n+" \u2192":"Open list \u2192",
-          onOvThanksList:()=>{ this.go("transactions"); this.openThanksList(); }}; })(),
+      upcomingEvents:this.upcomingEvents(),
+      upcomingEventsEmpty:this.upcomingEvents().length===0,
       attention:this.attentionItems(),
       attentionEmpty:this.attentionItems().length===0,
       activity:this.activityItems(),

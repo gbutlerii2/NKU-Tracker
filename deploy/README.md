@@ -56,8 +56,7 @@ dinner, say) so it shows the deductible amount.
 The top of Donations has **Print out Certificates**, **Print out Receipts**
 (same filters as certificates) and **Thank you List**, which shows every
 Received or Pledged donation still waiting on a thank-you and marks them in
-bulk. Plan payments are covered by their pledge's thank-you. The Overview's
-**Thank-yous due** panel replaces Upcoming events.
+bulk. Plan payments are covered by their pledge's thank-you.
 
 ## Upgrading to roles & operations
 
