@@ -7097,7 +7097,7 @@ tr{page-break-inside:avoid;break-inside:avoid}
         const alloc=t.taskIds.map(id=>(this.task(id)||{}).name).filter(Boolean).join(" · ")||"Unallocated";
         const who=t.eventLines?((t.eventLines||[]).length+" attendee gift"+((t.eventLines||[]).length===1?"":"s")):(t.title||t.grantName?dn:"");
         const planBit=t.plan?("Plan "+t.plan.installments.filter(x=>!x.extra&&x.txId).length+"/"+t.plan.installments.filter(x=>!x.extra).length+" paid"):"";
-        out.push(mk(t,{kicker:[t.date,t.method,t.title||t.grantName].filter(Boolean).join(" · "),
+        out.push(mk(t,{kicker:[t.date,t.method,t.title].filter(Boolean).join(" · "),
           title:t.title||t.grantName||dn,
         sub:[planBit,who,t.eventId?"":alloc,this.donationOwner(t)||"Unassigned"].filter(Boolean).join(" · "),
           value:this.money(t.amount),tag:this.txStatusLabel(t),amts:this.amtCells(this.txBucketsList(t))}));
@@ -7390,7 +7390,7 @@ tr{page-break-inside:avoid;break-inside:avoid}
         grp("Donations",(tx.length+evLines.length)+" linked",tx.map(t=>{
           const sc=t.plan?t.plan.installments.filter(x=>!x.extra):null;
           const kind=sc?("Installment · "+sc.filter(x=>x.txId).length+" of "+sc.length+" received · "+(t.plan.every||"").toLowerCase()):"One-time";
-          return {title:(t.title||t.date||"Donation")+(t.date&&t.title?" · "+t.date:""),
+          return {title:(t.title||t.grantName||t.date||"Donation")+(t.date&&(t.title||t.grantName)?" · "+t.date:""),
             sub:[kind,sc?this.txStatusLabel(t):t.status,t.method||(t.eventId?"event gift":""),t.thankedAt?"thanked":(this.thankDue(t)?"thank-you due":"")].filter(Boolean).join(" · "),
             value:sc?(this.money(this.planPaid(t))+" of "+this.money(t.plan.total)):this.money(t.amount),open:()=>this.open("transactions",t.id)};
         })
