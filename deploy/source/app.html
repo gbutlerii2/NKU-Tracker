@@ -576,6 +576,311 @@ body{margin:0;background:#e7dfcc;font-family:var(--font-body)}
 </div>
 </div>
 </sc-if>
+
+<sc-if value="{{ wsPickShow }}" hint-placeholder-val="{{ false }}">
+<div style="position:fixed;inset:0;z-index:8500;background:var(--color-bg);display:flex;align-items:center;padding:0 max(24px,6vw);overflow-y:auto">
+<div style="max-width:440px;width:100%;display:flex;flex-direction:column;gap:12px">
+<img src="https://rotaryknk.org/images/nku/NKU-800x378.png" alt="North Kitsap United" style="width:130px;height:auto;margin-bottom:6px">
+<div style="font-family:var(--font-heading);font-weight:800;font-size:26px;letter-spacing:-.02em">Where to?</div>
+<div style="height:2px;background:var(--color-divider)"></div>
+<div style="font-size:13.5px;line-height:1.6;color:color-mix(in srgb,var(--color-text) 70%,transparent);text-wrap:pretty">Signed in as {{ wsWho }}. Choose what you're working on. You can switch any time from the top of the page.</div>
+<div class="field"><label>Open</label>
+<sc-raw-select class="input" value="{{ wsPickValue }}" sc-camel-on-change="{{ onWsPick }}" style="height:44px;font-size:15px"><sc-for list="{{ wsPickOptions }}" as="o" hint-placeholder-count="4"><option value="{{ o.v }}">{{ o.l }}</option></sc-for></sc-raw-select>
+</div>
+<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px">
+<button class="btn btn-primary nkt-tap" sc-camel-on-click="{{ onWsPickGo }}" style="height:44px;padding:0 22px">Continue</button>
+<button class="btn btn-secondary nkt-tap" sc-camel-on-click="{{ onSignOut }}" style="height:44px;padding:0 16px">Sign out</button>
+</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ wsNone }}" hint-placeholder-val="{{ false }}">
+<div style="position:fixed;inset:0;z-index:8500;background:var(--color-bg);display:flex;align-items:center;padding:0 max(24px,6vw)">
+<div style="max-width:440px">
+<div style="font-family:var(--font-heading);font-weight:800;font-size:26px;letter-spacing:-.02em">No workspace yet</div>
+<div style="height:2px;background:var(--color-divider);margin:16px 0"></div>
+<div style="font-size:13.5px;line-height:1.6;color:color-mix(in srgb,var(--color-text) 70%,transparent);text-wrap:pretty">{{ wsWho }} is signed in, but hasn't been given the Donors, Donations or Grants workspace. An admin can turn one on from Admin → Users or Roles.</div>
+<button class="btn btn-secondary nkt-tap" sc-camel-on-click="{{ onSignOut }}" style="height:42px;padding:0 18px;margin-top:20px">Sign out</button>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ wsShow }}" hint-placeholder-val="{{ false }}">
+<div id="nkt-ws" class="nkt-scroll" style="position:fixed;inset:0;z-index:8000;background:var(--color-bg);overflow-y:auto">
+<div style="position:sticky;top:0;z-index:2;background:var(--color-bg);border-bottom:2px solid var(--color-divider)">
+<div style="max-width:1040px;margin:0 auto;padding:10px 16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+<img src="https://rotaryknk.org/images/nku/NKU-800x378.png" alt="North Kitsap United" style="width:84px;height:auto">
+<div style="flex:1;min-width:120px">
+<div style="font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:color-mix(in srgb,var(--color-text) 55%,transparent)">NKU Tracker</div>
+<div style="font-family:var(--font-heading);font-weight:800;font-size:20px;letter-spacing:-.015em">{{ wsTitle }}</div>
+</div>
+<sc-if value="{{ wsCanSwitch }}" hint-placeholder-val="{{ false }}">
+<sc-raw-select class="input" value="{{ wsSwitchValue }}" sc-camel-on-change="{{ onWsSwitch }}" style="height:34px;width:auto;min-width:130px"><sc-for list="{{ wsSwitchOptions }}" as="o" hint-placeholder-count="4"><option value="{{ o.v }}">{{ o.l }}</option></sc-for></sc-raw-select>
+</sc-if>
+<button class="btn btn-secondary nkt-tap" sc-camel-on-click="{{ onSignOut }}" style="height:34px;padding:0 12px;font-size:12.5px">Sign out</button>
+</div>
+</div>
+
+<div style="max-width:1040px;margin:0 auto;{{ wsMainPad }}">
+<sc-if value="{{ wsLoading }}" hint-placeholder-val="{{ false }}">
+<div style="padding:40px 0;font-size:13px;color:color-mix(in srgb,var(--color-text) 60%,transparent)">Loading…</div>
+</sc-if>
+<sc-if value="{{ wsErr }}" hint-placeholder-val="{{ false }}"><div style="border-left:3px solid #b3261e;padding:8px 0 8px 11px;margin-bottom:12px;font-size:13px;line-height:1.5;color:#b3261e">{{ wsErr }}</div></sc-if>
+<sc-if value="{{ wsMsg }}" hint-placeholder-val="{{ false }}"><div style="border-left:3px solid #2e6b3e;padding:8px 0 8px 11px;margin-bottom:12px;font-size:13px;line-height:1.5;color:#1b4127">{{ wsMsg }}</div></sc-if>
+
+<sc-if value="{{ wsReady }}" hint-placeholder-val="{{ true }}">
+
+<sc-if value="{{ wsIsDonors }}" hint-placeholder-val="{{ false }}">
+<div style="max-width:720px;display:flex;flex-direction:column;gap:12px">
+<div style="font-size:13px;line-height:1.6;color:color-mix(in srgb,var(--color-text) 68%,transparent)">Add a new donor with their contact details. As you type the name, anyone already in the tracker with a similar name shows below so you don't add them twice.</div>
+<div style="{{ wsTwoCol }}">
+<div class="field"><label>Type</label><sc-raw-select class="input" value="{{ wdnType }}" sc-camel-on-change="{{ onWdnType }}" style="height:40px"><sc-for list="{{ wdnTypes }}" as="o" hint-placeholder-count="3"><option value="{{ o.v }}">{{ o.l }}</option></sc-for></sc-raw-select></div>
+<div class="field"><label>Name *</label><input class="input" value="{{ wdnName }}" sc-camel-on-change="{{ onWdnName }}" placeholder="Person, organization or family" style="height:40px;min-height:40px"></div>
+</div>
+<sc-if value="{{ wdnDupShow }}" hint-placeholder-val="{{ false }}">
+<div style="border:1px solid #c9a227;background:color-mix(in srgb,#c9a227 10%,transparent);padding:10px 12px">
+<div style="font-size:12px;font-weight:700;margin-bottom:6px">Already in the tracker — check this isn't one of them:</div>
+<sc-for list="{{ wdnDups }}" as="d" hint-placeholder-count="2"><div style="font-size:12.5px;padding:2px 0"><b>{{ d.name }}</b> <span style="color:color-mix(in srgb,var(--color-text) 60%,transparent)">{{ d.sub }}</span></div></sc-for>
+</div>
+</sc-if>
+<sc-if value="{{ wdnIsOrg }}" hint-placeholder-val="{{ false }}">
+<div class="field"><label>Contact person</label><input class="input" value="{{ wdnContact }}" sc-camel-on-change="{{ onWdnContact }}" style="height:40px;min-height:40px"></div>
+</sc-if>
+<div style="{{ wsTwoCol }}">
+<div class="field"><label>Email</label><input class="input" type="email" value="{{ wdnEmail }}" sc-camel-on-change="{{ onWdnEmail }}" style="height:40px;min-height:40px"></div>
+<div class="field"><label>Phone</label><input class="input" type="tel" value="{{ wdnPhone }}" sc-camel-on-change="{{ onWdnPhone }}" style="height:40px;min-height:40px"></div>
+<div class="field"><label>Mobile</label><input class="input" type="tel" value="{{ wdnMobile }}" sc-camel-on-change="{{ onWdnMobile }}" style="height:40px;min-height:40px"></div>
+<div class="field"><label>Preferred contact</label><sc-raw-select class="input" value="{{ wdnPreferred }}" sc-camel-on-change="{{ onWdnPreferred }}" style="height:40px"><sc-for list="{{ wdnPrefs }}" as="o" hint-placeholder-count="5"><option value="{{ o.v }}">{{ o.l }}</option></sc-for></sc-raw-select></div>
+</div>
+<div class="field"><label>Mailing address</label><textarea class="input" value="{{ wdnAddress }}" sc-camel-on-change="{{ onWdnAddress }}" rows="3" style="min-height:70px;resize:vertical"></textarea></div>
+<div class="field"><label>Account owner</label><sc-raw-select class="input" value="{{ wdnOwner }}" sc-camel-on-change="{{ onWdnOwner }}" style="height:40px"><sc-for list="{{ wsTeam }}" as="o" hint-placeholder-count="4"><option value="{{ o.v }}">{{ o.l }}</option></sc-for></sc-raw-select></div>
+<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px">
+<button class="btn btn-primary nkt-tap" sc-camel-on-click="{{ onWdnSave }}" style="height:44px;padding:0 22px">{{ wdnSaveLabel }}</button>
+<button class="btn btn-secondary nkt-tap" sc-camel-on-click="{{ onWdnClear }}" style="height:44px;padding:0 16px">Clear</button>
+</div>
+<sc-if value="{{ wsRecentShow }}" hint-placeholder-val="{{ false }}">
+<div style="margin-top:14px">
+<div style="font-family:var(--font-heading);font-weight:800;font-size:12px;letter-spacing:.08em;text-transform:uppercase;padding-bottom:6px;border-bottom:2px solid var(--color-divider)">Added just now</div>
+<sc-for list="{{ wsRecent }}" as="r" hint-placeholder-count="2"><div style="padding:7px 0;border-bottom:1px solid var(--color-divider);font-size:13px">{{ r.name }} <span style="color:color-mix(in srgb,var(--color-text) 55%,transparent)">{{ r.sub }}</span></div></sc-for>
+</div>
+</sc-if>
+</div>
+</sc-if>
+
+<sc-if value="{{ wsIsDonations }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;border-bottom:1px solid var(--color-divider);margin-bottom:16px">
+<button class="nkt-tap" sc-camel-on-click="{{ onWdTabEnter }}" style="{{ wdTabEnterSt }}">Enter a donation</button>
+<button class="nkt-tap" sc-camel-on-click="{{ onWdTabList }}" style="{{ wdTabListSt }}">Donations list</button>
+</div>
+
+<sc-if value="{{ wdTabEnter }}" hint-placeholder-val="{{ true }}">
+<div style="max-width:720px;display:flex;flex-direction:column;gap:12px">
+<div style="{{ wsTwoCol }}">
+<div class="field"><label>Donation type *</label><sc-raw-select class="input" value="{{ wdMethod }}" sc-camel-on-change="{{ onWdMethod }}" style="height:40px"><sc-for list="{{ wdMethods }}" as="o" hint-placeholder-count="6"><option value="{{ o.v }}">{{ o.l }}</option></sc-for></sc-raw-select></div>
+<div class="field"><label>Payment type</label><div style="display:flex;gap:6px"><button class="nkt-tap" sc-camel-on-click="{{ onWdKindOne }}" style="{{ wdKindOne }}">One-time</button><button class="nkt-tap" sc-camel-on-click="{{ onWdKindInst }}" style="{{ wdKindInst }}">Installments</button></div></div>
+</div>
+
+<div class="field"><label>Donor *</label>
+<sc-if value="{{ wdPicked }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;align-items:center;gap:10px;border:1px solid var(--color-divider);padding:8px 10px">
+<div style="flex:1;min-width:0"><div style="font-weight:700;font-size:13.5px">{{ wdPickedName }}</div><div style="font-size:11.5px;color:color-mix(in srgb,var(--color-text) 60%,transparent)">{{ wdPickedSub }}</div></div>
+<button class="nkt-tap" sc-camel-on-click="{{ onWdUnpick }}" style="height:28px;padding:0 10px;border:1px solid var(--color-divider);background:transparent;cursor:pointer;font-size:12px">Change</button>
+</div>
+</sc-if>
+<sc-if value="{{ wdSearching }}" hint-placeholder-val="{{ true }}">
+<input class="input" value="{{ wdQ }}" sc-camel-on-change="{{ onWdQ }}" placeholder="Type a name, email or donor ID" style="height:40px;min-height:40px">
+<sc-for list="{{ wdResults }}" as="r" hint-placeholder-count="3">
+<button class="nkt-tap" sc-camel-on-click="{{ r.pick }}" style="display:block;width:100%;text-align:left;border:0;border-bottom:1px solid var(--color-divider);background:transparent;cursor:pointer;padding:8px 10px;font-family:var(--font-body)"><span style="font-weight:700;font-size:13px">{{ r.name }}</span> <span style="font-size:11.5px;color:color-mix(in srgb,var(--color-text) 60%,transparent)">{{ r.sub }}</span></button>
+</sc-for>
+<sc-if value="{{ wdNoResults }}" hint-placeholder-val="{{ false }}"><div style="font-size:12px;padding:6px 0;color:color-mix(in srgb,var(--color-text) 60%,transparent)">No donor matches that.</div></sc-if>
+<div><button class="nkt-tap" sc-camel-on-click="{{ onWdNewDonor }}" style="margin-top:6px;height:30px;padding:0 12px;border:1px dashed var(--color-text);background:transparent;cursor:pointer;font-size:12px;font-family:var(--font-body)">+ New donor</button></div>
+</sc-if>
+<sc-if value="{{ wdNewDonor }}" hint-placeholder-val="{{ false }}">
+<div style="border:1px solid var(--color-divider);padding:12px;display:flex;flex-direction:column;gap:10px">
+<div style="display:flex;align-items:center"><div style="flex:1;font-family:var(--font-heading);font-weight:800;font-size:13px">New donor</div><button class="nkt-tap" sc-camel-on-click="{{ onWdCancelNew }}" style="height:26px;padding:0 10px;border:1px solid var(--color-divider);background:transparent;cursor:pointer;font-size:11.5px">Search instead</button></div>
+<div style="{{ wsTwoCol }}">
+<div class="field"><label>Type</label><sc-raw-select class="input" value="{{ wdNdType }}" sc-camel-on-change="{{ onWdNdType }}" style="height:38px"><sc-for list="{{ wdTypes }}" as="o" hint-placeholder-count="3"><option value="{{ o.v }}">{{ o.l }}</option></sc-for></sc-raw-select></div>
+<div class="field"><label>Name *</label><input class="input" value="{{ wdNdName }}" sc-camel-on-change="{{ onWdNdName }}" style="height:38px;min-height:38px"></div>
+<div class="field"><label>Email</label><input class="input" type="email" value="{{ wdNdEmail }}" sc-camel-on-change="{{ onWdNdEmail }}" style="height:38px;min-height:38px"></div>
+<div class="field"><label>Phone</label><input class="input" type="tel" value="{{ wdNdPhone }}" sc-camel-on-change="{{ onWdNdPhone }}" style="height:38px;min-height:38px"></div>
+</div>
+<div class="field"><label>Mailing address</label><textarea class="input" value="{{ wdNdAddress }}" sc-camel-on-change="{{ onWdNdAddress }}" rows="2" style="min-height:52px;resize:vertical"></textarea></div>
+</div>
+</sc-if>
+</div>
+
+<div style="{{ wsTwoCol }}">
+<div class="field"><label>{{ wdAmountLabel }} *</label><input class="input" sc-camel-input-mode="decimal" value="{{ wdAmount }}" sc-camel-on-change="{{ onWdAmount }}" placeholder="$0.00" style="height:40px;min-height:40px;font-weight:700"></div>
+<sc-if value="{{ wdIsOne }}" hint-placeholder-val="{{ true }}">
+<div class="field"><label>Status</label><sc-raw-select class="input" value="{{ wdStatus }}" sc-camel-on-change="{{ onWdStatus }}" style="height:40px"><sc-for list="{{ wdStatuses }}" as="o" hint-placeholder-count="2"><option value="{{ o.v }}">{{ o.l }}</option></sc-for></sc-raw-select></div>
+</sc-if>
+<div class="field"><label>{{ wdDateLabel }}</label><input class="input" type="date" value="{{ wdDate }}" sc-camel-on-change="{{ onWdDate }}" style="height:40px;min-height:40px"></div>
+<div class="field"><label>Title / event (optional)</label><input class="input" list="nkt-ws-titles" value="{{ wdTitle }}" sc-camel-on-change="{{ onWdTitle }}" placeholder="e.g. NKU Dinner Gala" style="height:40px;min-height:40px"><datalist id="nkt-ws-titles"><sc-for list="{{ wdTitleOpts }}" as="o" hint-placeholder-count="3"><option value="{{ o.v }}"></option></sc-for></datalist></div>
+</div>
+
+<sc-if value="{{ wdIsInst }}" hint-placeholder-val="{{ false }}">
+<div style="border:1px solid var(--color-divider);padding:12px;display:flex;flex-direction:column;gap:10px">
+<div style="font-family:var(--font-heading);font-weight:800;font-size:13px">Installment schedule</div>
+<div style="display:flex;gap:10px;flex-wrap:wrap">
+<div class="field" style="width:110px"><label>Payments</label><input class="input" sc-camel-input-mode="numeric" value="{{ wdCount }}" sc-camel-on-change="{{ onWdCount }}" style="height:36px;min-height:36px"></div>
+<div class="field" style="width:140px"><label>Every</label><sc-raw-select class="input" value="{{ wdEvery }}" sc-camel-on-change="{{ onWdEvery }}" style="height:36px"><sc-for list="{{ wdEveryOpts }}" as="o" hint-placeholder-count="3"><option value="{{ o.v }}">{{ o.l }}</option></sc-for></sc-raw-select></div>
+<div class="field" style="width:170px"><label>First payment due</label><input class="input" type="date" value="{{ wdStart }}" sc-camel-on-change="{{ onWdStart }}" style="height:36px;min-height:36px"></div>
+</div>
+<sc-for list="{{ wdSched }}" as="r" hint-placeholder-count="3">
+<div style="display:flex;gap:10px;align-items:center">
+<span style="flex:none;width:22px;font-family:var(--font-heading);font-weight:800;font-size:12px;color:color-mix(in srgb,var(--color-text) 55%,transparent)">{{ r.no }}</span>
+<input class="input" type="date" value="{{ r.due }}" sc-camel-on-change="{{ r.onDue }}" style="flex:none;width:150px;height:32px;min-height:32px;font-size:12.5px">
+<input class="input" sc-camel-input-mode="decimal" value="{{ r.amt }}" sc-camel-on-change="{{ r.onAmt }}" style="flex:none;width:110px;height:32px;min-height:32px;font-size:12.5px;text-align:right;font-weight:700">
+</div>
+</sc-for>
+<div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+<span style="font-size:12px;color:color-mix(in srgb,var(--color-text) 65%,transparent)">{{ wdSchedNote }}</span>
+<sc-if value="{{ wdSchedOff }}" hint-placeholder-val="{{ false }}"><button class="nkt-tap" sc-camel-on-click="{{ onWdSpread }}" style="height:28px;padding:0 10px;border:1px solid var(--color-text);background:transparent;cursor:pointer;font-size:11.5px">Spread evenly</button></sc-if>
+</div>
+</div>
+</sc-if>
+
+<div class="field"><label>Notes</label><textarea class="input" value="{{ wdNotes }}" sc-camel-on-change="{{ onWdNotes }}" rows="2" style="min-height:52px;resize:vertical"></textarea></div>
+<div style="font-size:11.5px;color:color-mix(in srgb,var(--color-text) 58%,transparent)">Once saved, the amount isn't shown here again. An admin can see it in the full tracker.</div>
+<div style="display:flex;gap:8px;flex-wrap:wrap">
+<button class="btn btn-primary nkt-tap" sc-camel-on-click="{{ onWdSave }}" style="height:44px;padding:0 22px">{{ wdSaveLabel }}</button>
+<button class="btn btn-secondary nkt-tap" sc-camel-on-click="{{ onWdClear }}" style="height:44px;padding:0 16px">Clear</button>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ wdTabList }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:10px">
+<input class="input" value="{{ wdQList }}" sc-camel-on-change="{{ onWdQList }}" placeholder="Search donor, title or type" style="height:34px;min-height:34px;flex:1;min-width:180px;max-width:320px">
+<sc-for list="{{ wdShowOpts }}" as="o" hint-placeholder-count="3"><button class="nkt-tap" sc-camel-on-click="{{ o.on }}" style="{{ o.style }}">{{ o.label }}</button></sc-for>
+<span style="font-size:11.5px;color:color-mix(in srgb,var(--color-text) 55%,transparent)">{{ wdListCount }}</span>
+</div>
+<sc-for list="{{ wdList }}" as="r" hint-placeholder-count="5">
+<div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:10px 0;border-bottom:1px solid var(--color-divider)">
+<div style="flex:1;min-width:200px">
+<div style="font-weight:700;font-size:13.5px">{{ r.name }}</div>
+<div style="font-size:11.5px;color:color-mix(in srgb,var(--color-text) 60%,transparent)">{{ r.sub }}</div>
+<sc-if value="{{ r.receiptNote }}" hint-placeholder-val="{{ false }}"><div style="font-size:11px;color:color-mix(in srgb,var(--color-text) 55%,transparent);margin-top:2px">{{ r.receiptNote }}</div></sc-if>
+</div>
+<span class="{{ r.tagCls }}">{{ r.status }}</span>
+<sc-if value="{{ r.canThank }}" hint-placeholder-val="{{ true }}"><button class="nkt-tap" sc-camel-on-click="{{ r.onThank }}" style="{{ r.thankSt }}">{{ r.thankLabel }}</button></sc-if>
+<sc-if value="{{ r.canReceipt }}" hint-placeholder-val="{{ true }}"><button class="nkt-tap" sc-camel-on-click="{{ r.onReceipt }}" style="cursor:pointer;height:30px;padding:0 10px;font-size:12px;font-family:var(--font-body);white-space:nowrap;border:1px solid var(--color-text);background:transparent">{{ r.receiptLabel }}</button></sc-if>
+</div>
+</sc-for>
+<sc-if value="{{ wdListEmpty }}" hint-placeholder-val="{{ false }}"><div style="padding:30px 0;font-size:13px;color:color-mix(in srgb,var(--color-text) 55%,transparent)">Nothing matches.</div></sc-if>
+<sc-if value="{{ wdListMore }}" hint-placeholder-val="{{ false }}"><button class="btn btn-secondary nkt-tap" sc-camel-on-click="{{ onWdMore }}" style="height:36px;padding:0 14px;margin-top:12px">Show more</button></sc-if>
+</sc-if>
+</sc-if>
+
+<sc-if value="{{ wsIsGrants }}" hint-placeholder-val="{{ false }}">
+<sc-if value="{{ wgListShow }}" hint-placeholder-val="{{ true }}">
+<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:10px">
+<input class="input" value="{{ wgQ }}" sc-camel-on-change="{{ onWgQ }}" placeholder="Search grants" style="height:34px;min-height:34px;flex:1;min-width:180px;max-width:320px">
+<span style="font-size:11.5px;color:color-mix(in srgb,var(--color-text) 55%,transparent)">{{ wgCount }}</span>
+<div style="flex:1"></div>
+<button class="btn btn-primary nkt-tap" sc-camel-on-click="{{ onWgNew }}" style="height:36px;padding:0 16px">New grant</button>
+</div>
+<sc-for list="{{ wgRows }}" as="r" hint-placeholder-count="4">
+<button class="nkt-tap" sc-camel-on-click="{{ r.open }}" style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;width:100%;text-align:left;padding:11px 0;border:0;border-bottom:1px solid var(--color-divider);background:transparent;cursor:pointer;font-family:var(--font-body);color:var(--color-text)">
+<div style="flex:1;min-width:200px">
+<div style="font-weight:700;font-size:13.5px">{{ r.name }}</div>
+<div style="font-size:11.5px;color:color-mix(in srgb,var(--color-text) 60%,transparent)">{{ r.funder }} · {{ r.deadline }}</div>
+<sc-if value="{{ r.latest }}" hint-placeholder-val="{{ false }}"><div style="font-size:11.5px;margin-top:2px">{{ r.latest }}</div></sc-if>
+</div>
+<span style="font-family:var(--font-heading);font-weight:800;font-size:13px">{{ r.amount }}</span>
+<span class="{{ r.tagCls }}">{{ r.status }}</span>
+</button>
+</sc-for>
+<sc-if value="{{ wgEmpty }}" hint-placeholder-val="{{ false }}"><div style="padding:30px 0;font-size:13px;color:color-mix(in srgb,var(--color-text) 55%,transparent)">No grants yet.</div></sc-if>
+</sc-if>
+
+<sc-if value="{{ wgEditShow }}" hint-placeholder-val="{{ false }}">
+<div style="max-width:760px;display:flex;flex-direction:column;gap:12px">
+<div style="display:flex;align-items:center;gap:10px">
+<button class="nkt-tap" sc-camel-on-click="{{ onWgBack }}" style="height:30px;padding:0 10px;border:1px solid var(--color-divider);background:transparent;cursor:pointer;font-size:12px">← All grants</button>
+<div style="font-family:var(--font-heading);font-weight:800;font-size:17px">{{ wgEditTitle }}</div>
+</div>
+<div class="field"><label>Grant Name *</label><input class="input" value="{{ wgName }}" sc-camel-on-change="{{ onWgName }}" style="height:40px;min-height:40px"></div>
+<div class="field"><label>Funder *</label>
+<sc-if value="{{ wgFunderPicked }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;align-items:center;gap:10px;border:1px solid var(--color-divider);padding:8px 10px">
+<div style="flex:1;min-width:0"><div style="font-weight:700;font-size:13.5px">{{ wgFunderName }}</div><div style="font-size:11.5px;color:color-mix(in srgb,var(--color-text) 60%,transparent)">{{ wgFunderSub }}</div></div>
+<button class="nkt-tap" sc-camel-on-click="{{ onWgUnpick }}" style="height:28px;padding:0 10px;border:1px solid var(--color-divider);background:transparent;cursor:pointer;font-size:12px">Change</button>
+</div>
+</sc-if>
+<sc-if value="{{ wgFunderSearch }}" hint-placeholder-val="{{ true }}">
+<input class="input" value="{{ wgQ2 }}" sc-camel-on-change="{{ onWgQ2 }}" placeholder="Type the funder's name" style="height:40px;min-height:40px">
+<sc-for list="{{ wgResults }}" as="r" hint-placeholder-count="3">
+<button class="nkt-tap" sc-camel-on-click="{{ r.pick }}" style="display:block;width:100%;text-align:left;border:0;border-bottom:1px solid var(--color-divider);background:transparent;cursor:pointer;padding:8px 10px;font-family:var(--font-body)"><span style="font-weight:700;font-size:13px">{{ r.name }}</span> <span style="font-size:11.5px;color:color-mix(in srgb,var(--color-text) 60%,transparent)">{{ r.sub }}</span></button>
+</sc-for>
+<sc-if value="{{ wgNoResults }}" hint-placeholder-val="{{ false }}"><div style="font-size:12px;padding:6px 0;color:color-mix(in srgb,var(--color-text) 60%,transparent)">No funder matches that.</div></sc-if>
+<div><button class="nkt-tap" sc-camel-on-click="{{ onWgNewDonor }}" style="margin-top:6px;height:30px;padding:0 12px;border:1px dashed var(--color-text);background:transparent;cursor:pointer;font-size:12px;font-family:var(--font-body)">+ New funder</button></div>
+</sc-if>
+<sc-if value="{{ wgNewDonor }}" hint-placeholder-val="{{ false }}">
+<div style="border:1px solid var(--color-divider);padding:12px;display:flex;flex-direction:column;gap:10px">
+<div style="display:flex;align-items:center"><div style="flex:1;font-family:var(--font-heading);font-weight:800;font-size:13px">New funder</div><button class="nkt-tap" sc-camel-on-click="{{ onWgCancelNew }}" style="height:26px;padding:0 10px;border:1px solid var(--color-divider);background:transparent;cursor:pointer;font-size:11.5px">Search instead</button></div>
+<div style="{{ wsTwoCol }}">
+<div class="field"><label>Type</label><sc-raw-select class="input" value="{{ wgNdType }}" sc-camel-on-change="{{ onWgNdType }}" style="height:38px"><sc-for list="{{ wgTypes }}" as="o" hint-placeholder-count="3"><option value="{{ o.v }}">{{ o.l }}</option></sc-for></sc-raw-select></div>
+<div class="field"><label>Name *</label><input class="input" value="{{ wgNdName }}" sc-camel-on-change="{{ onWgNdName }}" style="height:38px;min-height:38px"></div>
+<div class="field"><label>Email</label><input class="input" type="email" value="{{ wgNdEmail }}" sc-camel-on-change="{{ onWgNdEmail }}" style="height:38px;min-height:38px"></div>
+<div class="field"><label>Phone</label><input class="input" type="tel" value="{{ wgNdPhone }}" sc-camel-on-change="{{ onWgNdPhone }}" style="height:38px;min-height:38px"></div>
+</div>
+<div class="field"><label>Mailing address</label><textarea class="input" value="{{ wgNdAddress }}" sc-camel-on-change="{{ onWgNdAddress }}" rows="2" style="min-height:52px;resize:vertical"></textarea></div>
+</div>
+</sc-if>
+</div>
+<div style="{{ wsTwoCol }}">
+<div class="field"><label>Status</label><sc-raw-select class="input" value="{{ wgStatus }}" sc-camel-on-change="{{ onWgStatus }}" style="height:40px"><sc-for list="{{ wgStatuses }}" as="o" hint-placeholder-count="5"><option value="{{ o.v }}">{{ o.l }}</option></sc-for></sc-raw-select></div>
+<div class="field"><label>Amount</label><input class="input" sc-camel-input-mode="decimal" value="{{ wgAmount }}" sc-camel-on-change="{{ onWgAmount }}" placeholder="$0" style="height:40px;min-height:40px;font-weight:700"></div>
+<div class="field"><label>Date entered</label><input class="input" type="date" value="{{ wgDate }}" sc-camel-on-change="{{ onWgDate }}" style="height:40px;min-height:40px"></div>
+<div class="field"><label>Deadline</label><input class="input" type="date" value="{{ wgDeadline }}" sc-camel-on-change="{{ onWgDeadline }}" style="height:40px;min-height:40px"></div>
+<div class="field"><label>Probability</label><sc-raw-select class="input" value="{{ wgProb }}" sc-camel-on-change="{{ onWgProb }}" style="height:40px"><sc-for list="{{ wgProbs }}" as="o" hint-placeholder-count="5"><option value="{{ o.v }}">{{ o.l }}</option></sc-for></sc-raw-select></div>
+<div class="field"><label>NKU team assigned</label><sc-raw-select class="input" value="{{ wgTeamVal }}" sc-camel-on-change="{{ onWgTeam }}" style="height:40px"><sc-for list="{{ wsTeam }}" as="o" hint-placeholder-count="4"><option value="{{ o.v }}">{{ o.l }}</option></sc-for></sc-raw-select></div>
+<div class="field"><label>Contact person</label><input class="input" value="{{ wgContact }}" sc-camel-on-change="{{ onWgContact }}" style="height:40px;min-height:40px"></div>
+<div class="field"><label>Contact phone</label><input class="input" value="{{ wgContactPhone }}" sc-camel-on-change="{{ onWgContactPhone }}" style="height:40px;min-height:40px"></div>
+<div class="field"><label>Application link / email</label><input class="input" value="{{ wgAppLink }}" sc-camel-on-change="{{ onWgAppLink }}" style="height:40px;min-height:40px"></div>
+<div class="field"><label>Match required</label><input class="input" value="{{ wgMatch }}" sc-camel-on-change="{{ onWgMatch }}" placeholder="e.g. 1:1, 25%, none" style="height:40px;min-height:40px"></div>
+</div>
+
+<div style="border:1px solid var(--color-divider)">
+<div style="display:flex;align-items:center;padding:10px 12px;border-bottom:1px solid var(--color-divider)">
+<div style="flex:1;font-family:var(--font-heading);font-weight:800;font-size:13px">Action items &amp; follow-ups</div>
+<sc-if value="{{ wgActCanAdd }}" hint-placeholder-val="{{ true }}"><button class="nkt-tap" sc-camel-on-click="{{ onWgActAdd }}" style="height:28px;padding:0 10px;border:1px solid var(--color-text);background:transparent;cursor:pointer;font-size:12px">+ Add</button></sc-if>
+</div>
+<sc-if value="{{ wgActOpen }}" hint-placeholder-val="{{ false }}">
+<div style="padding:12px;display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;border-bottom:1px solid var(--color-divider);background:color-mix(in srgb,var(--color-text) 3%,transparent)">
+<div class="field" style="width:150px"><label>Date</label><input class="input" type="date" value="{{ wgActDate }}" sc-camel-on-change="{{ onWgActDate }}" style="height:34px;min-height:34px"></div>
+<div class="field" style="width:170px"><label>Person</label><sc-raw-select class="input" value="{{ wgActPerson }}" sc-camel-on-change="{{ onWgActPerson }}" style="height:34px"><sc-for list="{{ wgActPeople }}" as="o" hint-placeholder-count="4"><option value="{{ o.v }}">{{ o.l }}</option></sc-for></sc-raw-select></div>
+<div class="field" style="width:190px"><label>Status</label><sc-raw-select class="input" value="{{ wgActStatus }}" sc-camel-on-change="{{ onWgActStatus }}" style="height:34px"><sc-for list="{{ wgActStatuses }}" as="o" hint-placeholder-count="4"><option value="{{ o.v }}">{{ o.l }}</option></sc-for></sc-raw-select></div>
+<div class="field" style="flex:1;min-width:200px"><label>Notes</label><textarea class="input" value="{{ wgActNotes }}" sc-camel-on-change="{{ onWgActNotes }}" rows="2" style="min-height:34px;resize:vertical"></textarea></div>
+<div style="display:flex;gap:6px"><button class="btn btn-primary nkt-tap" sc-camel-on-click="{{ onWgActSave }}" style="height:34px;padding:0 12px">Done</button><button class="btn btn-secondary nkt-tap" sc-camel-on-click="{{ onWgActCancel }}" style="height:34px;padding:0 12px">Cancel</button></div>
+</div>
+</sc-if>
+<sc-for list="{{ wgActs }}" as="a" hint-placeholder-count="2">
+<div style="display:flex;gap:10px;align-items:flex-start;padding:9px 12px;border-bottom:1px solid var(--color-divider)">
+<div style="flex:none;width:92px;font-size:12px;font-weight:700">{{ a.date }}</div>
+<div style="flex:1;min-width:0;font-size:12.5px"><div>{{ a.person }} <sc-if value="{{ a.hasStatus }}" hint-placeholder-val="{{ true }}"><span class="{{ a.tagCls }}" style="margin-left:6px">{{ a.status }}</span></sc-if></div><div style="color:color-mix(in srgb,var(--color-text) 70%,transparent);margin-top:2px;white-space:pre-wrap">{{ a.notes }}</div></div>
+<button class="nkt-tap" sc-camel-on-click="{{ a.onEdit }}" style="height:26px;padding:0 8px;border:1px solid var(--color-divider);background:transparent;cursor:pointer;font-size:11.5px">Edit</button>
+<button class="nkt-tap" sc-camel-on-click="{{ a.onRemove }}" style="width:26px;height:26px;padding:0;border:1px solid var(--color-divider);background:transparent;cursor:pointer;font-size:11px">✕</button>
+</div>
+</sc-for>
+<sc-if value="{{ wgActEmpty }}" hint-placeholder-val="{{ false }}"><div style="padding:12px;font-size:12.5px;color:color-mix(in srgb,var(--color-text) 55%,transparent)">No action items yet. Add the next step or a follow-up date.</div></sc-if>
+</div>
+
+<div class="field"><label>Notes</label><textarea class="input" value="{{ wgNotes }}" sc-camel-on-change="{{ onWgNotes }}" rows="3" style="min-height:70px;resize:vertical"></textarea></div>
+<div style="display:flex;gap:8px;flex-wrap:wrap">
+<button class="btn btn-primary nkt-tap" sc-camel-on-click="{{ onWgSave }}" style="height:44px;padding:0 22px">{{ wgSaveLabel }}</button>
+<button class="btn btn-secondary nkt-tap" sc-camel-on-click="{{ onWgBack }}" style="height:44px;padding:0 16px">Cancel</button>
+</div>
+</div>
+</sc-if>
+</sc-if>
+
+</sc-if>
+</div>
+</div>
+</sc-if>
 <div id="nkt-recaptcha"></div>
 
 <div style="min-height:100vh;background:var(--color-bg)">
@@ -602,6 +907,7 @@ body{margin:0;background:#e7dfcc;font-family:var(--font-body)}
 <div style="display:flex;align-items:center;gap:6px"><span style="{{ syncDotStyle }}"></span>{{ syncLabel }}</div>
 <div style="margin-top:4px;word-break:break-all">{{ signedInEmail }}</div>
 <button class="nkt-tap" sc-camel-on-click="{{ onSignOut }}" style="margin-top:7px;border:1px solid rgba(30,42,32,.3);background:transparent;cursor:pointer;font-size:10px;padding:4px 8px;color:#4a473f;font-family:var(--font-heading);font-weight:800;letter-spacing:.06em;text-transform:uppercase">Sign out</button>
+<sc-if value="{{ wsCanSwitch }}" hint-placeholder-val="{{ false }}"><button class="nkt-tap" sc-camel-on-click="{{ onWsSwitchFull }}" style="margin:7px 0 0 6px;border:1px solid rgba(30,42,32,.3);background:transparent;cursor:pointer;font-size:10px;padding:4px 8px;color:#4a473f;font-family:var(--font-heading);font-weight:800;letter-spacing:.06em;text-transform:uppercase">Switch</button></sc-if>
 <a href="user-guide.html" target="_blank" rel="noopener" style="display:inline-block;margin:7px 0 0 6px;border:1px solid rgba(30,42,32,.3);font-size:10px;padding:4px 8px;color:#4a473f;font-family:var(--font-heading);font-weight:800;letter-spacing:.06em;text-transform:uppercase;text-decoration:none" style-hover="background:rgba(30,42,32,.10)">User guide</a>
 </div>
 </div>
@@ -1243,6 +1549,28 @@ body{margin:0;background:#e7dfcc;font-family:var(--font-body)}
 </sc-for>
 </div>
 <div style="font-size:11.5px;color:color-mix(in srgb,var(--color-text) 55%,transparent)">Currently {{ textScaleLabel }}. 125% is the default.</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ adminIsEmail }}" hint-placeholder-val="{{ false }}">
+<div class="nkt-scroll" style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px;max-width:640px">
+<div style="font-family:var(--font-heading);font-weight:800;font-size:13px;letter-spacing:.06em;text-transform:uppercase;padding-bottom:9px;border-bottom:2px solid var(--color-divider)">Receipt email</div>
+<div style="font-size:12.5px;line-height:1.6;color:color-mix(in srgb,var(--color-text) 68%,transparent);text-wrap:pretty">Used by Email receipt in the Donations workspace. The receipt goes to the donor's email address on file; the person sending it never sees the amount. These settings, including the key, are visible to admins only. You need an account with the email service and its API key; the From address must be on a domain verified with that service.</div>
+<sc-if value="{{ emailLoading }}" hint-placeholder-val="{{ false }}"><div style="font-size:12.5px">Loading…</div></sc-if>
+<sc-if value="{{ emailReady }}" hint-placeholder-val="{{ true }}">
+<div class="field"><label>Email service</label><sc-raw-select class="input" value="{{ emailProvider }}" sc-camel-on-change="{{ onEmailProvider }}" style="height:38px;max-width:240px"><sc-for list="{{ emailProviders }}" as="o" hint-placeholder-count="2"><option value="{{ o.v }}">{{ o.l }}</option></sc-for></sc-raw-select></div>
+<div class="field"><label>API key</label><input class="input" type="password" autocomplete="off" value="{{ emailKey }}" sc-camel-on-change="{{ onEmailKey }}" style="height:38px;min-height:38px"></div>
+<div class="field"><label>From</label><input class="input" value="{{ emailFrom }}" sc-camel-on-change="{{ onEmailFrom }}" placeholder="North Kitsap United &lt;receipts@yourdomain.org&gt;" style="height:38px;min-height:38px"></div>
+<div class="field"><label>Reply-to (optional)</label><input class="input" value="{{ emailReplyTo }}" sc-camel-on-change="{{ onEmailReplyTo }}" placeholder="nku@rotaryknk.org" style="height:38px;min-height:38px"></div>
+<div class="field"><label>Subject</label><input class="input" value="{{ emailSubject }}" sc-camel-on-change="{{ onEmailSubject }}" style="height:38px;min-height:38px"></div>
+<div class="field"><label>Message above the receipt</label><textarea class="input" value="{{ emailMessage }}" sc-camel-on-change="{{ onEmailMessage }}" rows="7" style="min-height:120px;resize:vertical"></textarea></div>
+<div style="font-size:11.5px;color:color-mix(in srgb,var(--color-text) 58%,transparent)">{name} is replaced with the donor's name.</div>
+<div style="display:flex;gap:8px;flex-wrap:wrap">
+<button class="btn btn-primary nkt-tap" sc-camel-on-click="{{ onEmailSave }}" style="height:40px;padding:0 18px">{{ emailSaveLabel }}</button>
+<button class="btn btn-secondary nkt-tap" sc-camel-on-click="{{ onEmailTest }}" style="height:40px;padding:0 16px">Save and send me a sample</button>
+</div>
+<sc-if value="{{ emailMsg }}" hint-placeholder-val="{{ false }}"><div style="border-left:3px solid var(--color-text);padding:8px 0 8px 11px;font-size:12.5px;line-height:1.5">{{ emailMsg }}</div></sc-if>
+</sc-if>
 </div>
 </sc-if>
 
@@ -3766,8 +4094,14 @@ const SECTIONS = [
   {key:"admin", label:"Admin", num:"06"},
   {key:"reports", label:"Reports", num:"07"},
   {key:"documents", label:"Documents", num:"08"},
-  {key:"calendar", label:"Calendar", num:"09"}
+  {key:"calendar", label:"Calendar", num:"09"},
+  // Entry workspaces, chosen at sign-in. Not menu sections: they show only in
+  // the role editor. Everyone but an admin works through these alone.
+  {key:"wsdonors", label:"Donors workspace", num:"W1", workspace:true},
+  {key:"wsdonations", label:"Donations workspace", num:"W2", workspace:true},
+  {key:"wsgrants", label:"Grants workspace", num:"W3", workspace:true}
 ];
+const WS_KEYS=["wsdonors","wsdonations","wsgrants"];
 
 const GREEN="#2e6b3e", DEEP="#1b4127", TAN="#d9c9a3", YELLOW="#c9a227", RED="#b3261e", CHART="#2f3a31";
 const DEFAULT_TIERS=[["Legacy Partner",1000000],["Founders Circle",500000],["Hall of Fame",250000],["Championship Sponsor",100000],
@@ -4054,6 +4388,14 @@ function permsFor(u,roles){
   (u.roles||[]).forEach(n=>{ if(n==="Admin") merge(allPerms("write",true)); else merge((defs.find(r=>r.name===n)||{}).perms); });
   merge(u.ops||{});
   if(out.admin==="view") out.admin="write";
+  return fullSiteOnlyForAdmins(out);
+}
+// The full tracker is for admins alone: anyone else keeps only their
+// workspaces, whatever their roles say. Mirrored in firebase-sync.js.
+function fullSiteOnlyForAdmins(p){
+  if(!p||p.admin==="write") return p;
+  const out=Object.assign({},p);
+  OPS.forEach(k=>{ if(WS_KEYS.indexOf(k)<0) out[k]="none"; else if(out[k]==="view") out[k]="write"; });
   return out;
 }
 function permSummary(p){
@@ -4213,6 +4555,8 @@ class Component extends DCLogic {
   startSync(){
     const fb=this._fb;
     this._syncReady=false;
+    // Grants workspace users read grant amounts one record at a time.
+    if(fb.watchGrantMoney) fb.watchGrantMoney(this.perms.wsgrants==="write"&&!this.isAdminUser);
     fb.subscribe(snap=>{
       if(this._dead) return;
       const patch={data:Object.assign({},this.state.data,snap.data),users:snap.users,syncOnline:snap.online,moneyDenied:snap.moneyDenied};
@@ -4437,12 +4781,13 @@ class Component extends DCLogic {
   }
 
   get role(){ return this.state.me?(this.state.me.roles||[]).join(" + "):"General"; }
-  get perms(){ const me=this.state.me; if(!me) return emptyPerms(); return me.perms||permsFor(me,this.state.roles); }
+  get perms(){ const me=this.state.me; if(!me) return emptyPerms(); return fullSiteOnlyForAdmins(Object.assign(emptyPerms(),me.perms||permsFor(me,this.state.roles))); }
   lvl(sec){ return this.perms[sec]||"none"; }
-  canSee(sec){ const d=SECTIONS.find(x=>x.key===sec); if(d&&d.hidden) return false; return this.lvl(sec)!=="none"; }
+  canSee(sec){ const d=SECTIONS.find(x=>x.key===sec); if(d&&(d.hidden||d.workspace)) return false; return this.lvl(sec)!=="none"; }
   canEditSec(sec){ return this.lvl(sec)==="write"||this.perms.admin==="write"; }
   get isAdminUser(){ return this.perms.admin==="write"; }
-  get canWrite(){ const p=this.perms; return OPS.some(k=>p[k]==="write"); }
+  // Only the full tracker uses the diff push; workspaces save record by record.
+  get canWrite(){ const p=this.perms; return OPS.some(k=>WS_KEYS.indexOf(k)<0&&p[k]==="write"); }
   mergeRoles(list){
     const out=(Array.isArray(list)?list:[]).filter(r=>r&&r.name).map(r=>Object.assign({},r,{perms:Object.assign(emptyPerms(),r.perms||{})}));
     DEFAULT_ROLES.forEach(d=>{ const i=out.findIndex(r=>r.name===d.name);
@@ -8148,8 +8493,9 @@ tr{page-break-inside:avoid;break-inside:avoid}
     const seg=(on)=>"height:28px;padding:0 10px;border:0;border-right:1px solid var(--color-divider);cursor:"+(locked?"default":"pointer")+";font-size:11.5px;white-space:nowrap;font-family:var(--font-body);background:"+(on?GREEN:"transparent")+";color:"+(on?"#ffffff":"var(--color-text)")+(locked&&!on?";opacity:.45":"");
     return OPS.filter(k=>!(SECTIONS.find(x=>x.key===k)||{}).hidden).concat(["money"]).map(k=>{
       const money=k==="money", adm=k==="admin";
-      const choices=money?[[false,"Hidden"],[true,"Visible"]]:adm?[["none","Off"],["write","Full access"]]:[["none","Off"],["view","View only"],["write","Read / write"]];
-      const c=money?(cur.money===true):(cur[k]||"none");
+      const wsk=WS_KEYS.indexOf(k)>=0;
+      const choices=money?[[false,"Hidden"],[true,"Visible"]]:adm?[["none","Off"],["write","Full access"]]:wsk?[["none","Off"],["write","On"]]:[["none","Off"],["view","View only"],["write","Read / write"]];
+      const c=money?(cur.money===true):(wsk&&cur[k]==="view"?"write":(cur[k]||"none"));
       const sec=SECTIONS.find(x=>x.key===k);
       let note="";
       if(inherited){ const iv=money?inherited.money:inherited[k];
@@ -8712,7 +9058,434 @@ tr{page-break-inside:avoid;break-inside:avoid}
     return out.filter(x=>x.at).sort((a,b)=>a.at<b.at?1:-1).slice(0,5);
   }
 
-  renderVals(){
+  /* --------------------------------------------------- entry workspaces -- */
+  // Non-admins work only in these: Donors (add a donor), Donations (enter a
+  // gift, thank-yous, send the receipt) and Grants (track grant awards).
+  // Admins can open them too, or the Full Site. Workspace saves go straight
+  // to the database one record at a time (NKFB.createRecords / patchRecord);
+  // a non-admin never runs the diff push at all.
+  wsOptions(){
+    const p=this.perms, admin=this.isAdminUser, out=[];
+    if(admin) out.push({v:"full",l:"Full Site"});
+    if(admin||p.wsdonors==="write") out.push({v:"donors",l:"Donors"});
+    if(admin||p.wsdonations==="write") out.push({v:"donations",l:"Donations"});
+    if(admin||p.wsgrants==="write") out.push({v:"grants",l:"Grants"});
+    return out;
+  }
+  // The choice lasts for this browser tab (a reload keeps it); a new tab or
+  // a new sign-in asks again.
+  wsCurrent(){
+    const opts=this.wsOptions();
+    let cur=this.state.ws;
+    if(cur===undefined){ try{ cur=sessionStorage.getItem("nku.ws")||""; }catch(e){ cur=""; } }
+    if(opts.some(o=>o.v===cur)) return cur;
+    return opts.length===1?opts[0].v:"";
+  }
+  wsPickDefault(){
+    let last=""; try{ last=localStorage.getItem("nku.ws")||""; }catch(e){}
+    const opts=this.wsOptions();
+    return opts.some(o=>o.v===last)?last:(opts[0]?opts[0].v:"");
+  }
+  wsGo(v){
+    try{ localStorage.setItem("nku.ws",v); sessionStorage.setItem("nku.ws",v); }catch(e){}
+    this.setState({ws:v,wsMsg:"",wsErr:"",wdTab:"enter",wgOpen:null,wgDraft:null});
+  }
+  wsUid(prefix){ return prefix+Date.now().toString(36)+Math.random().toString(36).slice(2,5); }
+  wsMe(){ const me=this.state.me||{}; return me.name||me.email||""; }
+  // Writes through the workspace path. The records also go into local state
+  // so the lists update before the database echoes them back.
+  async wsCreate(list,withMoney){
+    const fb=this._fb;
+    if(!fb||!fb.createRecords) throw new Error("Not connected to the database.");
+    await fb.createRecords(list,withMoney);
+    this.setStateLocal(s=>{
+      const data=Object.assign({},s.data);
+      list.forEach(({col,rec})=>{ data[col]=[rec].concat((data[col]||[]).filter(r=>r.id!==rec.id)); });
+      return {data};
+    });
+  }
+  async wsPatch(col,id,fields){
+    const fb=this._fb, cur=(this.d()[col]||[]).find(r=>r.id===id);
+    if(!fb||!fb.patchRecord||!cur) throw new Error("Not connected to the database.");
+    const rec=Object.assign({},cur,fields);
+    await fb.patchRecord(col,rec,fields);
+    this.setStateLocal(s=>({data:Object.assign({},s.data,{[col]:(s.data[col]||[]).map(r=>r.id===id?rec:r)})}));
+  }
+  // A state change that never triggers the diff push.
+  setStateLocal(patch,cb){
+    super.setState(patch,cb);
+  }
+  wsFail(e){
+    const m=String((e&&(e.code||e.message))||e||"");
+    this.setState({wsBusy:false,wsErr:/permission/i.test(m)?"The database refused that save. Ask an admin to check your workspace access.":("That didn't save: "+m)});
+  }
+  wsDonorMatches(q,n){
+    q=String(q||"").trim().toLowerCase(); if(q.length<2) return [];
+    const words=q.split(/\s+/);
+    return this.d().donors.filter(o=>{ const h=((o.name||"")+" "+(o.org||"")+" "+(o.contactName||"")+" "+(o.email||"")+" "+(o.donorId||"")).toLowerCase(); return words.every(w=>h.includes(w)); })
+      .slice(0,n||8);
+  }
+  wsDonorSub(o){ return [o.donorId,o.type,o.email].filter(Boolean).join(" · "); }
+  wsNewDonor(f){
+    const data=this.d();
+    return {id:this.wsUid("d"),donorId:this.nextDonorId(data.donors),type:f.type||"Individual",name:String(f.name||"").trim(),
+      org:"",contactName:String(f.contactName||"").trim(),email:String(f.email||"").trim(),phone:String(f.phone||"").trim(),
+      mobile:String(f.mobile||"").trim(),address:String(f.address||"").trim(),preferred:f.preferred||"",accountOwner:f.accountOwner||"",
+      priority:"Medium",status:"New",tags:[],linked:[],phaseTaskLinks:[],familyNotes:"",other:"",
+      createdBy:this.wsMe(),createdAt:this.today()};
+  }
+
+  // ---- Donors workspace ----
+  wsDonorSave(){
+    const f=this.state.wdnF||{};
+    if(!String(f.name||"").trim()) return this.setState({wsErr:"Enter the donor's name."});
+    if(!String(f.email||"").trim()&&!String(f.phone||"").trim()&&!String(f.mobile||"").trim()&&!String(f.address||"").trim())
+      return this.setState({wsErr:"Add at least one way to reach them: email, phone or mailing address."});
+    const rec=this.wsNewDonor(f);
+    this.setState({wsBusy:true,wsErr:""});
+    this.wsCreate([{col:"donors",rec}],false).then(()=>{
+      this.setState(s=>({wsBusy:false,wdnF:{type:"Individual"},wsMsg:"Saved "+rec.name+" ("+rec.donorId+").",
+        wsRecent:[{name:rec.name,sub:rec.donorId}].concat(s.wsRecent||[]).slice(0,8)}));
+    }).catch(e=>this.wsFail(e));
+  }
+
+  // ---- Donations workspace ----
+  wdBlank(){ return {method:"",kind:"One-time",status:"Received",date:this.today(),donorId:"",q:"",newDonor:false,nd:{type:"Individual"},
+    amount:"",title:"",notes:"",count:"12",every:"Monthly",start:this.today(),inst:null}; }
+  wdForm(){ return this.state.wdF||this.wdBlank(); }
+  wdSet(o){ this.setState(s=>({wdF:Object.assign({},s.wdF||this.wdBlank(),o),wsErr:"",wsMsg:""})); }
+  // The schedule follows total / count / every / start until someone edits a
+  // payment amount by hand; then it keeps their amounts.
+  wdSchedule(f){
+    const total=this.num(f.amount), n=Math.max(1,Math.min(120,Math.round(this.num(f.count))||1));
+    if(f.inst&&f.inst.length===n) return f.inst;
+    return this.buildSchedule(total,n,f.every||"Monthly",f.start||f.date||this.today());
+  }
+  wdSave(){
+    const f=this.wdForm(), inst=f.kind==="Installment";
+    if(!f.method) return this.setState({wsErr:"Choose the donation type."});
+    if(!f.donorId&&!f.newDonor) return this.setState({wsErr:"Choose the donor, or add a new one."});
+    if(f.newDonor&&!String((f.nd||{}).name||"").trim()) return this.setState({wsErr:"Enter the new donor's name."});
+    const total=Math.round(this.num(f.amount)*100)/100;
+    if(total<=0) return this.setState({wsErr:inst?"Enter the pledge total.":"Enter the amount."});
+    const list=[]; let donorId=f.donorId, donorName="";
+    if(f.newDonor){ const d=this.wsNewDonor(f.nd||{}); list.push({col:"donors",rec:d}); donorId=d.id; donorName=d.name; }
+    else donorName=(this.donor(donorId)||{}).name||"the donor";
+    const title=String(f.title||"").trim();
+    const tx={id:this.wsUid("x"),donorId,method:f.method,title,tags:title?[title]:[],date:f.date||this.today(),
+      notes:String(f.notes||"").trim(),team:"",taskIds:[],phaseIds:[],groupIds:[],allocations:[],
+      enteredBy:this.wsMe(),enteredVia:"Donations workspace"};
+    if(inst){
+      const sched=this.wdSchedule(f).map((x,i)=>({id:this.newInstId()+i,due:x.due||"",amount:Math.round(this.num(x.amount)*100)/100,txId:""}));
+      const sum=Math.round(sched.reduce((n,x)=>n+x.amount,0)*100)/100;
+      if(Math.abs(sum-total)>0.009) return this.setState({wsErr:"The payments add up to "+this.receiptCash(sum)+", not the pledge total of "+this.receiptCash(total)+". Adjust them or use Spread evenly."});
+      Object.assign(tx,{status:"Pledged",completedAt:"",donationKind:"Installment",amount:total,instEvery:f.every,instCount:String(sched.length),instStart:sched[0]?sched[0].due:"",
+        plan:{total,every:f.every||"Monthly",installments:sched,openStatus:"Pledged"}});
+    } else {
+      const rcv=this.statusIs(f.status,"Received");
+      Object.assign(tx,{status:f.status||"Received",completedAt:rcv?(f.date||this.today()):"",donationKind:"One-time",amount:total});
+    }
+    list.push({col:"transactions",rec:tx});
+    this.setState({wsBusy:true,wsErr:""});
+    this.wsCreate(list,true).then(()=>{
+      this.setState({wsBusy:false,wdF:this.wdBlank(),wsMsg:"Saved the "+(inst?"pledge":"donation")+" from "+donorName+". It's in the list for a thank-you."});
+    }).catch(e=>this.wsFail(e));
+  }
+  wdRows(){
+    const s=this.state, q=String(s.wdQ||"").trim().toLowerCase(), only=s.wdShow||"All";
+    return this.d().transactions
+      .filter(t=>!this.isGrantAward(t)&&!t.pledgeId&&!t.eventLines&&t.donorId)
+      .filter(t=>only==="All"||(only==="Thanks"?this.thankDue(t):(only==="Receipt"?!t.receiptSentAt&&this.statusIs(t.status,"Received"):true)))
+      .filter(t=>{ if(!q) return true; const d=this.donor(t.donorId)||{}; return ((d.name||"")+" "+(t.title||"")+" "+(t.method||"")+" "+(d.donorId||"")).toLowerCase().includes(q); })
+      .sort((a,b)=>String(b.completedAt||b.date||"").localeCompare(String(a.completedAt||a.date||"")));
+  }
+  wdThank(t){
+    const on=!t.thankedAt;
+    const f=on?{thankedAt:this.today(),thankedBy:(this.state.me||{}).email||""}:{thankedAt:"",thankedBy:""};
+    this.wsPatch("transactions",t.id,f).catch(e=>this.wsFail(e));
+  }
+  async wdSendReceipt(t){
+    const d=this.donor(t.donorId)||{};
+    if(!String(d.email||"").trim()) return this.setState({wsErr:(d.name||"This donor")+" has no email address on file."});
+    this.setState(s=>({wdSending:Object.assign({},s.wdSending,{[t.id]:true}),wsErr:"",wsMsg:""}));
+    try{
+      const tok=this._fb&&this._fb.idToken?await this._fb.idToken():null;
+      const r=await fetch("/api/receipt",{method:"POST",headers:{"Content-Type":"application/json",Authorization:"Bearer "+(tok||"")},body:JSON.stringify({txId:t.id})});
+      const j=await r.json().catch(()=>({}));
+      if(!r.ok||!j.ok) throw new Error(j.error||("The receipt service answered "+r.status+"."));
+      this.setStateLocal(s=>({data:Object.assign({},s.data,{transactions:s.data.transactions.map(x=>x.id===t.id?Object.assign({},x,{receiptSentAt:j.sentAt||this.today(),receiptSentTo:j.to||d.email}):x)})}));
+      this.setState({wsMsg:"Receipt emailed to "+(j.to||d.email)+"."});
+    }catch(e){ this.setState({wsErr:e.message||String(e)}); }
+    this.setState(s=>({wdSending:Object.assign({},s.wdSending,{[t.id]:false})}));
+  }
+
+  // ---- Grants workspace ----
+  wgRows(){
+    const q=String(this.state.wgQ||"").trim().toLowerCase();
+    return this.d().transactions.filter(t=>this.isGrantAward(t))
+      .filter(t=>{ if(!q) return true; const d=this.donor(t.donorId)||{}; return ((t.grantName||"")+" "+(t.title||"")+" "+(d.name||"")+" "+(t.status||"")).toLowerCase().includes(q); })
+      .sort((a,b)=>String(a.deadline||"9999").localeCompare(String(b.deadline||"9999"))||String(a.grantName||"").localeCompare(String(b.grantName||"")));
+  }
+  wgOpen(id){
+    const t=id?this.d().transactions.find(x=>x.id===id):null;
+    const draft=t?JSON.parse(JSON.stringify(t)):{method:"Grant award",grantName:"",donorId:"",status:"Potential",date:this.today(),amount:"",actions:[]};
+    draft.amount=draft.amount===""?"":String(draft.amount==null?"":draft.amount);
+    // Older grant awards kept their name in Title/Event until migrateGrantNames runs.
+    if(t&&!draft.grantName&&t.title) draft.grantName=t.title;
+    this.setState({wgOpen:id||"new",wgDraft:draft,wgQ2:"",wgNewDonor:false,wgNd:{type:"Organization"},wsErr:"",wsMsg:"",wgAct:null});
+  }
+  wgSet(o){ this.setState(s=>({wgDraft:Object.assign({},s.wgDraft,o),wsErr:""})); }
+  wgSave(){
+    const s=this.state, dr=s.wgDraft; if(!dr) return;
+    if(!String(dr.grantName||"").trim()) return this.setState({wsErr:"Enter the grant name."});
+    if(!dr.donorId&&!s.wgNewDonor) return this.setState({wsErr:"Choose the funder, or add a new one."});
+    if(s.wgNewDonor&&!String((s.wgNd||{}).name||"").trim()) return this.setState({wsErr:"Enter the funder's name."});
+    const KEYS=["grantName","donorId","status","date","deadline","probability","team","contact","contactPhone","appLink","matchReq","nextAction","notes","actions","amount"];
+    const clean=Object.assign({},dr,{grantName:String(dr.grantName).trim(),amount:Math.round(this.num(dr.amount)*100)/100,method:"Grant award"});
+    const list=[];
+    if(s.wgNewDonor){ const d=this.wsNewDonor(s.wgNd||{}); list.push({col:"donors",rec:d}); clean.donorId=d.id; }
+    if(this.statusIs(clean.status,"Received")&&!clean.completedAt) clean.completedAt=clean.date||this.today();
+    this.setState({wsBusy:true,wsErr:""});
+    let job;
+    if(s.wgOpen==="new"){
+      const rec=Object.assign({id:this.wsUid("x"),title:"",tags:[],taskIds:[],phaseIds:[],groupIds:[],allocations:[],donationKind:"One-time",enteredBy:this.wsMe(),enteredVia:"Grants workspace"},clean);
+      list.push({col:"transactions",rec});
+      job=this.wsCreate(list,true);
+    } else {
+      const cur=this.d().transactions.find(x=>x.id===s.wgOpen)||{}, fields={};
+      KEYS.concat(["completedAt"]).forEach(k=>{ if(JSON.stringify(cur[k]==null?"":cur[k])!==JSON.stringify(clean[k]==null?"":clean[k])) fields[k]=clean[k]==null?"":clean[k]; });
+      job=(list.length?this.wsCreate(list,false):Promise.resolve()).then(()=>Object.keys(fields).length?this.wsPatch("transactions",s.wgOpen,fields):null);
+    }
+    job.then(()=>this.setState({wsBusy:false,wgOpen:null,wgDraft:null,wsMsg:"Saved "+clean.grantName+"."})).catch(e=>this.wsFail(e));
+  }
+
+  wsVals(){
+    const s=this.state, inApp=s.authStage==="in"&&!!s.me, opts=inApp?this.wsOptions():[], cur=inApp?this.wsCurrent():"";
+    const loading=!s.syncLoaded, mobile=this.mobile;
+    const sel=v=>({v,l:v});
+    const tabSt=on=>"cursor:pointer;border:0;border-bottom:3px solid "+(on?GREEN:"transparent")+";background:transparent;padding:10px 4px;margin-right:18px;font-family:var(--font-heading);font-weight:800;font-size:13.5px;color:"+(on?"var(--color-text)":"color-mix(in srgb,var(--color-text) 55%,transparent)");
+    const pillSt=on=>"cursor:pointer;height:30px;padding:0 12px;font-size:12px;font-family:var(--font-body);border:1px solid "+(on?GREEN:"var(--color-divider)")+";background:"+(on?GREEN:"transparent")+";color:"+(on?"#fff":"var(--color-text)");
+    const team=[{v:"",l:"— nobody yet —"}].concat(this.teamNames().map(n=>({v:n,l:n})));
+    const out={
+      wsPickShow:inApp&&opts.length>1&&!cur,
+      wsNone:inApp&&opts.length===0,
+      wsShow:inApp&&!!cur&&cur!=="full",
+      wsCanSwitch:opts.length>1,
+      wsPickOptions:opts, wsPickValue:s.wsPick||this.wsPickDefault(),
+      onWsPick:e=>this.setState({wsPick:e.target.value}),
+      onWsPickGo:()=>this.wsGo(s.wsPick||this.wsPickDefault()),
+      wsSwitchOptions:opts, wsSwitchValue:cur,
+      onWsSwitch:e=>this.wsGo(e.target.value),
+      onWsSwitchFull:()=>{ try{ sessionStorage.removeItem("nku.ws"); }catch(e){} this.setState({ws:"",wsPick:""}); },
+      wsTitle:({donors:"Donors",donations:"Donations",grants:"Grants"})[cur]||"",
+      wsIsDonors:cur==="donors", wsIsDonations:cur==="donations", wsIsGrants:cur==="grants",
+      wsLoading:loading, wsReady:!loading,
+      wsWho:(s.me&&(s.me.name||s.me.email))||"",
+      wsErr:s.wsErr||"", wsMsg:s.wsMsg||"",
+      wsBusy:!!s.wsBusy,
+      wsMainPad:mobile?"padding:14px 16px 60px":"padding:22px 28px 60px",
+      wsTwoCol:mobile?"display:grid;grid-template-columns:minmax(0,1fr);gap:10px":"display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px",
+      wsTeam:team
+    };
+    if(!out.wsShow) return out;
+
+    if(cur==="donors"){
+      const f=s.wdnF||{type:"Individual"}, set=(k)=>e=>{ const v=e.target.value; this.setState(st=>({wdnF:Object.assign({},st.wdnF||{type:"Individual"},{[k]:v}),wsErr:"",wsMsg:""})); };
+      const m=this.wsDonorMatches(f.name,6);
+      Object.assign(out,{
+        wdnType:f.type||"Individual", wdnName:f.name||"", wdnContact:f.contactName||"", wdnEmail:f.email||"", wdnPhone:f.phone||"", wdnMobile:f.mobile||"",
+        wdnAddress:f.address||"", wdnPreferred:f.preferred||"", wdnOwner:f.accountOwner||"",
+        wdnIsOrg:(f.type||"")==="Organization",
+        onWdnType:set("type"), onWdnName:set("name"), onWdnContact:set("contactName"), onWdnEmail:set("email"), onWdnPhone:set("phone"),
+        onWdnMobile:set("mobile"), onWdnAddress:set("address"), onWdnPreferred:set("preferred"), onWdnOwner:set("accountOwner"),
+        wdnTypes:["Individual","Organization","Family"].map(sel),
+        wdnPrefs:[{v:"",l:"—"}].concat(["Phone","Mobile","Email","Mail","In person"].map(sel)),
+        wdnDupShow:m.length>0, wdnDups:m.map(o=>({name:o.name||"—",sub:this.wsDonorSub(o)})),
+        wdnSaveLabel:s.wsBusy?"Saving…":"Save donor", onWdnSave:()=>this.wsDonorSave(),
+        onWdnClear:()=>this.setState({wdnF:{type:"Individual"},wsErr:"",wsMsg:""}),
+        wsRecentShow:(s.wsRecent||[]).length>0, wsRecent:s.wsRecent||[]
+      });
+    }
+
+    if(cur==="donations"){
+      const f=this.wdForm(), inst=f.kind==="Installment", tab=s.wdTab||"enter";
+      const methods=(((s.schema.transactions||[]).find(x=>x.k==="method")||{}).o||[]).filter(o=>String(o).trim().toLowerCase()!=="grant award");
+      const picked=f.donorId?this.donor(f.donorId):null;
+      const res=!picked&&!f.newDonor?this.wsDonorMatches(f.q,8):[];
+      const sched=inst?this.wdSchedule(f):[];
+      const sum=Math.round(sched.reduce((n,x)=>n+this.num(x.amount),0)*100)/100, total=this.num(f.amount);
+      const nd=f.nd||{type:"Individual"}, setNd=k=>e=>{ const v=e.target.value; this.wdSet({nd:Object.assign({},nd,{[k]:v})}); };
+      const rows=tab==="list"?this.wdRows():[], lim=s.wdLimit||60;
+      const titles=(s.lists.donationTitles||[]).slice().sort();
+      Object.assign(out,{
+        wdTabEnter:tab==="enter", wdTabList:tab==="list",
+        wdTabEnterSt:tabSt(tab==="enter"), wdTabListSt:tabSt(tab==="list"),
+        onWdTabEnter:()=>this.setState({wdTab:"enter",wsErr:"",wsMsg:""}), onWdTabList:()=>this.setState({wdTab:"list",wsErr:"",wsMsg:""}),
+        wdMethod:f.method, wdMethods:[{v:"",l:"— choose —"}].concat(methods.map(sel)), onWdMethod:e=>this.wdSet({method:e.target.value}),
+        wdKindOne:pillSt(!inst), wdKindInst:pillSt(inst),
+        onWdKindOne:()=>this.wdSet({kind:"One-time"}), onWdKindInst:()=>this.wdSet({kind:"Installment",inst:null}),
+        wdIsInst:inst, wdIsOne:!inst,
+        wdPicked:!!picked, wdPickedName:picked?(picked.name||"—"):"", wdPickedSub:picked?this.wsDonorSub(picked):"",
+        onWdUnpick:()=>this.wdSet({donorId:"",q:""}),
+        wdSearching:!picked&&!f.newDonor, wdQ:f.q||"", onWdQ:e=>this.wdSet({q:e.target.value}),
+        wdResults:res.map(o=>({name:o.name||"—",sub:this.wsDonorSub(o),pick:()=>this.wdSet({donorId:o.id,q:""})})),
+        wdNoResults:!picked&&!f.newDonor&&String(f.q||"").trim().length>=2&&!res.length,
+        onWdNewDonor:()=>this.wdSet({newDonor:true,nd:Object.assign({type:"Individual"},{name:String(f.q||"").trim()})}),
+        wdNewDonor:!!f.newDonor, onWdCancelNew:()=>this.wdSet({newDonor:false}),
+        wdNdType:nd.type||"Individual", wdNdName:nd.name||"", wdNdEmail:nd.email||"", wdNdPhone:nd.phone||"", wdNdAddress:nd.address||"",
+        onWdNdType:setNd("type"), onWdNdName:setNd("name"), onWdNdEmail:setNd("email"), onWdNdPhone:setNd("phone"), onWdNdAddress:setNd("address"),
+        wdTypes:["Individual","Organization","Family"].map(sel),
+        wdAmount:f.amount, onWdAmount:e=>this.wdSet({amount:e.target.value,inst:null}),
+        wdAmountLabel:inst?"Pledge total":"Amount",
+        wdStatus:f.status, wdStatuses:["Received","Pledged"].map(sel), onWdStatus:e=>this.wdSet({status:e.target.value}),
+        wdDate:f.date, onWdDate:e=>this.wdSet({date:e.target.value}),
+        wdDateLabel:inst?"Date pledged":(this.statusIs(f.status,"Received")?"Date received":"Date pledged"),
+        wdTitle:f.title, onWdTitle:e=>this.wdSet({title:e.target.value}), wdTitleOpts:titles.map(sel),
+        wdNotes:f.notes, onWdNotes:e=>this.wdSet({notes:e.target.value}),
+        wdCount:f.count, onWdCount:e=>this.wdSet({count:e.target.value,inst:null}),
+        wdEvery:f.every, wdEveryOpts:["Monthly","Quarterly","Annual"].map(sel), onWdEvery:e=>this.wdSet({every:e.target.value,inst:null}),
+        wdStart:f.start, onWdStart:e=>this.wdSet({start:e.target.value,inst:null}),
+        wdSched:sched.map((x,i)=>({no:String(i+1),due:x.due||"",amt:x.amount===""?"":String(x.amount),
+          onDue:e=>{ const v=e.target.value, l=sched.map(y=>Object.assign({},y)); l[i].due=v; this.wdSet({inst:l}); },
+          onAmt:e=>{ const v=e.target.value, l=sched.map(y=>Object.assign({},y)); l[i].amount=v; this.wdSet({inst:l}); }})),
+        wdSchedNote:!sched.length?"":(Math.abs(sum-total)>0.009?"Payments add up to "+this.receiptCash(sum)+" — "+(sum>total?"more":"less")+" than the "+this.receiptCash(total)+" total.":sched.length+" payments, "+this.receiptCash(sum)+" in all."),
+        wdSchedOff:sched.length>0&&Math.abs(sum-total)>0.009,
+        onWdSpread:()=>this.wdSet({inst:null}),
+        wdSaveLabel:s.wsBusy?"Saving…":(inst?"Save pledge":"Save donation"), onWdSave:()=>this.wdSave(),
+        onWdClear:()=>this.setState({wdF:this.wdBlank(),wsErr:"",wsMsg:""}),
+        wdQList:s.wdQ||"", onWdQList:e=>this.setState({wdQ:e.target.value,wdLimit:60}),
+        wdShowOpts:[["All","All"],["Thanks","Needs a thank-you"],["Receipt","No receipt sent"]].map(([v,l])=>({label:l,style:pillSt((s.wdShow||"All")===v),on:()=>this.setState({wdShow:v,wdLimit:60})})),
+        wdListCount:rows.length+" donation"+(rows.length===1?"":"s"),
+        wdListEmpty:tab==="list"&&!rows.length,
+        wdListMore:rows.length>lim, onWdMore:()=>this.setState({wdLimit:lim+60}),
+        wdList:rows.slice(0,lim).map(t=>{
+          const d=this.donor(t.donorId)||{}, can=this.needsThanks(t), sending=!!(s.wdSending||{})[t.id], rcv=this.statusIs(t.status,"Received")||this.statusIs(t.status,"Pledged");
+          return {name:d.name||"—",
+            sub:[String(t.completedAt||t.date||"").slice(0,10),t.method,t.donationKind==="Installment"?"Installments":"",t.title].filter(Boolean).join(" · "),
+            status:t.status||"—", tagCls:TAG[t.status]||"tag tag-neutral",
+            canThank:can, thanked:!!t.thankedAt, thankLabel:t.thankedAt?"✓ Thanked "+String(t.thankedAt).slice(5).replace("-","/"):"Thank you sent",
+            thankSt:"cursor:pointer;height:30px;padding:0 10px;font-size:12px;font-family:var(--font-body);white-space:nowrap;border:1px solid "+(t.thankedAt?GREEN:"var(--color-text)")+";background:"+(t.thankedAt?GREEN:"transparent")+";color:"+(t.thankedAt?"#fff":"var(--color-text)"),
+            onThank:()=>this.wdThank(t),
+            canReceipt:rcv, receiptSent:!!t.receiptSentAt,
+            receiptLabel:sending?"Sending…":(t.receiptSentAt?"Resend receipt":"Email receipt"),
+            receiptNote:t.receiptSentAt?"Receipt sent "+String(t.receiptSentAt).slice(0,10)+(t.receiptSentTo?" to "+t.receiptSentTo:""):(d.email?"":"No email on file"),
+            onReceipt:()=>{ if(!sending) this.wdSendReceipt(t); }};
+        })
+      });
+    }
+
+    if(cur==="grants"){
+      const open=s.wgOpen, dr=s.wgDraft;
+      const rows=open?[]:this.wgRows();
+      const statuses=(((s.schema.transactions||[]).find(x=>x.k==="status")||{}).o||["Received","Pledged","Promised","Potential","Throwing darts"]);
+      Object.assign(out,{
+        wgListShow:!open, wgEditShow:!!open&&!!dr,
+        wgQ:s.wgQ||"", onWgQ:e=>this.setState({wgQ:e.target.value}),
+        onWgNew:()=>this.wgOpen(null),
+        wgCount:rows.length+" grant"+(rows.length===1?"":"s"),
+        wgEmpty:!open&&!rows.length,
+        wgRows:rows.map(t=>{ const d=this.donor(t.donorId)||{}, a=this.actionSummary(t);
+          return {name:t.grantName||t.title||"Untitled grant", funder:d.name||"—", status:t.status||"—", tagCls:TAG[t.status]||"tag tag-neutral",
+            amount:F.full(Number(t.amount)||0), deadline:t.deadline?"Deadline "+t.deadline:"", latest:a||t.nextAction||"",
+            open:()=>this.wgOpen(t.id)}; })
+      });
+      if(open&&dr){
+        const set=k=>e=>this.wgSet({[k]:e.target.value});
+        const funder=dr.donorId?this.donor(dr.donorId):null;
+        const res=!funder&&!s.wgNewDonor?this.wsDonorMatches(s.wgQ2,8):[];
+        const nd=s.wgNd||{type:"Organization"}, setNd=k=>e=>{ const v=e.target.value; this.setState(st=>({wgNd:Object.assign({},st.wgNd||{type:"Organization"},{[k]:v})})); };
+        const acts=(dr.actions||[]).slice().sort((x,y)=>String(y.date||"").localeCompare(String(x.date||"")));
+        const af=s.wgAct, setA=k=>e=>{ const v=e.target.value; this.setState(st=>({wgAct:Object.assign({},st.wgAct,{[k]:v})})); };
+        const people=[{v:"",l:"— choose —"}].concat(this.teamNames().map(n=>({v:n,l:n})));
+        Object.assign(out,{
+          wgEditTitle:open==="new"?"New grant":(dr.grantName||"Grant"),
+          onWgBack:()=>this.setState({wgOpen:null,wgDraft:null,wsErr:""}),
+          wgName:dr.grantName||"", onWgName:set("grantName"),
+          wgFunderPicked:!!funder, wgFunderName:funder?(funder.name||"—"):"", wgFunderSub:funder?this.wsDonorSub(funder):"",
+          onWgUnpick:()=>this.wgSet({donorId:""}),
+          wgFunderSearch:!funder&&!s.wgNewDonor, wgQ2:s.wgQ2||"", onWgQ2:e=>this.setState({wgQ2:e.target.value}),
+          wgResults:res.map(o=>({name:o.name||"—",sub:this.wsDonorSub(o),pick:()=>{ this.wgSet({donorId:o.id}); this.setState({wgQ2:""}); }})),
+          wgNoResults:!funder&&!s.wgNewDonor&&String(s.wgQ2||"").trim().length>=2&&!res.length,
+          onWgNewDonor:()=>this.setState({wgNewDonor:true,wgNd:{type:"Organization",name:String(s.wgQ2||"").trim()}}),
+          wgNewDonor:!!s.wgNewDonor, onWgCancelNew:()=>this.setState({wgNewDonor:false}),
+          wgNdType:nd.type||"Organization", wgNdName:nd.name||"", wgNdEmail:nd.email||"", wgNdPhone:nd.phone||"", wgNdAddress:nd.address||"",
+          onWgNdType:setNd("type"), onWgNdName:setNd("name"), onWgNdEmail:setNd("email"), onWgNdPhone:setNd("phone"), onWgNdAddress:setNd("address"),
+          wgTypes:["Organization","Individual","Family"].map(sel),
+          wgStatus:dr.status||"", wgStatuses:statuses.map(sel), onWgStatus:set("status"),
+          wgAmount:dr.amount==null?"":String(dr.amount), onWgAmount:set("amount"),
+          wgDate:dr.date||"", onWgDate:set("date"),
+          wgDeadline:dr.deadline||"", onWgDeadline:set("deadline"),
+          wgProb:dr.probability||"", wgProbs:[{v:"",l:"—"}].concat(["High","Medium","Low","Very Low"].map(sel)), onWgProb:set("probability"),
+          wgTeamVal:dr.team||"", onWgTeam:set("team"),
+          wgContact:dr.contact||"", onWgContact:set("contact"),
+          wgContactPhone:dr.contactPhone||"", onWgContactPhone:set("contactPhone"),
+          wgAppLink:dr.appLink||"", onWgAppLink:set("appLink"),
+          wgMatch:dr.matchReq||"", onWgMatch:set("matchReq"),
+          wgNotes:dr.notes||"", onWgNotes:set("notes"),
+          wgActEmpty:!acts.length&&!af,
+          wgActs:acts.map(a=>({date:a.date||"—",person:a.person||"—",status:a.status||"",hasStatus:!!a.status,notes:a.notes||"",tagCls:this.actStatusTag(a.status),
+            onEdit:()=>this.setState({wgAct:Object.assign({},a)}),
+            onRemove:()=>this.wgSet({actions:(dr.actions||[]).filter(x=>x.id!==a.id)})})),
+          wgActOpen:!!af, wgActCanAdd:!af,
+          onWgActAdd:()=>this.setState({wgAct:{date:this.today(),person:dr.team||"",status:"Upcoming",notes:""}}),
+          wgActDate:af?af.date||"":"", wgActPerson:af?af.person||"":"", wgActStatus:af?af.status||"":"", wgActNotes:af?af.notes||"":"",
+          wgActPeople:people.concat(af&&af.person&&this.teamNames().indexOf(af.person)<0?[{v:af.person,l:af.person}]:[]),
+          wgActStatuses:[{v:"",l:"—"},{v:"Upcoming",l:"Upcoming / follow-up"},{v:"In Progress",l:"In Progress"},{v:"Complete",l:"Complete"}],
+          onWgActDate:setA("date"), onWgActPerson:setA("person"), onWgActStatus:setA("status"), onWgActNotes:setA("notes"),
+          onWgActCancel:()=>this.setState({wgAct:null}),
+          onWgActSave:()=>{ if(!af) return; const e={id:af.id||("a"+Date.now().toString(36)),date:af.date||"",person:af.person||"",status:af.status||"",notes:String(af.notes||"").trim()};
+            const l=(dr.actions||[]).slice(); this.wgSet({actions:af.id?l.map(x=>x.id===af.id?e:x):l.concat([e])}); this.setState({wgAct:null}); },
+          wgSaveLabel:s.wsBusy?"Saving…":(open==="new"?"Save grant":"Save changes"), onWgSave:()=>this.wgSave()
+        });
+      }
+    }
+    return out;
+  }
+
+  // ---- Admin → Email (receipt email settings) ----
+  emailLoad(){
+    if(this._emailLoading||!this._fb||!this._fb.getEmailConfig) return;
+    this._emailLoading=true;
+    this._fb.getEmailConfig().then(c=>this.setStateLocal({emailCfg:Object.assign(this.emailDefaults(),c||{}),emailLoaded:true}))
+      .catch(e=>this.setStateLocal({emailLoaded:true,emailCfg:this.emailDefaults(),emailMsg:"Couldn't read the email settings: "+(e.code||e.message)}))
+      .then(()=>{ this._emailLoading=false; });
+  }
+  emailDefaults(){ return {provider:"resend",apiKey:"",from:"",replyTo:"",subject:"Your donation receipt from North Kitsap United",
+    message:"Dear {name},\n\nThank you for your generous gift to North Kitsap United. Your receipt is below; please keep it for your tax records.\n\nWith gratitude,\nNorth Kitsap United"}; }
+  emailVals(){
+    const s=this.state, on=s.adminTab==="email"&&this.isAdminUser;
+    if(on&&!s.emailLoaded) setTimeout(()=>this.emailLoad(),0);
+    const c=s.emailCfg||this.emailDefaults(), set=k=>e=>{ const v=e.target.value; this.setStateLocal(st=>({emailCfg:Object.assign({},st.emailCfg||this.emailDefaults(),{[k]:v}),emailMsg:""})); };
+    const save=async(test)=>{
+      this.setStateLocal({emailBusy:true,emailMsg:""});
+      try{
+        await this._fb.saveEmailConfig(Object.assign({},c,{updatedBy:(s.me||{}).email||"",updatedAt:new Date().toISOString()}));
+        if(test){
+          const tok=await this._fb.idToken();
+          const r=await fetch("/api/receipt",{method:"POST",headers:{"Content-Type":"application/json",Authorization:"Bearer "+(tok||"")},body:JSON.stringify({test:true})});
+          const j=await r.json().catch(()=>({}));
+          if(!r.ok||!j.ok) throw new Error(j.error||("The receipt service answered "+r.status+"."));
+          this.setStateLocal({emailBusy:false,emailMsg:"Saved. A sample receipt was sent to "+j.to+"."});
+        } else this.setStateLocal({emailBusy:false,emailMsg:"Saved."});
+      }catch(e){ this.setStateLocal({emailBusy:false,emailMsg:"Not done: "+(e.message||e.code||e)}); }
+    };
+    return {
+      adminIsEmail:on, emailLoading:on&&!s.emailLoaded, emailReady:on&&!!s.emailLoaded,
+      emailProvider:c.provider||"resend", emailProviders:[{v:"resend",l:"Resend"},{v:"sendgrid",l:"SendGrid"}], onEmailProvider:set("provider"),
+      emailKey:c.apiKey||"", onEmailKey:set("apiKey"),
+      emailFrom:c.from||"", onEmailFrom:set("from"),
+      emailReplyTo:c.replyTo||"", onEmailReplyTo:set("replyTo"),
+      emailSubject:c.subject||"", onEmailSubject:set("subject"),
+      emailMessage:c.message||"", onEmailMessage:set("message"),
+      emailMsg:s.emailMsg||"", emailBusy:!!s.emailBusy,
+      emailSaveLabel:s.emailBusy?"Saving…":"Save", onEmailSave:()=>save(false),
+      onEmailTest:()=>save(true)
+    };
+  }
+
+  renderVals(){ return Object.assign(this.mainVals(),this.wsVals(),this.emailVals()); }
+
+  mainVals(){
     const s=this.state, sec=s.section, mobile=this.mobile;
     const zoom=mobile?1:((Number(s.textScale)||125)/100);
     const secDef=SECTIONS.find(x=>x.key===sec)||SECTIONS[0];
@@ -8817,7 +9590,7 @@ tr{page-break-inside:avoid;break-inside:avoid}
       onUnlockGoogle:()=>this.gateAction("unlockGoogle"),
       lockHasPass:!s.me||s.me.hasPassword!==false, lockHasGoogle:!!(s.me&&s.me.viaGoogle),
       onForgot:()=>this.authAction("reset"),
-      onSignOut:()=>{ if(this._fb) this._fb.signOut(); },
+      onSignOut:()=>{ try{ sessionStorage.removeItem("nku.ws"); }catch(e){} this.setState({ws:undefined}); if(this._fb) this._fb.signOut(); },
       fbProject:(this._fb&&this._fb.projectId)||"northkitsapunited",
       signedInEmail:s.me?s.me.email:"—",
       myRole:this.role,
@@ -8840,7 +9613,7 @@ tr{page-break-inside:avoid;break-inside:avoid}
       deviceStyle:"width:100%;height:calc(100vh / "+zoom+");zoom:"+zoom,
       shellStyle:"position:relative;display:flex;flex-direction:row;overflow:hidden;background:var(--color-bg);width:100%;height:100%",
 
-      navItems:SECTIONS.filter(x=>!s.me||this.canSee(x.key)).map(x=>({num:x.num,label:x.label,count:counts[x.key],go:()=>this.go(x.key),
+      navItems:SECTIONS.filter(x=>!x.workspace&&!x.hidden&&(!s.me||this.canSee(x.key))).map(x=>({num:x.num,label:x.label,count:counts[x.key],go:()=>this.go(x.key),
         style:"padding:9px 14px;"+(sec===x.key?"background:"+GREEN+";color:#ffffff;font-weight:700":"color:#6f6b62;font-weight:400")})),
       drawerOpen:s.drawerOpen,
       onCloseDrawer:()=>this.setState({drawerOpen:false}),
@@ -9668,7 +10441,7 @@ tr{page-break-inside:avoid;break-inside:avoid}
       onSave:()=>this.save(),
       sectionKey:sec,
 
-      adminTabs:[{k:"users",l:"Users"},{k:"roles",l:"Roles"},{k:"fields",l:"Data fields"},{k:"groups",l:"Task groups"},{k:"lists",l:"Tags & lists"},{k:"tiers",l:"Donor tiers"},{k:"import",l:"Bulk upload"},{k:"display",l:"General"},{k:"reset",l:"Reset data"}].map(t=>({label:t.l,on:()=>this.setState({adminTab:t.k,resetStage:"idle",importPreview:null,importMsg:""}),
+      adminTabs:[{k:"users",l:"Users"},{k:"roles",l:"Roles"},{k:"fields",l:"Data fields"},{k:"groups",l:"Task groups"},{k:"lists",l:"Tags & lists"},{k:"tiers",l:"Donor tiers"},{k:"import",l:"Bulk upload"},{k:"display",l:"General"},{k:"email",l:"Email"},{k:"reset",l:"Reset data"}].map(t=>({label:t.l,on:()=>this.setState({adminTab:t.k,resetStage:"idle",importPreview:null,importMsg:""}),
         style:"cursor:pointer;flex:1;border:0;border-right:1px solid var(--color-divider);font-family:var(--font-heading);font-weight:800;font-size:12.5px;padding:11px 14px;text-align:left;background:"+(s.adminTab===t.k?GREEN:"transparent")+";color:"+(s.adminTab===t.k?"#ffffff":"var(--color-text)")})),
       adminIsUsers:s.adminTab==="users", adminIsRoles:s.adminTab==="roles", adminIsFields:s.adminTab==="fields", adminIsReset:s.adminTab==="reset",
       adminIsGroups:s.adminTab==="groups", adminIsImport:s.adminTab==="import",

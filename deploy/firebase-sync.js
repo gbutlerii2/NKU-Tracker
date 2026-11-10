@@ -23,7 +23,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
 import { setDoc,
   initializeFirestore, persistentLocalCache, persistentMultipleTabManager,
-  collection, collectionGroup, doc, onSnapshot, deleteDoc, writeBatch, getDocs
+  collection, collectionGroup, doc, onSnapshot, deleteDoc, writeBatch, getDocs, getDoc, updateDoc
 } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 import {
   getStorage, ref as storageRef, uploadBytes, getDownloadURL, deleteObject
@@ -66,7 +66,11 @@ const BOOTSTRAP_ADMINS = ["gerry@gb2solutions.net", "gerandkar@gmail.com"];
 /* ---------------------------------------------------------- permissions -- */
 // Mirror of the app's OPS / DEFAULT_ROLES. Keep the three in step with
 // firestore.rules.
-const SECTION_OPS = ["overview", "donors", "transactions", "events", "phases", "workers", "tasks", "admin", "reports", "documents", "calendar"];
+const SECTION_OPS = ["overview", "donors", "transactions", "events", "phases", "workers", "tasks", "admin", "reports", "documents", "calendar", "wsdonors", "wsdonations", "wsgrants"];
+// Entry workspaces: the only access a non-admin has. The full tracker (every
+// other section) is for admins alone, so permsFor turns those off for anyone
+// without Admin, whatever their roles say.
+const WS_OPS = ["wsdonors", "wsdonations", "wsgrants"];
 const RANK = { none: 0, view: 1, write: 2 };
 const emptyPerms = () => { const p = { money: false }; SECTION_OPS.forEach((k) => { p[k] = "none"; }); return p; };
 const allPerms = (lvl, money) => { const p = { money: !!money }; SECTION_OPS.forEach((k) => { p[k] = lvl; }); return p; };
@@ -100,6 +104,10 @@ function permsFor(u, roles) {
   });
   merge(u.ops || {});
   if (out.admin === "view") out.admin = "write";
+  if (out.admin !== "write") {
+    SECTION_OPS.forEach((k) => { if (WS_OPS.indexOf(k) < 0) out[k] = "none"; });
+    WS_OPS.forEach((k) => { if (out[k] === "view") out[k] = "write"; });
+  }
   return out;
 }
 const canon = (p) => p ? JSON.stringify(SECTION_OPS.map((k) => p[k] || "none").concat([p.money === true])) : "";
@@ -227,6 +235,25 @@ let dataUnsubs = [];
 let seen = new Set();
 let online = true;
 let moneyDenied = false;
+// A Grants workspace user without View $$ is refused the collection-group
+// listener, but the rules let them read the amount of each grant award one
+// document at a time. These listeners fill those amounts in.
+let grantMoney = false;
+const grantUnsubs = new Map();
+let emitNow = null;
+const isGrant = (r) => String((r && r.method) || "").trim().toLowerCase() === "grant award";
+function syncGrantWatch() {
+  const want = new Set(grantMoney && moneyDenied ? store.open.transactions.filter(isGrant).map((r) => r.id) : []);
+  grantUnsubs.forEach((u, id) => { if (!want.has(id)) { try { u(); } catch (e) {} grantUnsubs.delete(id); delete store.secure.transactions[id]; } });
+  want.forEach((id) => {
+    if (grantUnsubs.has(id)) return;
+    grantUnsubs.set(id, onSnapshot(secureRef("transactions", id), (snap) => {
+      if (snap.exists()) store.secure.transactions[id] = snap.data(); else delete store.secure.transactions[id];
+      if (emitNow) emitNow("grant-money");
+    }, () => {}));
+  });
+}
+function watchGrantMoney(on) { grantMoney = !!on; syncGrantWatch(); }
 // A collection the rules refuse to read is left OUT of the composed snapshot
 // rather than reported as empty, so the app keeps whatever it holds locally
 // instead of watching new records vanish a moment after they are created.
@@ -259,11 +286,13 @@ function subscribe(onChange) {
       moneyDenied, online
     });
   };
+  emitNow = (name) => { if (seen.size >= total) emit(name); };
 
   COLLECTIONS.forEach((name) => {
     dataUnsubs.push(onSnapshot(collection(db, name), { includeMetadataChanges: true }, (snap) => {
       online = !snap.metadata.fromCache;
       store.open[name] = snap.docs.map((d) => Object.assign({ id: d.id }, d.data()));
+      if (name === "transactions") syncGrantWatch();
       emit(name);
     }, (err) => {
       console.warn("[NKFB]", name, err.code);
@@ -288,6 +317,8 @@ function subscribe(onChange) {
     if (err.code === "permission-denied") moneyDenied = true;
     else console.warn("[NKFB] secure", err.code);
     COLLECTIONS.forEach((c) => { store.secure[c] = {}; });
+    grantUnsubs.forEach((u) => { try { u(); } catch (e) {} }); grantUnsubs.clear();
+    syncGrantWatch();
     emit("secure");
   }));
 
@@ -316,7 +347,11 @@ function subscribe(onChange) {
   }, (err) => { console.warn("[NKFB] users", err.code); emit("users"); }));
 }
 
-function unsubscribe() { dataUnsubs.forEach((u) => { try { u(); } catch (e) {} }); dataUnsubs = []; }
+function unsubscribe() {
+  dataUnsubs.forEach((u) => { try { u(); } catch (e) {} }); dataUnsubs = [];
+  grantUnsubs.forEach((u) => { try { u(); } catch (e) {} }); grantUnsubs.clear();
+  emitNow = null;
+}
 
 /* ------------------------------------------------------------- writing ---- */
 // The app mutates plain React state. After each mutation we diff the new state
@@ -405,6 +440,53 @@ async function push(s, opts) {
   await writing;
   writing = null;
   return { writes: n };
+}
+
+/* ------------------------------------------------- workspace writes ---- */
+// The entry workspaces write one record at a time instead of the diff push.
+// A workspace user may only touch the records the rules allow them, and the
+// diff push sends everything that changed in one all-or-nothing batch, so one
+// unrelated change (a field list, a reminder) would sink their donation too.
+
+function noteSaved(c, rec) {
+  if (!last || !last.open[c]) return;
+  const { open, money } = splitRecord(c, rec);
+  last.open[c][rec.id] = JSON.stringify(open);
+  last.money[c][rec.id] = JSON.stringify(money);
+}
+
+// Creates new records. withMoney writes their amounts too (rules allow a
+// workspace user to create an amount document, never to read or change one).
+async function createRecords(list, withMoney) {
+  const batch = writeBatch(db);
+  list.forEach(({ col, rec }) => {
+    const { open, money } = splitRecord(col, rec);
+    batch.set(doc(db, col, rec.id), open);
+    if (withMoney && MONEY[col]) batch.set(secureRef(col, rec.id), money);
+  });
+  await batch.commit();
+  list.forEach(({ col, rec }) => noteSaved(col, rec));
+}
+
+// Changes some fields of one record (rec is the full record after the change).
+async function patchRecord(col, rec, fields) {
+  const open = {}, money = {}, spec = MONEY[col] || {};
+  Object.keys(fields).forEach((k) => { if (k in spec) money[k] = fields[k]; else open[k] = fields[k]; });
+  const batch = writeBatch(db);
+  if (Object.keys(open).length) batch.update(doc(db, col, rec.id), open);
+  if (Object.keys(money).length) batch.set(secureRef(col, rec.id), money, { merge: true });
+  await batch.commit();
+  noteSaved(col, rec);
+}
+
+// Email settings for receipts: admin-only, outside meta so other users can't
+// read the API key.
+async function getEmailConfig() {
+  const snap = await getDoc(doc(db, "private", "email"));
+  return snap.exists() ? snap.data() : null;
+}
+async function saveEmailConfig(cfg) {
+  await setDoc(doc(db, "private", "email"), cfg);
 }
 
 /* ---------------------------------------------------------------- seed ---- */
@@ -598,6 +680,7 @@ window.NKFB = {
   resetPassword: (e) => sendPasswordResetEmail(auth, key(e)).catch((x) => { throw new Error(friendly(x)); }),
   signOut: () => { unsubscribe(); last = null; return fbSignOut(auth); },
   subscribe, unsubscribe, push, markPushed, migrate, isEmpty, seed,
+  WS_OPS, watchGrantMoney, createRecords, patchRecord, getEmailConfig, saveEmailConfig,
   uploadFile, deleteFile, createAccount, changePassword, DEVICE_DAYS,
   // Used by inbox.html to call the website API (/api/inbox) as the signed-in user.
   idToken: () => (auth.currentUser ? auth.currentUser.getIdToken() : Promise.resolve(null))

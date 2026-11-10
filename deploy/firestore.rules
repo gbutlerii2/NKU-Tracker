@@ -10,7 +10,10 @@ rules_version = '2';
 //   perms.<section>  'none' | 'view' | 'write'   for overview, donors,
 //                    transactions, events, phases, workers, tasks, admin,
 //                    reports, documents, calendar
+//   perms.wsdonors / wsdonations / wsgrants  'none' | 'write'  entry workspaces
 //   perms.money      true | false                 View $$
+// Only admins hold the full-tracker sections; everyone else works through the
+// entry workspaces (the app's permsFor turns the other sections off).
 // Writes to a collection need 'write' on its section; perms.admin == 'write'
 // is full admin. Section visibility is enforced in the app — the Overview,
 // Reports and Calendar roll up every collection, so records stay readable to
@@ -92,6 +95,28 @@ service cloud.firestore {
         ? me().perms.get('money', false) == true
         : legacyRole() in ['View Only Full', 'Entry User']));
     }
+    // Holds an entry workspace (Donor entry, Donation entry, Grant tracking).
+    function ws(op) {
+      return activeUser() && hasPerms() && me().perms.get(op, 'none') == 'write';
+    }
+    function grantDoc(d) {
+      return d.get('method', '').lower() == 'grant award';
+    }
+    function txPath(id) {
+      return /databases/$(database)/documents/transactions/$(id);
+    }
+    // Donation entry may create non-grant donations and afterwards only mark
+    // the thank-you. Grant tracking may create and edit grant awards. Neither
+    // may delete, and neither may turn one kind into the other.
+    function wsTxCreate() {
+      return (ws('wsdonations') && !grantDoc(request.resource.data))
+        || (ws('wsgrants') && grantDoc(request.resource.data));
+    }
+    function wsTxUpdate() {
+      return (ws('wsdonations') && !grantDoc(resource.data) && !grantDoc(request.resource.data)
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['thankedAt', 'thankedBy']))
+        || (ws('wsgrants') && grantDoc(resource.data) && grantDoc(request.resource.data));
+    }
     function anyRecordWrite() {
       return canWrite('donors') || canWrite('transactions') || canWrite('events');
     }
@@ -101,10 +126,15 @@ service cloud.firestore {
     match /donors/{id} {
       allow read: if member();
       allow write: if canWrite('donors');
+      // Donors workspace, and the Donations / Grants workspaces adding a new
+      // donor or funder along with a gift or grant.
+      allow create: if ws('wsdonors') || ws('wsdonations') || ws('wsgrants');
     }
     match /transactions/{id} {
       allow read: if member();
       allow write: if canWrite('transactions');
+      allow create: if wsTxCreate();
+      allow update: if wsTxUpdate();
     }
     match /events/{id} {
       allow read: if member();
@@ -140,6 +170,14 @@ service cloud.firestore {
     }
     match /transactions/{id}/secure/{doc} {
       allow write: if canWrite('transactions');
+      // The amount typed when a workspace user enters a gift. Create only:
+      // they can't read it back or change it afterwards.
+      allow create: if existsAfter(txPath(id)) && (
+        (ws('wsdonations') && !grantDoc(getAfter(txPath(id)).data))
+        || (ws('wsgrants') && grantDoc(getAfter(txPath(id)).data)));
+      // Grant details aren't private: Grant tracking reads and edits the
+      // amount of a grant award, one document at a time.
+      allow read, update: if ws('wsgrants') && grantDoc(get(txPath(id)).data);
     }
     match /events/{id}/secure/{doc} {
       allow write: if canWrite('events');
@@ -162,6 +200,13 @@ service cloud.firestore {
     match /meta/{doc} {
       allow read: if member();
       allow write: if isAdmin() || (anyRecordWrite() && doc in ['reminders', 'contacts']);
+    }
+
+    // ---- admin-only settings ---------------------------------------------------
+    // private/email holds the receipt email settings, including the provider's
+    // API key. Only admins (and the Netlify function, via the Admin SDK) see it.
+    match /private/{doc} {
+      allow read, write: if isAdmin();
     }
 
     // ---- roster -------------------------------------------------------------
