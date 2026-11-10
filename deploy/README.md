@@ -11,8 +11,10 @@ user-guide.html     the User Guide, self-contained (opened from the sidebar's Us
 _redirects          single-page fallback for Netlify
 ```
 
-Drag this folder onto Netlify (or `netlify deploy --prod --dir .`). The three files
-above are all that get served; the rest of this folder is documentation and source.
+Netlify is linked to the GitHub repository, so merging to `main` deploys the site
+and the functions in `netlify/functions` (since 2026-11-10; dragging the folder onto
+Netlify no longer deploys the functions). `firestore.rules` is not deployed by
+Netlify: paste it into Firestore → Rules whenever it changes.
 
 ## Before it works
 
@@ -34,6 +36,35 @@ rules are published Firestore refuses every read and the app sits empty; until
 | `FIREBASE-SETUP.md` | Console setup, roles, where amounts live, offline behaviour, costs |
 | `_redirects` | Netlify SPA fallback |
 | `source/` | `app.html` is the app template packed into `index.html` (see `tools/bundle.py`). The `.dc.html` there is an older Design copy and is out of date |
+
+## Workspaces (sign-in picker)
+
+Only admins use the full tracker. Everyone else works in one of three entry
+workspaces, turned on per user or role in Admin → Users / Roles (rows "Donors
+workspace", "Donations workspace", "Grants workspace": Off / On). At sign-in a
+"Where to?" dropdown lists Full Site (admins only) and the workspaces the person
+has. With a single workspace they go straight in. The choice holds for the browser
+tab; a header dropdown switches, and admins have a Switch button in the sidebar.
+
+- **Donors**: add a donor with contact details. Similar names already in the
+  tracker are shown as you type. Account owner can be assigned or left blank.
+- **Donations**: enter a gift for an existing donor or a new one, one-time or in
+  installments (number, frequency, first date, and each payment's amount). The amount
+  is visible only while typing it. The list shows non-grant donations without
+  amounts, with Thank you sent and Email receipt (the receipt is built and sent by
+  `/api/receipt`, so the sender never sees it).
+- **Grants**: grant awards only. Add or edit a grant (name, funder, status, amount,
+  deadline, contacts) with action items and follow-ups.
+
+How it is enforced: `permsFor` (app and `firebase-sync.js`) turns every full-site
+section off for anyone without Admin. `firestore.rules` lets a workspace user
+create donors, create non-grant donations (Donations) or create and edit grant
+awards (Grants), mark a donation thanked, and create, but never read or change, a
+donation's amount. Grants users read and edit grant amounts only. Workspaces save
+record by record (`NKFB.createRecords` / `patchRecord`), never through the diff push.
+
+Receipt email settings live in Admin → Email (service Resend or SendGrid, API key,
+From, reply-to, subject, message) in the admin-only document `private/email`.
 
 ## Donations: certificates, tax receipts and thank-yous
 
