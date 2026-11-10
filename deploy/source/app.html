@@ -3775,6 +3775,9 @@ const DEFAULT_TIERS=[["Legacy Partner",1000000],["Founders Circle",500000],["Hal
   .map(([name,min],i)=>({id:"tier"+(i+1),name,min}));
 // Title and tag given to the donations moved out of the retired Events section.
 const EVENT_DONATION_TITLE="NKU Dinner Gala";
+// Tags are lists, but older or imported records can hold a comma-separated
+// string (or nothing). Every read of a tags field goes through this.
+const asList=v=>Array.isArray(v)?v:(typeof v==="string"&&v.trim()?v.split(",").map(x=>x.trim()).filter(Boolean):[]);
 const MONTHS=["January","February","March","April","May","June","July","August","September","October","November","December"];
 
 const SCHEMA = {
@@ -4986,12 +4989,12 @@ body{margin:0;font-family:Archivo,system-ui,sans-serif;color:#201e1d;-webkit-pri
       if(t.eventId!==ev.id) return t;
       any=true;
       if(t.title===name) return t;
-      return Object.assign({},t,{title:name,tags:[name].concat((t.tags||[]).filter(x=>x!==t.title&&x!==name))});
+      return Object.assign({},t,{title:name,tags:[name].concat(asList(t.tags).filter(x=>x!==t.title&&x!==name))});
     });
     if(!any) return lists;
     const titles=(lists.donationTitles||[]).slice();
     if(titles.indexOf(name)<0){ titles.push(name); titles.sort(); lists.donationTitles=titles; }
-    const tags=(lists.tags||[]).slice();
+    const tags=asList(lists.tags).slice();
     if(tags.indexOf(name)<0){ tags.push(name); lists.tags=tags; }
     return lists;
   }
@@ -5089,7 +5092,7 @@ body{margin:0;font-family:Archivo,system-ui,sans-serif;color:#201e1d;-webkit-pri
     const inst=pp.plan.installments, sched=inst.filter(y=>!y.extra);
     const label=x?"payment "+(sched.indexOf(x)+1)+" of "+sched.length:"extra payment";
     const tx={id:this.nextKey("transactions",data.transactions),donorId:pp.donorId,pledgeId:pp.id,amount:amt,
-      title:(pp.title||"Pledge")+" — "+label,tags:(pp.tags||[]).slice(),date:day,status:"Received",completedAt:day,
+      title:(pp.title||"Pledge")+" — "+label,tags:asList(pp.tags).slice(),date:day,status:"Received",completedAt:day,
       method:method||pp.method||"",notes:note||"",team:pp.team||"",
       taskIds:(pp.taskIds||[]).slice(),phaseIds:(pp.phaseIds||[]).slice(),groupIds:(pp.groupIds||[]).slice(),allocations:(pp.allocations||[]).slice()};
     data.transactions.unshift(tx);
@@ -5479,13 +5482,13 @@ body{margin:0;font-family:Archivo,system-ui,sans-serif;color:#201e1d;-webkit-pri
         const ev=data.events.find(e=>e.id===t.eventId);
         const old=String(t.title||"").trim(), evName=ev?String(ev.name||"").trim():"";
         const out=Object.assign({},t,{eventId:"",title:NAME,
-          tags:[NAME].concat((t.tags||[]).filter(x=>x!==NAME&&x!==old&&x!==evName))});
+          tags:[NAME].concat(asList(t.tags).filter(x=>x!==NAME&&x!==old&&x!==evName))});
         const todo=ev&&!t.pledgeId&&(ev.todos||[]).find(x=>x.thankDonorId===t.donorId&&x.done);
         if(todo&&!t.thankedAt){ out.thankedAt=day; out.thankedBy="Moved from Events"; }
         return out;
       });
       const titles=(lists.donationTitles||[]).filter(x=>x!==NAME).concat([NAME]).sort();
-      const tags=(lists.tags||[]).indexOf(NAME)<0?(lists.tags||[]).concat([NAME]):(lists.tags||[]);
+      const tags=asList(lists.tags).indexOf(NAME)<0?asList(lists.tags).concat([NAME]):asList(lists.tags);
       lists=Object.assign({},lists,{donationTitles:titles,tags});
       console.info("[NKU] moved event gifts into Donations as “"+NAME+"”");
       return {data,lists,evGroupOpen:{}};
@@ -6104,7 +6107,7 @@ body{margin:0;font-family:Archivo,system-ui,sans-serif;color:#201e1d;-webkit-pri
         Object.assign(gtx,{donationKind:"Installment",instCount:String(planN),instEvery:every,instStart:day});
         if(todayAmt>0){
           const pay=Object.assign({},gtx,{id:this.nextKey("transactions",data.transactions),pledgeId:gtx.id,amount:todayAmt,
-            status:"Received",completedAt:day,tags:(gtx.tags||[]).slice(),title:gtx.title+" — payment 1 of "+planN});
+            status:"Received",completedAt:day,tags:asList(gtx.tags).slice(),title:gtx.title+" — payment 1 of "+planN});
           delete pay.plan;
           data.transactions=[pay].concat(data.transactions);
           gtx.plan.installments[0].txId=pay.id;
@@ -6798,7 +6801,7 @@ tr{page-break-inside:avoid;break-inside:avoid}
       });
       data[sec]=list;
       const lists=Object.assign({},s.lists);
-      const all=(lists.tags||[]).slice();
+      const all=asList(lists.tags).slice();
       tagsAdded.forEach(t=>{ if(!all.find(x=>x.toLowerCase()===t.toLowerCase())) all.push(t); });
       lists.tags=all;
       return {data,lists,importPreview:null,
@@ -7226,7 +7229,7 @@ tr{page-break-inside:avoid;break-inside:avoid}
     if(!v) return;
     this.setState(s=>{
       const lists=Object.assign({},s.lists);
-      const all=(lists.tags||[]).slice();
+      const all=asList(lists.tags).slice();
       const match=all.find(t=>t.toLowerCase()===v.toLowerCase())||v;
       if(all.indexOf(match)<0) all.push(match);
       lists.tags=all;
@@ -7556,7 +7559,7 @@ tr{page-break-inside:avoid;break-inside:avoid}
       if(f.t==="Long text") return Object.assign(base,{isArea:true});
       if(f.t==="Tags"){
         const sel=Array.isArray(d[f.k])?d[f.k]:(d[f.k]?String(d[f.k]).split(",").map(x=>x.trim()).filter(Boolean):[]);
-        const all=(this.state.lists.tags||[]).slice().sort();
+        const all=asList(this.state.lists.tags).slice().sort();
         return Object.assign(base,{isTags:true,wrapStyle:two?"grid-column:1 / -1":"",
           tagChips:all.map(t=>{
             const on=sel.indexOf(t)>=0;
