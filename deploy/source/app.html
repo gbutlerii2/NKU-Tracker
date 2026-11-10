@@ -632,6 +632,23 @@ body{margin:0;background:#e7dfcc;font-family:var(--font-body)}
 <sc-if value="{{ wsReady }}" hint-placeholder-val="{{ true }}">
 
 <sc-if value="{{ wsIsDonors }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;border-bottom:1px solid var(--color-divider);margin-bottom:16px">
+<button class="nkt-tap" sc-camel-on-click="{{ onWdnTabAdd }}" style="{{ wdnTabAddSt }}">Add a donor</button>
+<button class="nkt-tap" sc-camel-on-click="{{ onWdnTabList }}" style="{{ wdnTabListSt }}">Donors list</button>
+</div>
+<sc-if value="{{ wdnTabList }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:10px">
+<input class="input" value="{{ wdnQList }}" sc-camel-on-change="{{ onWdnQList }}" placeholder="Search name, email or donor ID" style="height:34px;min-height:34px;flex:1;min-width:180px;max-width:320px">
+<span style="font-size:11.5px;color:color-mix(in srgb,var(--color-text) 55%,transparent)">{{ wdnListNote }}</span>
+</div>
+<sc-for list="{{ wdnList }}" as="r" hint-placeholder-count="5">
+<div style="padding:9px 0;border-bottom:1px solid var(--color-divider)">
+<div style="font-weight:700;font-size:13.5px">{{ r.name }} <span style="font-weight:400;font-size:11.5px;color:color-mix(in srgb,var(--color-text) 55%,transparent)">{{ r.sub }}</span></div>
+<div style="font-size:12px;color:color-mix(in srgb,var(--color-text) 65%,transparent)">{{ r.contact }}</div>
+</div>
+</sc-for>
+</sc-if>
+<sc-if value="{{ wdnTabAdd }}" hint-placeholder-val="{{ true }}">
 <div style="max-width:720px;display:flex;flex-direction:column;gap:12px">
 <div style="font-size:13px;line-height:1.6;color:color-mix(in srgb,var(--color-text) 68%,transparent)">Add a new donor with their contact details. As you type the name, anyone already in the tracker with a similar name shows below so you don't add them twice.</div>
 <div style="{{ wsTwoCol }}">
@@ -657,6 +674,7 @@ body{margin:0;background:#e7dfcc;font-family:var(--font-body)}
 <div class="field"><label>Account owner</label><sc-raw-select class="input" value="{{ wdnOwner }}" sc-camel-on-change="{{ onWdnOwner }}" style="height:40px"><sc-for list="{{ wsTeam }}" as="o" hint-placeholder-count="4"><option value="{{ o.v }}">{{ o.l }}</option></sc-for></sc-raw-select></div>
 <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px">
 <button class="btn btn-primary nkt-tap" sc-camel-on-click="{{ onWdnSave }}" style="height:44px;padding:0 22px">{{ wdnSaveLabel }}</button>
+<button class="btn btn-secondary nkt-tap" sc-camel-on-click="{{ onWdnSaveNext }}" style="height:44px;padding:0 18px">{{ wdnSaveNextLabel }}</button>
 <button class="btn btn-secondary nkt-tap" sc-camel-on-click="{{ onWdnClear }}" style="height:44px;padding:0 16px">Clear</button>
 </div>
 <sc-if value="{{ wsRecentShow }}" hint-placeholder-val="{{ false }}">
@@ -666,6 +684,7 @@ body{margin:0;background:#e7dfcc;font-family:var(--font-body)}
 </div>
 </sc-if>
 </div>
+</sc-if>
 </sc-if>
 
 <sc-if value="{{ wsIsDonations }}" hint-placeholder-val="{{ false }}">
@@ -745,6 +764,7 @@ body{margin:0;background:#e7dfcc;font-family:var(--font-body)}
 <div style="font-size:11.5px;color:color-mix(in srgb,var(--color-text) 58%,transparent)">Once saved, the amount isn't shown here again. An admin can see it in the full tracker.</div>
 <div style="display:flex;gap:8px;flex-wrap:wrap">
 <button class="btn btn-primary nkt-tap" sc-camel-on-click="{{ onWdSave }}" style="height:44px;padding:0 22px">{{ wdSaveLabel }}</button>
+<button class="btn btn-secondary nkt-tap" sc-camel-on-click="{{ onWdSaveNext }}" style="height:44px;padding:0 18px">{{ wdSaveNextLabel }}</button>
 <button class="btn btn-secondary nkt-tap" sc-camel-on-click="{{ onWdClear }}" style="height:44px;padding:0 16px">Clear</button>
 </div>
 </div>
@@ -871,6 +891,7 @@ body{margin:0;background:#e7dfcc;font-family:var(--font-body)}
 <div class="field"><label>Notes</label><textarea class="input" value="{{ wgNotes }}" sc-camel-on-change="{{ onWgNotes }}" rows="3" style="min-height:70px;resize:vertical"></textarea></div>
 <div style="display:flex;gap:8px;flex-wrap:wrap">
 <button class="btn btn-primary nkt-tap" sc-camel-on-click="{{ onWgSave }}" style="height:44px;padding:0 22px">{{ wgSaveLabel }}</button>
+<sc-if value="{{ wgIsNew }}" hint-placeholder-val="{{ false }}"><button class="btn btn-secondary nkt-tap" sc-camel-on-click="{{ onWgSaveNext }}" style="height:44px;padding:0 18px">Save and Add Another</button></sc-if>
 <button class="btn btn-secondary nkt-tap" sc-camel-on-click="{{ onWgBack }}" style="height:44px;padding:0 16px">Cancel</button>
 </div>
 </div>
@@ -9136,7 +9157,8 @@ tr{page-break-inside:avoid;break-inside:avoid}
   }
 
   // ---- Donors workspace ----
-  wsDonorSave(){
+  // close: back to the list. Otherwise the form clears for the next one.
+  wsDonorSave(close){
     const f=this.state.wdnF||{};
     if(!String(f.name||"").trim()) return this.setState({wsErr:"Enter the donor's name."});
     if(!String(f.email||"").trim()&&!String(f.phone||"").trim()&&!String(f.mobile||"").trim()&&!String(f.address||"").trim())
@@ -9144,7 +9166,7 @@ tr{page-break-inside:avoid;break-inside:avoid}
     const rec=this.wsNewDonor(f);
     this.setState({wsBusy:true,wsErr:""});
     this.wsCreate([{col:"donors",rec}],false).then(()=>{
-      this.setState(s=>({wsBusy:false,wdnF:{type:"Individual"},wsMsg:"Saved "+rec.name+" ("+rec.donorId+").",
+      this.setState(s=>({wsBusy:false,wdnF:{type:"Individual"},wdnTab:close?"list":"add",wsMsg:"Saved "+rec.name+" ("+rec.donorId+")."+(close?"":" Ready for the next one."),
         wsRecent:[{name:rec.name,sub:rec.donorId}].concat(s.wsRecent||[]).slice(0,8)}));
     }).catch(e=>this.wsFail(e));
   }
@@ -9161,7 +9183,7 @@ tr{page-break-inside:avoid;break-inside:avoid}
     if(f.inst&&f.inst.length===n) return f.inst;
     return this.buildSchedule(total,n,f.every||"Monthly",f.start||f.date||this.today());
   }
-  wdSave(){
+  wdSave(close){
     const f=this.wdForm(), inst=f.kind==="Installment";
     if(!f.method) return this.setState({wsErr:"Choose the donation type."});
     if(!f.donorId&&!f.newDonor) return this.setState({wsErr:"Choose the donor, or add a new one."});
@@ -9188,7 +9210,7 @@ tr{page-break-inside:avoid;break-inside:avoid}
     list.push({col:"transactions",rec:tx});
     this.setState({wsBusy:true,wsErr:""});
     this.wsCreate(list,true).then(()=>{
-      this.setState({wsBusy:false,wdF:this.wdBlank(),wsMsg:"Saved the "+(inst?"pledge":"donation")+" from "+donorName+". It's in the list for a thank-you."});
+      this.setState({wsBusy:false,wdF:this.wdBlank(),wdTab:close?"list":"enter",wsMsg:"Saved the "+(inst?"pledge":"donation")+" from "+donorName+"."+(close?"":" Ready for the next one.")});
     }).catch(e=>this.wsFail(e));
   }
   wdRows(){
@@ -9235,7 +9257,7 @@ tr{page-break-inside:avoid;break-inside:avoid}
     this.setState({wgOpen:id||"new",wgDraft:draft,wgQ2:"",wgNewDonor:false,wgNd:{type:"Organization"},wsErr:"",wsMsg:"",wgAct:null});
   }
   wgSet(o){ this.setState(s=>({wgDraft:Object.assign({},s.wgDraft,o),wsErr:""})); }
-  wgSave(){
+  wgSave(another){
     const s=this.state, dr=s.wgDraft; if(!dr) return;
     if(!String(dr.grantName||"").trim()) return this.setState({wsErr:"Enter the grant name."});
     if(!dr.donorId&&!s.wgNewDonor) return this.setState({wsErr:"Choose the funder, or add a new one."});
@@ -9256,7 +9278,11 @@ tr{page-break-inside:avoid;break-inside:avoid}
       KEYS.concat(["completedAt"]).forEach(k=>{ if(JSON.stringify(cur[k]==null?"":cur[k])!==JSON.stringify(clean[k]==null?"":clean[k])) fields[k]=clean[k]==null?"":clean[k]; });
       job=(list.length?this.wsCreate(list,false):Promise.resolve()).then(()=>Object.keys(fields).length?this.wsPatch("transactions",s.wgOpen,fields):null);
     }
-    job.then(()=>this.setState({wsBusy:false,wgOpen:null,wgDraft:null,wsMsg:"Saved "+clean.grantName+"."})).catch(e=>this.wsFail(e));
+    const isNew=s.wgOpen==="new";
+    job.then(()=>{
+      if(isNew&&another){ this.wgOpen(null); this.setState({wsBusy:false,wsMsg:"Saved "+clean.grantName+". Ready for the next one."}); }
+      else this.setState({wsBusy:false,wgOpen:null,wgDraft:null,wsMsg:"Saved "+clean.grantName+"."});
+    }).catch(e=>this.wsFail(e));
   }
 
   wsVals(){
@@ -9301,7 +9327,17 @@ tr{page-break-inside:avoid;break-inside:avoid}
         wdnTypes:["Individual","Organization","Family"].map(sel),
         wdnPrefs:[{v:"",l:"—"}].concat(["Phone","Mobile","Email","Mail","In person"].map(sel)),
         wdnDupShow:m.length>0, wdnDups:m.map(o=>({name:o.name||"—",sub:this.wsDonorSub(o)})),
-        wdnSaveLabel:s.wsBusy?"Saving…":"Save donor", onWdnSave:()=>this.wsDonorSave(),
+        wdnSaveLabel:s.wsBusy?"Saving…":"Save and Close", onWdnSave:()=>{ if(!s.wsBusy) this.wsDonorSave(true); },
+        wdnSaveNextLabel:"Save and Add Another", onWdnSaveNext:()=>{ if(!s.wsBusy) this.wsDonorSave(false); },
+        wdnTabAdd:(s.wdnTab||"add")==="add", wdnTabList:s.wdnTab==="list",
+        wdnTabAddSt:tabSt((s.wdnTab||"add")==="add"), wdnTabListSt:tabSt(s.wdnTab==="list"),
+        onWdnTabAdd:()=>this.setState({wdnTab:"add",wsErr:"",wsMsg:""}), onWdnTabList:()=>this.setState({wdnTab:"list",wsErr:"",wsMsg:""}),
+        wdnQList:s.wdnQ||"", onWdnQList:e=>this.setState({wdnQ:e.target.value}),
+        wdnList:(()=>{ const q=String(s.wdnQ||"").trim().toLowerCase();
+          return this.d().donors.filter(o=>!q||((o.name||"")+" "+(o.org||"")+" "+(o.email||"")+" "+(o.donorId||"")).toLowerCase().includes(q))
+            .slice().sort((a,b)=>String(a.name||"").localeCompare(String(b.name||""))).slice(0,100)
+            .map(o=>({name:o.name||"—",sub:[o.donorId,o.type].filter(Boolean).join(" · "),contact:[o.email,o.phone||o.mobile].filter(Boolean).join(" · ")})); })(),
+        wdnListNote:(()=>{ const n=this.d().donors.length; return n>100?"Showing the first 100 of "+n+". Search to narrow it down.":n+" donor"+(n===1?"":"s"); })(),
         onWdnClear:()=>this.setState({wdnF:{type:"Individual"},wsErr:"",wsMsg:""}),
         wsRecentShow:(s.wsRecent||[]).length>0, wsRecent:s.wsRecent||[]
       });
@@ -9351,7 +9387,8 @@ tr{page-break-inside:avoid;break-inside:avoid}
         wdSchedNote:!sched.length?"":(Math.abs(sum-total)>0.009?"Payments add up to "+this.receiptCash(sum)+" — "+(sum>total?"more":"less")+" than the "+this.receiptCash(total)+" total.":sched.length+" payments, "+this.receiptCash(sum)+" in all."),
         wdSchedOff:sched.length>0&&Math.abs(sum-total)>0.009,
         onWdSpread:()=>this.wdSet({inst:null}),
-        wdSaveLabel:s.wsBusy?"Saving…":(inst?"Save pledge":"Save donation"), onWdSave:()=>this.wdSave(),
+        wdSaveLabel:s.wsBusy?"Saving…":"Save and Close", onWdSave:()=>{ if(!s.wsBusy) this.wdSave(true); },
+        wdSaveNextLabel:"Save and Add Another", onWdSaveNext:()=>{ if(!s.wsBusy) this.wdSave(false); },
         onWdClear:()=>this.setState({wdF:this.wdBlank(),wsErr:"",wsMsg:""}),
         wdQList:s.wdQ||"", onWdQList:e=>this.setState({wdQ:e.target.value,wdLimit:60}),
         wdShowOpts:[["All","All"],["Thanks","Needs a thank-you"],["Receipt","No receipt sent"]].map(([v,l])=>({label:l,style:pillSt((s.wdShow||"All")===v),on:()=>this.setState({wdShow:v,wdLimit:60})})),
@@ -9435,7 +9472,8 @@ tr{page-break-inside:avoid;break-inside:avoid}
           onWgActCancel:()=>this.setState({wgAct:null}),
           onWgActSave:()=>{ if(!af) return; const e={id:af.id||("a"+Date.now().toString(36)),date:af.date||"",person:af.person||"",status:af.status||"",notes:String(af.notes||"").trim()};
             const l=(dr.actions||[]).slice(); this.wgSet({actions:af.id?l.map(x=>x.id===af.id?e:x):l.concat([e])}); this.setState({wgAct:null}); },
-          wgSaveLabel:s.wsBusy?"Saving…":(open==="new"?"Save grant":"Save changes"), onWgSave:()=>this.wgSave()
+          wgSaveLabel:s.wsBusy?"Saving…":(open==="new"?"Save and Close":"Save changes"), onWgSave:()=>{ if(!s.wsBusy) this.wgSave(false); },
+          wgIsNew:open==="new", onWgSaveNext:()=>{ if(!s.wsBusy) this.wgSave(true); }
         });
       }
     }
