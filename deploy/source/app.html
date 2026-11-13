@@ -936,12 +936,6 @@ body{margin:0;background:#e7dfcc;font-family:var(--font-body)}
 
 <div style="flex:1;min-width:0;display:flex;flex-direction:column;background:var(--color-bg)">
 
-<sc-if value="{{ isMobile }}" hint-placeholder-val="{{ false }}">
-<div style="flex:none;display:flex;align-items:center;justify-content:space-between;padding:8px 18px 4px;font-size:12px;font-weight:600">
-<span>9:41</span>
-<span style="letter-spacing:.14em;opacity:.6">LTE ▮</span>
-</div>
-</sc-if>
 
 <div style="{{ headerBarStyle }}">
 <sc-if value="{{ showBackBtn }}" hint-placeholder-val="{{ false }}">
@@ -1227,7 +1221,7 @@ body{margin:0;background:#e7dfcc;font-family:var(--font-body)}
 
 <sc-if value="{{ isAdmin }}" hint-placeholder-val="{{ false }}">
 <div style="animation:nktFade .16s ease">
-<div style="display:flex;border-bottom:2px solid var(--color-divider)">
+<div class="nkt-scroll" style="{{ adminTabsBar }}">
 <sc-for list="{{ adminTabs }}" as="t" hint-placeholder-count="2">
 <button class="nkt-tap" sc-camel-on-click="{{ t.on }}" style="{{ t.style }}">{{ t.label }}</button>
 </sc-for>
@@ -1236,26 +1230,26 @@ body{margin:0;background:#e7dfcc;font-family:var(--font-body)}
 <sc-for list="{{ users }}" as="u" hint-placeholder-count="5">
 <div style="{{ u.rowStyle }}">
 <sc-if value="{{ u.viewing }}" hint-placeholder-val="{{ true }}">
-<div style="display:flex;align-items:center;gap:12px">
+<div style="{{ adminURow }}">
 <div style="flex:none;width:34px;height:34px;display:grid;place-items:center;background:var(--color-neutral-200);font-family:var(--font-heading);font-weight:800;font-size:12px">{{ u.initials }}</div>
-<div style="flex:1;min-width:0">
+<div style="{{ adminUInfo }}">
 <div style="font-size:13.5px;font-weight:600">{{ u.name }}</div>
-<div style="font-size:11.5px;color:color-mix(in srgb,var(--color-text) 58%,transparent)">{{ u.email }}{{ u.phoneShown }} · {{ u.access }} · {{ u.assignments }}</div>
+<div style="font-size:11.5px;color:color-mix(in srgb,var(--color-text) 58%,transparent);overflow-wrap:anywhere">{{ u.email }}{{ u.phoneShown }} · {{ u.access }} · {{ u.assignments }}</div>
 <div style="font-size:11px;margin-top:2px;color:color-mix(in srgb,var(--color-text) 48%,transparent)">{{ u.lastSeen }}</div>
 </div>
-<div style="display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end;align-items:center">
+<div style="{{ adminUTags }}">
 <sc-for list="{{ u.roleTags }}" as="t" hint-placeholder-count="2"><span class="{{ t.cls }}">{{ t.label }}</span></sc-for>
 <sc-if value="{{ u.extraOps }}" hint-placeholder-val="{{ false }}"><span class="tag tag-outline">{{ u.extraOps }}</span></sc-if>
 <sc-if value="{{ u.isBoot }}" hint-placeholder-val="{{ false }}"><span class="tag tag-accent" title="Hard-coded in the app and security rules as a lockout escape hatch">Built-in admin</span></sc-if>
-</div>
 <sc-if value="{{ u.inactive }}" hint-placeholder-val="{{ false }}">
 <span class="tag tag-neutral">Inactive</span>
 </sc-if>
-<div style="display:flex;gap:6px;flex:none">
-<button class="nkt-tap" sc-camel-on-click="{{ u.edit }}" style="height:28px;padding:0 10px;border:1px solid var(--color-divider);background:transparent;cursor:pointer;font-size:11.5px">Edit</button>
-<button class="nkt-tap" sc-camel-on-click="{{ u.toggle }}" style="height:28px;padding:0 10px;border:1px solid var(--color-divider);background:transparent;cursor:pointer;font-size:11.5px">{{ u.toggleLabel }}</button>
+</div>
+<div style="{{ adminUBtns }}">
+<button class="nkt-tap" sc-camel-on-click="{{ u.edit }}" style="{{ adminUBtn }}">Edit</button>
+<button class="nkt-tap" sc-camel-on-click="{{ u.toggle }}" style="{{ adminUBtn }}">{{ u.toggleLabel }}</button>
 <sc-if value="{{ u.canDelete }}" hint-placeholder-val="{{ true }}">
-<button class="nkt-tap" sc-camel-on-click="{{ u.remove }}" title="Delete this account" style="height:28px;width:28px;padding:0;border:1px solid #b3261e;background:transparent;cursor:pointer;font-size:11.5px;color:#b3261e">✕</button>
+<button class="nkt-tap" sc-camel-on-click="{{ u.remove }}" title="Delete this account" style="{{ adminUDel }}">✕</button>
 </sc-if>
 <sc-if value="{{ u.canDelete }}" hint-placeholder-val="{{ false }}"></sc-if>
 </div>
@@ -2992,7 +2986,7 @@ Required
 <sc-if value="{{ showRecordModal }}" hint-placeholder-val="{{ false }}">
 <div sc-camel-on-click="{{ onBack }}" style="position:absolute;inset:0;z-index:8;background:color-mix(in srgb,#2d2b2b 45%,transparent)"></div>
 </sc-if>
-<div class="nkt-scroll" style="{{ detailPaneStyle }}">
+<div id="nkt-detail" class="nkt-scroll" style="{{ detailPaneStyle }}">
 
 <sc-if value="{{ showRecordModal }}" hint-placeholder-val="{{ false }}">
 <div style="position:sticky;top:0;z-index:6;height:0;display:flex;justify-content:flex-end;overflow:visible">
@@ -3135,9 +3129,9 @@ Required
 </sc-for>
 </div>
 </sc-if>
-<div style="padding:6px 20px 2px">
+<div style="{{ detailFieldsGrid }}">
 <sc-for list="{{ detailFields }}" as="f" hint-placeholder-count="10">
-<div style="display:flex;gap:14px;padding:8px 0;border-bottom:1px solid color-mix(in srgb,var(--color-text) 12%,transparent)">
+<div style="{{ f.rowStyle }}">
 <div style="flex:none;width:132px;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;padding-top:3px;color:color-mix(in srgb,var(--color-text) 55%,transparent)">{{ f.label }}</div>
 <div style="flex:1;font-size:13.5px;text-wrap:pretty">{{ f.value }}</div>
 </div>
@@ -3362,6 +3356,9 @@ Required
 <span style="font-size:10px;color:#5c5850;width:12px;text-align:right">{{ g.caret }}</span>
 </button>
 <sc-if value="{{ g.open }}" hint-placeholder-val="{{ true }}">
+<sc-if value="{{ g.hasAction }}" hint-placeholder-val="{{ false }}">
+<div style="padding:10px 20px;border-bottom:1px solid var(--color-divider)"><button class="btn btn-primary nkt-tap" sc-camel-on-click="{{ g.onAction }}" style="height:34px;padding:0 14px;font-size:13px">{{ g.actionLabel }}</button></div>
+</sc-if>
 <sc-for list="{{ g.items }}" as="i" hint-placeholder-count="3">
 <button class="nkt-row" sc-camel-on-click="{{ i.open }}" style="padding:9px 20px">
 <span style="flex:1;min-width:0">
@@ -4080,7 +4077,14 @@ Required
 </button>
 </sc-for>
 </div>
-<div style="padding:12px 16px 16px;border-top:2px solid rgba(30,42,32,.25);display:flex;flex-direction:column;gap:8px"><a href="user-guide.html" target="_blank" rel="noopener" style="font-family:var(--font-heading);font-weight:800;font-size:13px;color:#1e2a20;text-decoration:underline">User guide</a><span style="font-size:10px;color:#6b675e;word-break:break-all">northkitsapunited-default-rtdb.firebaseio.com</span></div>
+<div style="padding:12px 16px 16px;border-top:2px solid rgba(30,42,32,.25);display:flex;flex-direction:column;gap:8px">
+<sc-if value="{{ wsCanSwitch }}" hint-placeholder-val="{{ false }}">
+<label style="font-family:var(--font-heading);font-weight:800;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#6b675e">Switch to</label>
+<sc-raw-select class="input" value="{{ wsSwitchValue }}" sc-camel-on-change="{{ onWsSwitch }}" style="height:42px;font-size:15px;background:#f5efe0"><sc-for list="{{ wsSwitchOptions }}" as="o" hint-placeholder-count="4"><option value="{{ o.v }}">{{ o.l }}</option></sc-for></sc-raw-select>
+</sc-if>
+<div style="display:flex;align-items:center;gap:6px;font-size:10px;color:#6b675e;word-break:break-all"><span style="{{ syncDotStyle }}"></span>{{ signedInEmail }}</div>
+<button class="nkt-tap" sc-camel-on-click="{{ onSignOut }}" style="align-self:flex-start;height:36px;border:1px solid rgba(30,42,32,.3);background:transparent;cursor:pointer;font-size:11px;padding:0 12px;color:#4a473f;font-family:var(--font-heading);font-weight:800;letter-spacing:.06em;text-transform:uppercase">Sign out</button>
+<a href="user-guide.html" target="_blank" rel="noopener" style="font-family:var(--font-heading);font-weight:800;font-size:13px;color:#1e2a20;text-decoration:underline">User guide</a><span style="font-size:10px;color:#6b675e;word-break:break-all">northkitsapunited-default-rtdb.firebaseio.com</span></div>
 </div>
 <button sc-camel-on-click="{{ onCloseDrawer }}" style="flex:1;border:0;background:transparent;cursor:pointer"></button>
 </div>
@@ -4827,9 +4831,14 @@ class Component extends DCLogic {
   worker(id){ return this.d().workers.find(x=>x.id===id); }
   task(id){ return this.d().tasks.find(x=>x.id===id); }
 
-  go(section){ if(this.state.me&&!this.canSee(section)) return; this.setState({section,mode:section==="admin"||section==="reports"||section==="overview"?"list":"list",recordId:null,query:"",filter:"All",drawerOpen:false,workerAddOpen:false,workerAddMode:"",newDonorOpen:false}); }
+  go(section){ if(this.state.me&&!this.canSee(section)) return; this.setState({section,mode:section==="admin"||section==="reports"||section==="overview"?"list":"list",recordId:null,query:"",filter:"All",drawerOpen:false,workerAddOpen:false,workerAddMode:"",newDonorOpen:false,donorReturn:null}); }
   open(section,id){ this.setState({section,recordId:id,mode:"detail",drawerOpen:false}); }
   back(){
+    const dr=this.state.donorReturn;
+    if(dr&&this.state.mode==="form"){
+      this.setState({donorReturn:null,section:dr.section,mode:dr.recordId?"detail":"list",recordId:dr.recordId,draft:null,formError:""},()=>this.scrollDetailTop());
+      return;
+    }
     const rt=this.state.returnTo;
     if(rt){
       this.setState({returnTo:null,section:rt.section,mode:"form",recordId:rt.recordId,
@@ -6514,6 +6523,21 @@ body{margin:0;font-family:Archivo,system-ui,sans-serif;color:#201e1d;-webkit-pri
       repeaterRows:[{date:"",label:"",amount:""}],
       allocRows:[{kind:"task",target:"",pct:""}]});
   }
+  // "Add a donation" from a donor's detail (or "Add a donation off this
+  // pledge" from a pledge): the donation form opens with the donor filled in,
+  // and saving or cancelling comes back to that donor.
+  startDonationFor(donorId,pledgeId){
+    if(!this.canEditSec("transactions")) return;
+    const draft={};
+    this.secFields("transactions").forEach(f=>{ draft[f.k]=f.t==="Link"&&!f.one?[]:""; });
+    const pl=pledgeId?this.d().transactions.find(t=>t.id===pledgeId):null;
+    Object.assign(draft,{donorId,date:this.today(),status:"Received",donationKind:"One-time"});
+    if(pl) Object.assign(draft,{pledgeId:pl.id,method:pl.method||"",title:pl.title||""});
+    this.setState({section:"transactions",mode:"form",recordId:null,draft,formError:"",duplicatedFrom:null,
+      donorReturn:{section:this.state.section,recordId:this.state.recordId},
+      repeaterRows:[{date:"",label:"",amount:""}],allocRows:[{kind:"task",target:"",pct:""}]},()=>this.scrollDetailTop());
+  }
+  scrollDetailTop(){ setTimeout(()=>{ const el=document.getElementById("nkt-detail"); if(el) el.scrollTop=0; },0); }
   startEdit(){
     const sec=this.state.section, rec=this.currentRecord();
     if(!rec) return;
@@ -6652,6 +6676,10 @@ body{margin:0;font-family:Archivo,system-ui,sans-serif;color:#201e1d;-webkit-pri
         return {data,returnTo:null,section:rt.section,mode:"form",recordId:rt.recordId,
           draft:Object.assign({},rt.draft,{[rt.key||"donorId"]:id}),allocRows:rt.allocRows||[],
           pick:{},formError:""};
+      }
+      if(s.donorReturn&&sec==="transactions"){
+        const dr=s.donorReturn;
+        return {data,donorReturn:null,section:dr.section,mode:dr.recordId?"detail":"list",recordId:dr.recordId,draft:null,formError:""};
       }
       return {data,mode:"detail",recordId:id,draft:null,formError:""};
     });
@@ -7728,7 +7756,7 @@ tr{page-break-inside:avoid;break-inside:avoid}
       if(sec==="tasks"&&f.k==="type"&&(value==="—"||!String(value).trim())) value="General";
       if(sec==="transactions"&&f.k==="status"&&rec.plan) value=this.txStatusLabel(rec)||value;
       if(sec==="donors"&&f.k==="contactName"&&String(rec.contactName||"").trim()) value+=rec.contactOnCert?" · shown on certificate":" · not on certificate";
-      return {label:f.l,value};
+      return {label:f.l,value,wide:f.t==="Long text"||f.t==="Link"||f.t==="Tags"};
     });
     // Donation sums are derived, so they show as read-only rows rather than fields.
     // Generated keys are shown, never edited.
@@ -7756,7 +7784,7 @@ tr{page-break-inside:avoid;break-inside:avoid}
           recTier?[{title:recTier.name,sub:"Reached at "+this.money(Number(recTier.min)||0)+" received · "+(recDue?"certificate not printed yet":"certificate printed "+((rec.tierCerts||{})[recTier.id]||"")),value:""}]:[],
           recNext?[{title:"Next: "+recNext.name,sub:this.money(Math.max(0,(Number(recNext.min)||0)-this.donorReceived(rec.id)))+" to go",value:this.money(Number(recNext.min)||0)}]:[]),
           this.hideAmounts?"Tiers need $$ access.":"Tiers are set in Admin → Donor tiers."),
-        grp("Donations",(tx.length+evLines.length)+" linked",tx.map(t=>{
+        Object.assign(grp("Donations",(tx.length+evLines.length)+" linked",tx.map(t=>{
           const sc=t.plan?t.plan.installments.filter(x=>!x.extra):null;
           const kind=sc?("Installment · "+sc.filter(x=>x.txId).length+" of "+sc.length+" received · "+(t.plan.every||"").toLowerCase()):"One-time";
           return {title:(t.title||t.grantName||t.date||"Donation")+(t.date&&(t.title||t.grantName)?" · "+t.date:""),
@@ -7764,6 +7792,7 @@ tr{page-break-inside:avoid;break-inside:avoid}
             value:sc?(this.money(this.planPaid(t))+" of "+this.money(t.plan.total)):this.money(t.amount),open:()=>this.open("transactions",t.id)};
         })
           .concat(evLines.map(l=>({title:(l.ev.date||"")+" · event gift",sub:"Received · "+l.ev.name,value:this.money(l.amount),open:()=>this.open("events",l.ev.id)}))),"No transactions recorded for this donor."),
+          {action:this.canEditSec("transactions")?{label:"+ Add a donation",on:()=>this.startDonationFor(rec.id)}:null}),
         this.canSee("events")&&(()=>{
           const evs=this.evts().filter(ev=>(ev.attendees||[]).some(a=>a.donorId===rec.id)||this.eventGifts(ev).some(t=>t.donorId===rec.id))
             .sort((a,b)=>String(this.evDay(b)||"")<String(this.evDay(a)||"")?-1:1);
@@ -10083,11 +10112,14 @@ tr{page-break-inside:avoid;break-inside:avoid}
       detailKicker:det?det.head.kicker:"", detailTitle:det?det.head.title:"", detailSub:det?det.head.sub:"",
       detailTag:det?det.head.tag:"", detailTagStyle:det?(TAG[det.head.tag]||"tag tag-neutral"):"tag",
       detailStats:det?det.stats:[], hasDetailStats:!!(det&&det.stats.length),
-      detailFields:det?det.fields:[],
+      // Desktop reads the fields in two columns; long text spans both.
+      detailFieldsGrid:mobile?"padding:6px 20px 2px":"padding:6px 20px 2px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);column-gap:32px",
+      detailFields:det?det.fields.map(f=>Object.assign({},f,{rowStyle:"display:flex;gap:14px;padding:8px 0;border-bottom:1px solid color-mix(in srgb,var(--color-text) 12%,transparent)"+(!mobile&&f.wide?";grid-column:1 / -1":"")})):[],
       detailGroups:(det?det.groups:[]).map(g=>{
         const key="grp:"+sec+":"+(g.title||"");
         const open=this.sectionOpen(key);
-        return Object.assign({},g,{open,caret:open?"\u25be":"\u25b8",toggle:()=>this.toggleSection(key)});
+        return Object.assign({},g,{open,caret:open?"\u25be":"\u25b8",toggle:()=>this.toggleSection(key),
+          hasAction:!!g.action, actionLabel:g.action?g.action.label:"", onAction:g.action?g.action.on:null});
       }),
       secHeadStyle:"display:flex;align-items:center;gap:10px;width:100%;border:0;padding:9px 20px;background:#d9c9a3;cursor:pointer;font-family:var(--font-body);text-align:left;color:var(--color-text)",
       docsOpen:this.sectionOpen("ev:docs"),
@@ -10480,7 +10512,14 @@ tr{page-break-inside:avoid;break-inside:avoid}
       sectionKey:sec,
 
       adminTabs:[{k:"users",l:"Users"},{k:"roles",l:"Roles"},{k:"fields",l:"Data fields"},{k:"groups",l:"Task groups"},{k:"lists",l:"Tags & lists"},{k:"tiers",l:"Donor tiers"},{k:"import",l:"Bulk upload"},{k:"display",l:"General"},{k:"email",l:"Email"},{k:"reset",l:"Reset data"}].map(t=>({label:t.l,on:()=>this.setState({adminTab:t.k,resetStage:"idle",importPreview:null,importMsg:""}),
-        style:"cursor:pointer;flex:1;border:0;border-right:1px solid var(--color-divider);font-family:var(--font-heading);font-weight:800;font-size:12.5px;padding:11px 14px;text-align:left;background:"+(s.adminTab===t.k?GREEN:"transparent")+";color:"+(s.adminTab===t.k?"#ffffff":"var(--color-text)")})),
+        style:"cursor:pointer;"+(this.mobile?"flex:none;white-space:nowrap;":"flex:1;")+"border:0;border-right:1px solid var(--color-divider);font-family:var(--font-heading);font-weight:800;font-size:12.5px;padding:11px 14px;text-align:left;background:"+(s.adminTab===t.k?GREEN:"transparent")+";color:"+(s.adminTab===t.k?"#ffffff":"var(--color-text)")})),
+      adminTabsBar:"display:flex;border-bottom:2px solid var(--color-divider)"+(this.mobile?";overflow-x:auto;-webkit-overflow-scrolling:touch":""),
+      adminURow:this.mobile?"display:flex;align-items:flex-start;gap:10px;flex-wrap:wrap":"display:flex;align-items:center;gap:12px",
+      adminUInfo:this.mobile?"flex:1 1 calc(100% - 50px);min-width:0":"flex:1;min-width:0",
+      adminUTags:this.mobile?"display:flex;gap:4px;flex-wrap:wrap;align-items:center;width:100%;padding-left:44px":"display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end;align-items:center",
+      adminUBtns:this.mobile?"display:flex;gap:8px;width:100%;padding-left:44px":"display:flex;gap:6px;flex:none",
+      adminUBtn:"height:"+(this.mobile?"38px":"28px")+";padding:0 "+(this.mobile?"14px":"10px")+";border:1px solid var(--color-divider);background:transparent;cursor:pointer;font-size:"+(this.mobile?"13px":"11.5px"),
+      adminUDel:"height:"+(this.mobile?"38px;width:38px":"28px;width:28px")+";padding:0;border:1px solid #b3261e;background:transparent;cursor:pointer;font-size:11.5px;color:#b3261e;"+(this.mobile?"margin-left:auto":""),
       adminIsUsers:s.adminTab==="users", adminIsRoles:s.adminTab==="roles", adminIsFields:s.adminTab==="fields", adminIsReset:s.adminTab==="reset",
       adminIsGroups:s.adminTab==="groups", adminIsImport:s.adminTab==="import",
       adminIsLists:s.adminTab==="lists",
