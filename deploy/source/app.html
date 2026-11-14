@@ -1329,6 +1329,10 @@ body{margin:0;background:#e7dfcc;font-family:var(--font-body)}
 <div class="field" style="flex:1.3;min-width:150px"><label>Email</label><input class="input" type="email" value="{{ u.draftEmail }}" sc-camel-on-change="{{ u.onEmail }}" style="height:34px;min-height:34px"></div>
 <div class="field" style="flex:1;min-width:140px"><label>Mobile phone</label><input class="input" type="tel" value="{{ u.draftPhone }}" sc-camel-on-change="{{ u.onPhone }}" placeholder="(360) 555-0123" style="height:34px;min-height:34px"></div>
 </div>
+<div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:12px">
+<button class="btn btn-secondary nkt-tap" sc-camel-on-click="{{ u.sendReset }}" style="height:34px;padding:0 13px;font-size:12.5px">Send password reset email</button>
+<div style="flex:1;min-width:200px;font-size:11.5px;line-height:1.5;color:color-mix(in srgb,var(--color-text) 62%,transparent);text-wrap:pretty">{{ u.resetNote }}</div>
+</div>
 <sc-if value="{{ u.isBoot }}" hint-placeholder-val="{{ false }}">
 <div style="border-left:3px solid var(--color-accent);padding:8px 0 8px 11px;margin-top:14px;font-size:12.5px;line-height:1.55;color:var(--color-accent-700);text-wrap:pretty">This is a built-in admin address. It always has full access so the tracker can't be locked out — roles and operations set here are saved but have no effect on this account.</div>
 </sc-if>
@@ -9244,6 +9248,15 @@ tr{page-break-inside:avoid;break-inside:avoid}
         resetDoneMsg:cleared.length?("Cleared "+cleared.join(", ")+". Data fields, choices and users kept."):"Nothing selected."};
     });
   }
+  // Firebase never lets one person set another's password from the browser,
+  // so the admin sends the standard reset link instead.
+  async sendUserReset(email){
+    const say=text=>this.setState({userResetMsg:{email,text}});
+    if(!this._fb||!this._fb.resetPassword) return say("Not connected to the database.");
+    say("Sending…");
+    try{ await this._fb.resetPassword(email); say("Reset link sent to "+email+". It expires in about an hour; they can ask for another from the sign-in screen with Forgot password."); }
+    catch(e){ say(e.message||String(e)); }
+  }
   removeUser(i){ this.setState(s=>({users:s.users.filter((_,j)=>j!==i),editingUser:null})); }
   toggleRequired(i){
     this.setState(s=>{
@@ -11453,6 +11466,8 @@ tr{page-break-inside:avoid;break-inside:avoid}
         toggle:()=>this.setUser(i,{active:u.active===false}),
         toggleLabel:u.active===false?"Reactivate":"Deactivate",
         remove:()=>this.deleteUser(u.email),
+        sendReset:()=>this.sendUserReset(u.email),
+        resetNote:(s.userResetMsg&&s.userResetMsg.email===u.email)?s.userResetMsg.text:"Emails "+u.email+" a link to choose a new password. For security, admins can't see or type someone else's password.",
         draftName:(s.userDraft||{}).name||"",
         draftEmail:(s.userDraft||{}).email||"",
         draftPhone:(s.userDraft||{}).phone||"",
