@@ -71,7 +71,8 @@ const SECTION_OPS = ["overview", "donors", "transactions", "events", "phases", "
 // other section) is for admins alone, so permsFor turns those off for anyone
 // without Admin, whatever their roles say.
 const WS_OPS = ["wsdonors", "wsdonations", "wsgrants"];
-const RANK = { none: 0, view: 1, write: 2 };
+// "edit" (Enter and edit) is only used by the Donors and Donations workspaces.
+const RANK = { none: 0, view: 1, write: 2, edit: 3 };
 const emptyPerms = () => { const p = { money: false }; SECTION_OPS.forEach((k) => { p[k] = "none"; }); return p; };
 const allPerms = (lvl, money) => { const p = { money: !!money }; SECTION_OPS.forEach((k) => { p[k] = lvl; }); return p; };
 const DEFAULT_ROLES = [

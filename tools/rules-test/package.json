@@ -1,0 +1,14 @@
+{
+  "name": "nku-rules-test",
+  "private": true,
+  "description": "Firestore rules checks for the workspaces. Run: npm install && npm test",
+  "type": "module",
+  "scripts": {
+    "test": "firebase emulators:exec --only firestore --project nku-test \"node rules.test.mjs ../../deploy/firestore.rules\""
+  },
+  "devDependencies": {
+    "@firebase/rules-unit-testing": "^3.0.0",
+    "firebase": "10.12.5",
+    "firebase-tools": "^13.0.0"
+  }
+}

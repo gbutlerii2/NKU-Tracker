@@ -32,7 +32,7 @@ async function caller(req: Request): Promise<Who | Response> {
   if (!u || u.active === false) return json(req, { ok: false, error: "Your account doesn't have access." }, 403);
   const p = u.perms || {};
   const admin = p.admin === "write";
-  return { email, admin, canSend: admin || p.wsdonations === "write" || p.transactions === "write" };
+  return { email, admin, canSend: admin || p.wsdonations === "write" || p.wsdonations === "edit" || p.transactions === "write" };
 }
 
 const esc = (v: unknown) => String(v ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]!);
