@@ -5,9 +5,8 @@
 // The same test as firestore.rules applies: signed in with the texted code, on
 // an active account with Admin, or write access to Donors, or a bootstrap admin.
 import type { Config, Context } from "@netlify/functions";
-import { getAuth } from "firebase-admin/auth";
 import { FieldValue, Timestamp } from "firebase-admin/firestore";
-import { firestore } from "./_lib/firebase.mts";
+import { adminAuth, firestore } from "./_lib/firebase.mts";
 import { failure, json } from "./_lib/http.mts";
 
 const BOOTSTRAP_ADMINS = ["gerry@gb2solutions.net", "gerandkar@gmail.com"]; // mirror of firestore.rules
@@ -17,7 +16,8 @@ async function caller(req: Request): Promise<{ email: string } | Response> {
   if (!m) return json(req, { ok: false, error: "Sign in to the Tracker first." }, 401);
   const db = firestore();
   let tok;
-  try { tok = await getAuth().verifyIdToken(m[1], true); }
+  const fa = adminAuth(); // outside the try: a missing server setting must not read as an expired sign-in
+  try { tok = await fa.verifyIdToken(m[1], true); }
   catch { return json(req, { ok: false, error: "Your sign-in has expired. Sign in to the Tracker again." }, 401); }
   const email = String(tok.email || "").toLowerCase();
   if (!email || tok.firebase?.sign_in_second_factor !== "phone") {
