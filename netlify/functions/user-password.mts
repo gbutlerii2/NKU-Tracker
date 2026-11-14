@@ -43,17 +43,35 @@ export default async (req: Request) => {
     if (email === who) return json(req, { ok: false, error: "Change your own password from the sign-in screen instead." }, 400);
 
     const auth = adminAuth();
-    let user;
+    // Only "no such user" means there's no login. Anything else (for example
+    // the service account lacking Firebase Auth rights) is reported as itself.
+    let user = null;
     try { user = await auth.getUserByEmail(email); }
-    catch { return json(req, { ok: false, error: email + " has no login yet. Add them with Add user and a temporary password." }, 404); }
+    catch (e: any) {
+      if (e?.code !== "auth/user-not-found") {
+        console.error("[user-password] lookup failed", e?.code, e?.message);
+        if (/permission|PERMISSION_DENIED|insufficient/i.test(String(e?.code) + String(e?.message))) {
+          return json(req, { ok: false, error: "The server's Firebase key isn't allowed to manage logins. In Google Cloud → IAM, give the service account the \"Firebase Authentication Admin\" role." }, 500);
+        }
+        return json(req, { ok: false, error: "Couldn't look up " + email + ": " + (e?.message || e?.code || "unknown error") }, 500);
+      }
+    }
 
-    await auth.updateUser(user.uid, { password });
-    await auth.revokeRefreshTokens(user.uid);
+    // A person on the roster who never got a password login (for example one
+    // added for Google sign-in who hasn't signed in) gets one now.
+    let created = false;
+    if (!user) {
+      user = await auth.createUser({ email, password });
+      created = true;
+    } else {
+      await auth.updateUser(user.uid, { password });
+      await auth.revokeRefreshTokens(user.uid);
+    }
     await firestore().collection("users").doc(email).set(
       { mustChangePassword: true, passwordSetBy: who, passwordSetAt: new Date().toISOString() },
       { merge: true },
     );
-    return json(req, { ok: true, email });
+    return json(req, { ok: true, email, created });
   } catch (e) {
     return failure(req, e);
   }

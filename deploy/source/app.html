@@ -9270,7 +9270,7 @@ tr{page-break-inside:avoid;break-inside:avoid}
       const j=await r.json().catch(()=>({}));
       if(!r.ok||!j.ok) throw new Error(j.error||("The password service answered "+r.status+"."));
       this.setStateLocal(st=>({userPwDraft:"",users:st.users.map(x=>x.email===email?Object.assign({},x,{mustChangePassword:true}):x)}));
-      say("Done. Give "+email+" the password you set; they'll choose their own when they sign in.");
+      say((j.created?"Login created. ":"Done. ")+"Give "+email+" the password you set; they'll choose their own when they sign in.");
     }catch(e){ say(e.message||String(e)); }
   }
   removeUser(i){ this.setState(s=>({users:s.users.filter((_,j)=>j!==i),editingUser:null})); }
