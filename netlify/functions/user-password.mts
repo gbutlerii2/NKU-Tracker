@@ -7,8 +7,7 @@
 // who finished the texted-code step. The user is flagged to choose their own
 // password at their next sign-in, and their other sessions are signed out.
 import type { Config } from "@netlify/functions";
-import { getAuth } from "firebase-admin/auth";
-import { firestore } from "./_lib/firebase.mts";
+import { adminAuth, firestore } from "./_lib/firebase.mts";
 import { failure, json } from "./_lib/http.mts";
 
 const BOOTSTRAP_ADMINS = ["gerry@gb2solutions.net", "gerandkar@gmail.com"]; // mirror of firestore.rules
@@ -17,7 +16,8 @@ async function adminCaller(req: Request): Promise<string | Response> {
   const m = /^Bearer\s+(.+)$/i.exec(req.headers.get("authorization") || "");
   if (!m) return json(req, { ok: false, error: "Sign in to the Tracker first." }, 401);
   let tok;
-  try { tok = await getAuth().verifyIdToken(m[1], true); }
+  const fa = adminAuth(); // outside the try: a missing server setting must not read as an expired sign-in
+  try { tok = await fa.verifyIdToken(m[1], true); }
   catch { return json(req, { ok: false, error: "Your sign-in has expired. Sign in to the Tracker again." }, 401); }
   const email = String(tok.email || "").toLowerCase();
   if (!email || tok.firebase?.sign_in_second_factor !== "phone") {
@@ -42,7 +42,7 @@ export default async (req: Request) => {
     if (password.length < 6) return json(req, { ok: false, error: "Password needs at least six characters." }, 400);
     if (email === who) return json(req, { ok: false, error: "Change your own password from the sign-in screen instead." }, 400);
 
-    const auth = getAuth();
+    const auth = adminAuth();
     let user;
     try { user = await auth.getUserByEmail(email); }
     catch { return json(req, { ok: false, error: email + " has no login yet. Add them with Add user and a temporary password." }, 404); }

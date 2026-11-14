@@ -8,6 +8,7 @@
 //   FIREBASE_PRIVATE_KEY   its private_key (PEM, "\n" escapes are fine)
 import { cert, getApps, initializeApp } from "firebase-admin/app";
 import { getFirestore, type Firestore } from "firebase-admin/firestore";
+import { getAuth, type Auth } from "firebase-admin/auth";
 
 const PROJECT_ID = "northkitsapunited";
 
@@ -26,4 +27,11 @@ export function firestore(): Firestore {
   const app = getApps()[0] ?? initializeApp({ credential: cert({ projectId: PROJECT_ID, clientEmail, privateKey }), projectId: PROJECT_ID });
   db = getFirestore(app);
   return db;
+}
+
+// Firebase Auth for verifying Tracker sign-ins and managing logins. getAuth()
+// needs the app initialized first, which firestore() does.
+export function adminAuth(): Auth {
+  firestore();
+  return getAuth();
 }
