@@ -1329,6 +1329,12 @@ body{margin:0;background:#e7dfcc;font-family:var(--font-body)}
 <div class="field" style="flex:1.3;min-width:150px"><label>Email</label><input class="input" type="email" value="{{ u.draftEmail }}" sc-camel-on-change="{{ u.onEmail }}" style="height:34px;min-height:34px"></div>
 <div class="field" style="flex:1;min-width:140px"><label>Mobile phone</label><input class="input" type="tel" value="{{ u.draftPhone }}" sc-camel-on-change="{{ u.onPhone }}" placeholder="(360) 555-0123" style="height:34px;min-height:34px"></div>
 </div>
+<div style="display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap;margin-top:12px">
+<div class="field" style="flex:none;width:220px;margin:0"><label>New temporary password</label><input class="input" type="text" autocomplete="off" value="{{ u.pwDraft }}" sc-camel-on-change="{{ u.onPwDraft }}" placeholder="At least six characters" style="height:34px;min-height:34px"></div>
+<button class="btn btn-secondary nkt-tap" sc-camel-on-click="{{ u.setPw }}" style="height:34px;padding:0 13px;font-size:12.5px">Set password</button>
+<button class="nkt-tap" sc-camel-on-click="{{ u.sendReset }}" style="height:34px;padding:0 4px;border:0;background:transparent;cursor:pointer;font-family:var(--font-body);font-size:12px;text-decoration:underline;color:color-mix(in srgb,var(--color-text) 65%,transparent)">or email them a reset link</button>
+</div>
+<div style="font-size:11.5px;line-height:1.5;margin-top:6px;color:color-mix(in srgb,var(--color-text) 62%,transparent);text-wrap:pretty">{{ u.resetNote }}</div>
 <sc-if value="{{ u.isBoot }}" hint-placeholder-val="{{ false }}">
 <div style="border-left:3px solid var(--color-accent);padding:8px 0 8px 11px;margin-top:14px;font-size:12.5px;line-height:1.55;color:var(--color-accent-700);text-wrap:pretty">This is a built-in admin address. It always has full access so the tracker can't be locked out — roles and operations set here are saved but have no effect on this account.</div>
 </sc-if>
@@ -9141,7 +9147,7 @@ tr{page-break-inside:avoid;break-inside:avoid}
   startUserEdit(email){
     const u=this.state.users.find(x=>x.email===email);
     if(!u) return;
-    this.setState({editingUser:email,userDraft:{name:u.name,email:u.email,phone:this.fmtPhone(u.phone),roles:(u.roles||[]).slice(),ops:Object.assign({},u.ops||{})},userError:""});
+    this.setState({userPwDraft:"",userResetMsg:null,editingUser:email,userDraft:{name:u.name,email:u.email,phone:this.fmtPhone(u.phone),roles:(u.roles||[]).slice(),ops:Object.assign({},u.ops||{})},userError:""});
   }
   saveUserEdit(original){
     const d=this.state.userDraft||{};
@@ -9243,6 +9249,29 @@ tr{page-break-inside:avoid;break-inside:avoid}
         resetStage:"done",resetConfirm:"",recordId:null,mode:"list",certTxId:null,
         resetDoneMsg:cleared.length?("Cleared "+cleared.join(", ")+". Data fields, choices and users kept."):"Nothing selected."};
     });
+  }
+  // Firebase never lets one person set another's password from the browser,
+  // so the admin sends the standard reset link instead.
+  async sendUserReset(email){
+    const say=text=>this.setState({userResetMsg:{email,text}});
+    if(!this._fb||!this._fb.resetPassword) return say("Not connected to the database.");
+    say("Sending…");
+    try{ await this._fb.resetPassword(email); say("Reset link sent to "+email+". It expires in about an hour; they can ask for another from the sign-in screen with Forgot password."); }
+    catch(e){ say(e.message||String(e)); }
+  }
+  async setUserPassword(email){
+    const say=text=>this.setState({userResetMsg:{email,text}});
+    const pw=String(this.state.userPwDraft||"");
+    if(pw.length<6) return say("Password needs at least six characters.");
+    say("Setting the password…");
+    try{
+      const tok=this._fb&&this._fb.idToken?await this._fb.idToken():null;
+      const r=await fetch("/api/user-password",{method:"POST",headers:{"Content-Type":"application/json",Authorization:"Bearer "+(tok||"")},body:JSON.stringify({email,password:pw})});
+      const j=await r.json().catch(()=>({}));
+      if(!r.ok||!j.ok) throw new Error(j.error||("The password service answered "+r.status+"."));
+      this.setStateLocal(st=>({userPwDraft:"",users:st.users.map(x=>x.email===email?Object.assign({},x,{mustChangePassword:true}):x)}));
+      say("Done. Give "+email+" the password you set; they'll choose their own when they sign in.");
+    }catch(e){ say(e.message||String(e)); }
   }
   removeUser(i){ this.setState(s=>({users:s.users.filter((_,j)=>j!==i),editingUser:null})); }
   toggleRequired(i){
@@ -11453,6 +11482,10 @@ tr{page-break-inside:avoid;break-inside:avoid}
         toggle:()=>this.setUser(i,{active:u.active===false}),
         toggleLabel:u.active===false?"Reactivate":"Deactivate",
         remove:()=>this.deleteUser(u.email),
+        sendReset:()=>this.sendUserReset(u.email),
+        pwDraft:s.userPwDraft||"", onPwDraft:e=>this.setState({userPwDraft:e.target.value}),
+        setPw:()=>this.setUserPassword(u.email),
+        resetNote:(s.userResetMsg&&s.userResetMsg.email===u.email)?s.userResetMsg.text:"Set a temporary password and give it to them. They'll be asked to choose their own the next time they sign in, and any device they're signed in on is signed out.",
         draftName:(s.userDraft||{}).name||"",
         draftEmail:(s.userDraft||{}).email||"",
         draftPhone:(s.userDraft||{}).phone||"",
