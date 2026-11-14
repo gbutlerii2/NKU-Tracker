@@ -11,6 +11,7 @@ rules_version = '2';
 //                    transactions, events, phases, workers, tasks, admin,
 //                    reports, documents, calendar
 //   perms.wsdonors / wsdonations / wsgrants  'none' | 'write'  entry workspaces
+//                    ('edit' = Enter and edit, Donors and Donations only)
 //   perms.money      true | false                 View $$
 // Only admins hold the full-tracker sections; everyone else works through the
 // entry workspaces (the app's permsFor turns the other sections off).
@@ -95,9 +96,14 @@ service cloud.firestore {
         ? me().perms.get('money', false) == true
         : legacyRole() in ['View Only Full', 'Entry User']));
     }
-    // Holds an entry workspace (Donor entry, Donation entry, Grant tracking).
+    // Holds an entry workspace (Donor entry, Donation entry, Grant tracking),
+    // at either level: 'write' (Enter only) or 'edit' (Enter and edit).
     function ws(op) {
-      return activeUser() && hasPerms() && me().perms.get(op, 'none') == 'write';
+      return activeUser() && hasPerms() && me().perms.get(op, 'none') in ['write', 'edit'];
+    }
+    // Enter and edit: may also change existing records from the workspace.
+    function wsEdit(op) {
+      return activeUser() && hasPerms() && me().perms.get(op, 'none') == 'edit';
     }
     function grantDoc(d) {
       return d.get('method', '').lower() == 'grant award';
@@ -106,8 +112,10 @@ service cloud.firestore {
       return /databases/$(database)/documents/transactions/$(id);
     }
     // Donation entry may create non-grant donations and afterwards only mark
-    // the thank-you. Grant tracking may create and edit grant awards. Neither
-    // may delete, and neither may turn one kind into the other.
+    // the thank-you; at Enter and edit it may change them (including applying
+    // a donation to a pledge and the pledge's balance). Grant tracking may
+    // create and edit grant awards. None may delete, and none may turn one
+    // kind into the other.
     function wsTxCreate() {
       return (ws('wsdonations') && !grantDoc(request.resource.data))
         || (ws('wsgrants') && grantDoc(request.resource.data));
@@ -115,6 +123,7 @@ service cloud.firestore {
     function wsTxUpdate() {
       return (ws('wsdonations') && !grantDoc(resource.data) && !grantDoc(request.resource.data)
           && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['thankedAt', 'thankedBy']))
+        || (wsEdit('wsdonations') && !grantDoc(resource.data) && !grantDoc(request.resource.data))
         || (ws('wsgrants') && grantDoc(resource.data) && grantDoc(request.resource.data));
     }
     function anyRecordWrite() {
@@ -129,6 +138,8 @@ service cloud.firestore {
       // Donors workspace, and the Donations / Grants workspaces adding a new
       // donor or funder along with a gift or grant.
       allow create: if ws('wsdonors') || ws('wsdonations') || ws('wsgrants');
+      // Donors workspace at Enter and edit changes donors' details.
+      allow update: if wsEdit('wsdonors');
     }
     match /transactions/{id} {
       allow read: if member();
@@ -178,6 +189,9 @@ service cloud.firestore {
       // Grant details aren't private: Grant tracking reads and edits the
       // amount of a grant award, one document at a time.
       allow read, update: if ws('wsgrants') && grantDoc(get(txPath(id)).data);
+      // Donations workspace at Enter and edit: the amount of a non-grant
+      // donation, and a pledge's open balance when a donation is applied.
+      allow create, update: if wsEdit('wsdonations') && exists(txPath(id)) && !grantDoc(get(txPath(id)).data);
     }
     match /events/{id}/secure/{doc} {
       allow write: if canWrite('events');
