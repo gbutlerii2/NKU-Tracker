@@ -670,7 +670,9 @@ body{margin:0;background:#e7dfcc;font-family:var(--font-body)}
 <input class="input" value="{{ wdnQList }}" sc-camel-on-change="{{ onWdnQList }}" placeholder="Search name, email or donor ID" style="height:34px;min-height:34px;flex:1;min-width:180px;max-width:320px">
 <sc-raw-select class="input" value="{{ wdnSort }}" sc-camel-on-change="{{ onWdnSort }}" style="height:34px;width:auto;min-width:150px"><sc-for list="{{ wdnSortOpts }}" as="o" hint-placeholder-count="3"><option value="{{ o.v }}">{{ o.l }}</option></sc-for></sc-raw-select>
 <span style="font-size:11.5px;color:color-mix(in srgb,var(--color-text) 55%,transparent)">{{ wdnListNote }}</span>
+<button class="btn btn-secondary nkt-tap" sc-camel-on-click="{{ onWdnExport }}" title="{{ wdnExportNote }}" style="height:34px;padding:0 14px;margin-left:auto">{{ wdnExportLabel }}</button>
 </div>
+<div style="font-size:11.5px;color:color-mix(in srgb,var(--color-text) 55%,transparent);margin:-4px 0 8px">{{ wdnExportNote }}</div>
 <sc-for list="{{ wdnList }}" as="r" hint-placeholder-count="5">
 <div style="padding:9px 0;border-bottom:1px solid var(--color-divider)">
 <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
@@ -680,6 +682,7 @@ body{margin:0;background:#e7dfcc;font-family:var(--font-body)}
 <span style="font-size:11.5px;color:color-mix(in srgb,var(--color-text) 55%,transparent)">{{ r.sub }}</span>
 </div>
 <div style="font-size:12px;margin-top:2px;color:color-mix(in srgb,var(--color-text) 65%,transparent)">{{ r.contact }}</div>
+<sc-if value="{{ r.address }}" hint-placeholder-val="{{ false }}"><div style="font-size:12px;margin-top:1px;color:color-mix(in srgb,var(--color-text) 65%,transparent)">{{ r.address }}</div></sc-if>
 </div>
 </sc-for>
 </sc-if>
@@ -3080,7 +3083,7 @@ Required
 </div>
 <div style="font-size:11.5px;color:color-mix(in srgb,var(--color-text) 60%,transparent);margin-bottom:10px;text-wrap:pretty">{{ mdnNote }}</div>
 <div style="overflow-x:auto">
-<sc-raw-table class="table" style="width:100%;min-width:1060px;font-size:11.5px">
+<sc-raw-table class="table" style="width:100%;min-width:1240px;font-size:11.5px">
 <sc-raw-thead>
 <sc-raw-tr>
 <sc-raw-th style="text-align:left">#</sc-raw-th>
@@ -3088,6 +3091,7 @@ Required
 <sc-raw-th style="text-align:left">Type</sc-raw-th>
 <sc-raw-th style="text-align:left">Email</sc-raw-th>
 <sc-raw-th style="text-align:left">Phone</sc-raw-th>
+<sc-raw-th style="text-align:left">Address</sc-raw-th>
 <sc-raw-th style="text-align:right">Donations</sc-raw-th>
 <sc-raw-th style="text-align:right">Potential</sc-raw-th>
 <sc-raw-th style="text-align:right">Promised</sc-raw-th>
@@ -3104,6 +3108,7 @@ Required
 <sc-raw-td>{{ r.type }}</sc-raw-td>
 <sc-raw-td style="word-break:break-all">{{ r.email }}</sc-raw-td>
 <sc-raw-td style="white-space:nowrap">{{ r.phone }}</sc-raw-td>
+<sc-raw-td style="white-space:pre-line;min-width:160px">{{ r.address }}</sc-raw-td>
 <sc-raw-td style="text-align:right">{{ r.count }}</sc-raw-td>
 <sc-raw-td style="text-align:right;white-space:nowrap">{{ r.potential }}</sc-raw-td>
 <sc-raw-td style="text-align:right;white-space:nowrap">{{ r.promised }}</sc-raw-td>
@@ -7341,25 +7346,31 @@ body{margin:0;font-family:Archivo,system-ui,sans-serif;color:#201e1d;-webkit-pri
         mdnTotals:[{label:rows.length+" donor"+(rows.length===1?"":"s"),style:"display:inline-block;padding:2px 8px;font-size:11px;font-weight:700;border:1px solid var(--color-divider)"}]
           .concat([["Received","received"],["Pledged","pledged"],["Promised","promised"],["Potential","potential"]].map(([l,k])=>({label:l+(k==="pledged"?" (open)":"")+" "+cash(sum[k]),style:this.toneChip(l)}))),
         mdnNote:"Has donated means at least one gift received. Has pledged means at least one pledge. None means neither. Donations counts gifts received; Pledged is the open balance still owed."+(hide?" Amounts need $$ access.":""),
-        mdnRows:rows.map((r,i)=>({n:i+1,name:r.d.name||"—",type:r.d.type||"—",email:r.d.email||"—",phone:r.d.phone||r.d.mobile||"—",count:r.gave,
+        mdnRows:rows.map((r,i)=>({n:i+1,name:r.d.name||"—",type:r.d.type||"—",email:r.d.email||"—",phone:r.d.phone||r.d.mobile||"—",address:String(r.d.address||"").trim()||"—",count:r.gave,
           potential:cash(r.bk.potential),promised:cash(r.bk.promised),pledged:cash(r.bk.pledged),received:cash(r.bk.received),
           owner:r.d.accountOwner||"Unassigned",open:()=>this.setState({reportModal:null,section:"donors",mode:"detail",recordId:r.d.id})})),
         mdnEmpty:rows.length===0});
     }
     return out;
   }
+  // Without $$ access the money columns are left out of the file altogether,
+  // so an export or a print never carries amounts the screen hides.
   masterSheet(kind){
-    const hide=this.hideAmounts, amt=n=>hide?"withheld":n;
+    const hide=this.hideAmounts;
+    // cols: [header, value(row,i), right-aligned?, money?]
+    const build=(title,cols,list)=>{ const use=cols.filter(c=>!(hide&&c[3]));
+      return {title,head:use.map(c=>c[0]),rows:list.map((r,i)=>use.map(c=>c[1](r,i))),right:use.map((c,i)=>c[2]?i:-1).filter(i=>i>=0)}; };
     if(kind==="mdl"){
-      const head=["#","Donor","Title / grant","Donation type","Status","Amount","Full pledge","Applied to pledge","Date entered","Date received","NKU assigned","Probability","Deadline","Next action"];
-      const rows=this.masterDonationRows().map((r,i)=>[i+1,r.donor,r.title,r.type,r.status,amt(r.amount),r.total!=null?amt(r.total):"",r.applied,r.date,r.received,r.owner,r.prob,r.deadline,r.nextAction]);
-      return {title:"NKU Master Donations List",head,rows,right:[0,5,6]};
+      return build("NKU Master Donations List",[["#",(r,i)=>i+1,1],["Donor",r=>r.donor],["Title / grant",r=>r.title],["Donation type",r=>r.type],["Status",r=>r.status],
+        ["Amount",r=>r.amount,1,1],["Full pledge",r=>r.total!=null?r.total:"",1,1],["Applied to pledge",r=>r.applied],["Date entered",r=>r.date],["Date received",r=>r.received],
+        ["NKU assigned",r=>r.owner],["Probability",r=>r.prob],["Deadline",r=>r.deadline],["Next action",r=>r.nextAction]],this.masterDonationRows());
     }
-    const head=["#","Name","Type","Email","Phone","Donations","Potential","Promised","Pledged","Received","Assigned"];
-    const rows=this.masterDonorRows().map((r,i)=>[i+1,r.d.name||"",r.d.type||"",r.d.email||"",r.d.phone||r.d.mobile||"",r.gave,
-      amt(r.bk.potential),amt(r.bk.promised),amt(r.bk.pledged),amt(r.bk.received),r.d.accountOwner||"Unassigned"]);
-    return {title:"Master Donors List",head,rows,right:[0,5,6,7,8,9]};
+    return build("Master Donors List",[["#",(r,i)=>i+1,1],["Name",r=>r.d.name||""],["Type",r=>r.d.type||""],["Email",r=>r.d.email||""],["Phone",r=>r.d.phone||r.d.mobile||""],
+      ["Address",r=>this.oneLineAddress(r.d.address)],["Donations",r=>r.gave,1],
+      ["Potential",r=>r.bk.potential,1,1],["Promised",r=>r.bk.promised,1,1],["Pledged",r=>r.bk.pledged,1,1],["Received",r=>r.bk.received,1,1],["Assigned",r=>r.d.accountOwner||"Unassigned"]],this.masterDonorRows());
   }
+  // A mailing address typed over several lines, as one spreadsheet cell.
+  oneLineAddress(a){ return String(a||"").split(/\s*\n\s*/).map(x=>x.trim()).filter(Boolean).join(", "); }
   exportMaster(kind){
     const sh=this.masterSheet(kind), clean=v=>(v==="—"||v==null)?"":v;
     const csv=[sh.head,...sh.rows].map(r=>r.map(c=>this.csvCell(clean(c))).join(",")).join("\n")+"\n";
@@ -10122,6 +10133,27 @@ tr{page-break-inside:avoid;break-inside:avoid}
     }).catch(e=>this.wsFail(e));
   }
 
+  // Donors workspace list, filtered and sorted the way the screen shows it.
+  wdnFiltered(){
+    const s=this.state, q=String(s.wdnQ||"").trim().toLowerCase(), srt=s.wdnSort||"name";
+    return this.d().donors.filter(o=>!q||((o.name||"")+" "+(o.org||"")+" "+(o.email||"")+" "+(o.donorId||"")).toLowerCase().includes(q))
+      .slice().sort(srt==="name"?(a,b)=>String(a.name||"").localeCompare(String(b.name||"")):(a,b)=>this.donorEnteredKey(srt==="newest"?b:a).localeCompare(this.donorEnteredKey(srt==="newest"?a:b)));
+  }
+  // Exports every donor matching the current search (not just the first 100
+  // on screen). Money columns are only written for users with $$ access.
+  wdnExport(){
+    const money=!this.hideAmounts, counts=this.donorEntryCounts();
+    const head=["Donor ID","Name","Type","Organization","Contact person","Email","Phone","Mobile","Mailing address","Preferred contact","Account owner","Date entered",
+      "Received entries","Pledged entries","Promised entries"].concat(money?["Potential $","Promised $","Pledged $ (open)","Received $"]:[]);
+    const rows=this.wdnFiltered().map(o=>{ const c=counts[o.id]||{Received:0,Pledged:0,Promised:0};
+      const row=[o.donorId||"",o.name||"",o.type||"",o.org||"",o.contactName||"",o.email||"",o.phone||"",o.mobile||"",this.oneLineAddress(o.address),o.preferred||"",o.accountOwner||"",
+        o.createdAt?String(o.createdAt).slice(0,10):"",c.Received||0,c.Pledged||0,c.Promised||0];
+      if(money){ const b=this.donorBucketsList(o.id); row.push(b.potential||0,b.promised||0,b.pledged||0,b.received||0); }
+      return row; });
+    const csv=[head,...rows].map(r=>r.map(v=>this.csvCell(v)).join(",")).join("\n")+"\n";
+    this.download("NKU-Donors-"+this.today()+".csv",csv,"text/csv");
+    this.setState({wsMsg:"Exported "+rows.length+" donor"+(rows.length===1?"":"s")+".",wsErr:""});
+  }
   wsVals(){
     const s=this.state, inApp=s.authStage==="in"&&!!s.me, opts=inApp?this.wsOptions():[], cur=inApp?this.wsCurrent():"";
     const loading=!s.syncLoaded, mobile=this.mobile;
@@ -10173,14 +10205,16 @@ tr{page-break-inside:avoid;break-inside:avoid}
         wdnQList:s.wdnQ||"", onWdnQList:e=>this.setState({wdnQ:e.target.value}),
         wdnSort:s.wdnSort||"name", onWdnSort:e=>this.setState({wdnSort:e.target.value}),
         wdnSortOpts:[{v:"name",l:"Sort: Name A–Z"},{v:"newest",l:"Sort: Newest entered"},{v:"oldest",l:"Sort: Oldest entered"}],
-        wdnList:(()=>{ const q=String(s.wdnQ||"").trim().toLowerCase(), canEdit=this.wsCanEdit("wsdonors"), srt=s.wdnSort||"name";
+        wdnList:(()=>{ const canEdit=this.wsCanEdit("wsdonors");
           const counts=this.donorEntryCounts();
-          return this.d().donors.filter(o=>!q||((o.name||"")+" "+(o.org||"")+" "+(o.email||"")+" "+(o.donorId||"")).toLowerCase().includes(q))
-            .slice().sort(srt==="name"?(a,b)=>String(a.name||"").localeCompare(String(b.name||"")):(a,b)=>this.donorEnteredKey(srt==="newest"?b:a).localeCompare(this.donorEnteredKey(srt==="newest"?a:b))).slice(0,100)
+          return this.wdnFiltered().slice(0,100)
             .map(o=>{ const c=counts[o.id]||{Received:0,Pledged:0,Promised:0};
               return {name:o.name||"—",sub:[o.donorId,o.type,o.createdAt?"entered "+String(o.createdAt).slice(0,10):""].filter(Boolean).join(" · "),contact:[o.email,o.phone||o.mobile].filter(Boolean).join(" · "),
+                address:this.oneLineAddress(o.address),
                 counts:["Received","Pledged","Promised"].map(k=>({label:c[k]+" "+k,st:this.toneChip(k)+(c[k]?"":";opacity:.55")})),
                 canEdit, noEdit:!canEdit, onEdit:()=>this.wdnEOpen(o.id)}; }); })(),
+        wdnExportLabel:"Export list (CSV)", onWdnExport:()=>this.wdnExport(),
+        wdnExportNote:this.hideAmounts?"The export has contact details and entry counts. Dollar amounts need $$ access.":"The export includes contact details, entry counts and dollar amounts.",
         wdnListNote:(()=>{ const n=this.d().donors.length; return n>100?"Showing the first 100 of "+n+". Search to narrow it down.":n+" donor"+(n===1?"":"s"); })(),
         onWdnClear:()=>this.setState({wdnF:{type:"Individual"},wsErr:"",wsMsg:""}),
         ...(()=>{ const e=s.wdnE; if(!e) return {wdnEOpen:false};
