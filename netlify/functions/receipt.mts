@@ -9,19 +9,22 @@
 //        Donations editors with $$ access; "goods" only for full-site editors.
 //   POST {"test": true, "kind"?}  admins only: sends a sample to the caller
 //   POST {"status": true}         admins only: is Gmail set up, and as whom
+//   POST {"setMail": {"user", "password"}}  admins only: checks the Gmail
+//        sign-in and saves it server-side (secrets/mail); never returned
+//   POST {"clearMail": true}      admins only: removes the saved sign-in
 //
 // Callers send their Tracker sign-in as "Authorization: Bearer <Firebase ID
 // token>". The document, with its amount, is built here on the server, so a
 // Donations workspace user without $$ access never sees the dollar figure.
 // Sending needs Edit-level access: admin, full-site Donations "write", or the
 // Donations workspace at "Enter and edit".
-// Mail goes out through Gmail SMTP (see _lib/mail.mts for the env vars).
+// Mail goes out through Gmail SMTP (see _lib/mail.mts for where the sign-in lives).
 // Wording (From name, reply-to, subjects, messages) lives in the admin-only
 // Firestore doc private/email, edited in Admin → Email.
 import type { Config } from "@netlify/functions";
 import { adminAuth, firestore } from "./_lib/firebase.mts";
 import { failure, json } from "./_lib/http.mts";
-import { MailError, isEmail, mailAccount, sendMail } from "./_lib/mail.mts";
+import { MailError, clearMailCreds, isEmail, mailCreds, saveMailCreds, sendMail, verifyMailCreds } from "./_lib/mail.mts";
 import { type Certificate, type Receipt, certificateHtml, certificatePdf, receiptHtml, receiptPdf, today } from "./_lib/donor-docs.mts";
 
 const BOOTSTRAP_ADMINS = ["gerry@gb2solutions.net", "gerandkar@gmail.com"]; // mirror of firestore.rules
@@ -132,10 +135,19 @@ export default async (req: Request) => {
     const body = await req.json().catch(() => ({}));
     const kind: "receipt" | "certificate" = body.kind === "certificate" ? "certificate" : "receipt";
 
-    if (body.status) {
+    if (body.status || body.setMail || body.clearMail) {
       if (!who.admin) return json(req, { ok: false, error: "Admins only." }, 403);
-      const acct = mailAccount();
-      return json(req, { ok: true, configured: !!acct && !!Netlify.env.get("GMAIL_APP_PASSWORD"), account: acct });
+      if (body.setMail) {
+        const user = String(body.setMail.user || "").trim().toLowerCase();
+        const pass = String(body.setMail.password || "").replace(/\s+/g, "");
+        if (!isEmail(user)) return json(req, { ok: false, error: "Enter the Gmail address that sends." }, 400);
+        if (!/^[A-Za-z0-9]{16}$/.test(pass)) return json(req, { ok: false, error: "A Google App Password is 16 letters (spaces don't matter)." }, 400);
+        await verifyMailCreds(user, pass);
+        await saveMailCreds(user, pass, who.email);
+      }
+      if (body.clearMail) await clearMailCreds();
+      const c = await mailCreds(); // the password itself never leaves the server
+      return json(req, { ok: true, configured: !!c.pass, account: c.user, source: c.source });
     }
 
     const cfg = (await db.collection("private").doc("email").get()).data() || {};
