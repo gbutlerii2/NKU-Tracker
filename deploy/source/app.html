@@ -580,6 +580,32 @@ body{margin:0;background:#e7dfcc;font-family:var(--font-body)}
 </div>
 </sc-if>
 
+<sc-if value="{{ docMailOpen }}" hint-placeholder-val="{{ false }}">
+<div style="position:fixed;inset:0;z-index:8800;display:flex;align-items:flex-start;justify-content:center;overflow-y:auto;padding:{{ docMailPad }};background:color-mix(in srgb,#1e2a20 55%,transparent);animation:nktFade .15s ease">
+<div style="background:var(--color-bg);border:2px solid var(--color-text);width:100%;max-width:520px;padding:18px 18px 20px;display:flex;flex-direction:column;gap:12px">
+<div style="display:flex;align-items:center;gap:10px"><div style="flex:1;min-width:0"><div style="font-family:var(--font-heading);font-weight:800;font-size:18px">{{ docMailTitle }}</div><div style="font-size:12px;margin-top:2px;color:color-mix(in srgb,var(--color-text) 62%,transparent)">{{ docMailSub }}</div></div><button class="nkt-tap" sc-camel-on-click="{{ onDocMailClose }}" title="Close" style="flex:none;width:34px;height:34px;border:2px solid #b3261e;background:transparent;color:#b3261e;cursor:pointer;font-weight:800">✕</button></div>
+<div class="field" style="margin:0"><label>Send to</label>
+<div style="display:flex;flex-direction:column;gap:6px">
+<sc-for list="{{ docMailRows }}" as="a" hint-placeholder-count="1">
+<div style="display:flex;gap:6px;align-items:center">
+<input class="input" type="email" autocomplete="off" value="{{ a.value }}" sc-camel-on-change="{{ a.onChange }}" placeholder="{{ a.placeholder }}" style="flex:1;min-width:0;height:38px;min-height:38px">
+<sc-if value="{{ a.canRemove }}" hint-placeholder-val="{{ false }}"><button class="nkt-tap" sc-camel-on-click="{{ a.onRemove }}" title="Remove this address" style="flex:none;width:34px;height:38px;border:1px solid var(--color-divider);background:transparent;cursor:pointer;font-size:13px">✕</button></sc-if>
+</div>
+</sc-for>
+</div></div>
+<sc-if value="{{ docMailCanAdd }}" hint-placeholder-val="{{ true }}"><button class="nkt-tap" sc-camel-on-click="{{ onDocMailAdd }}" style="align-self:flex-start;border:0;background:transparent;cursor:pointer;padding:0;font-size:12.5px;text-decoration:underline;color:var(--color-text)">+ Add another address</button></sc-if>
+<div style="font-size:11.5px;line-height:1.5;color:color-mix(in srgb,var(--color-text) 58%,transparent);text-wrap:pretty">Starts with the donor's email on file. Change it, or add more addresses; everyone listed gets the same email, with a printable PDF attached.</div>
+<sc-if value="{{ docMailNote }}" hint-placeholder-val="{{ false }}"><div style="font-size:11.5px;color:color-mix(in srgb,var(--color-text) 58%,transparent)">Last {{ docMailNote }}</div></sc-if>
+<sc-if value="{{ docMailErr }}" hint-placeholder-val="{{ false }}"><div style="border-left:3px solid #b3261e;padding:8px 0 8px 11px;font-size:12.5px;line-height:1.5;color:#b3261e">{{ docMailErr }}</div></sc-if>
+<sc-if value="{{ docMailDone }}" hint-placeholder-val="{{ false }}"><div style="border-left:3px solid #2e6b3e;padding:8px 0 8px 11px;font-size:12.5px;line-height:1.5;color:#1b4127">{{ docMailDone }}</div></sc-if>
+<div style="display:flex;gap:8px;flex-wrap:wrap">
+<sc-if value="{{ docMailNotDone }}" hint-placeholder-val="{{ true }}"><button class="btn btn-primary nkt-tap" sc-camel-on-click="{{ onDocMailSend }}" style="height:40px;padding:0 18px">{{ docMailSendLabel }}</button></sc-if>
+<button class="btn btn-secondary nkt-tap" sc-camel-on-click="{{ onDocMailClose }}" style="height:40px;padding:0 16px">{{ docMailCloseLabel }}</button>
+</div>
+</div>
+</div>
+</sc-if>
+
 <sc-if value="{{ wsPickShow }}" hint-placeholder-val="{{ false }}">
 <div style="position:fixed;inset:0;z-index:8500;background:var(--color-bg);display:flex;align-items:center;padding:0 max(24px,6vw);overflow-y:auto">
 <div style="max-width:440px;width:100%;display:flex;flex-direction:column;gap:12px">
@@ -805,6 +831,7 @@ body{margin:0;background:#e7dfcc;font-family:var(--font-body)}
 <span style="{{ r.chipSt }}">{{ r.status }}</span>
 <sc-if value="{{ r.canThank }}" hint-placeholder-val="{{ true }}"><button class="nkt-tap" sc-camel-on-click="{{ r.onThank }}" style="{{ r.thankSt }}">{{ r.thankLabel }}</button></sc-if>
 <sc-if value="{{ r.canReceipt }}" hint-placeholder-val="{{ true }}"><button class="nkt-tap" sc-camel-on-click="{{ r.onReceipt }}" style="cursor:pointer;height:30px;padding:0 10px;font-size:12px;font-family:var(--font-body);white-space:nowrap;border:1px solid var(--color-text);background:transparent">{{ r.receiptLabel }}</button></sc-if>
+<sc-if value="{{ r.canReceipt }}" hint-placeholder-val="{{ true }}"><button class="nkt-tap" sc-camel-on-click="{{ r.onCert }}" style="cursor:pointer;height:30px;padding:0 10px;font-size:12px;font-family:var(--font-body);white-space:nowrap;border:1px solid var(--color-text);background:transparent">{{ r.certLabel }}</button></sc-if>
 </div>
 </sc-for>
 <sc-if value="{{ wdListEmpty }}" hint-placeholder-val="{{ false }}"><div style="padding:30px 0;font-size:13px;color:color-mix(in srgb,var(--color-text) 55%,transparent)">Nothing matches.</div></sc-if>
@@ -1643,20 +1670,33 @@ body{margin:0;background:#e7dfcc;font-family:var(--font-body)}
 
 <sc-if value="{{ adminIsEmail }}" hint-placeholder-val="{{ false }}">
 <div class="nkt-scroll" style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px;max-width:640px">
-<div style="font-family:var(--font-heading);font-weight:800;font-size:13px;letter-spacing:.06em;text-transform:uppercase;padding-bottom:9px;border-bottom:2px solid var(--color-divider)">Receipt email</div>
-<div style="font-size:12.5px;line-height:1.6;color:color-mix(in srgb,var(--color-text) 68%,transparent);text-wrap:pretty">Used by Email receipt in the Donations workspace. The receipt goes to the donor's email address on file; the person sending it never sees the amount. These settings, including the key, are visible to admins only. You need an account with the email service and its API key; the From address must be on a domain verified with that service.</div>
+<div style="font-family:var(--font-heading);font-weight:800;font-size:13px;letter-spacing:.06em;text-transform:uppercase;padding-bottom:9px;border-bottom:2px solid var(--color-divider)">Receipt and certificate email</div>
+<div style="font-size:12.5px;line-height:1.6;color:color-mix(in srgb,var(--color-text) 68%,transparent);text-wrap:pretty">Used by Email receipt and Email certificate in Donations, on a donor's page and in the Donations workspace. Mail goes out through Gmail with a Google App Password.</div>
+<div style="{{ emailStatusStyle }}">{{ emailStatus }}</div>
+<div style="border:1px solid var(--color-divider);padding:12px 14px;display:flex;flex-direction:column;gap:10px">
+<div style="font-family:var(--font-heading);font-weight:800;font-size:12px;letter-spacing:.06em;text-transform:uppercase">Gmail sign-in</div>
+<div class="field" style="margin:0"><label>Gmail address that sends</label><input class="input" type="email" autocomplete="off" value="{{ mailUser }}" sc-camel-on-change="{{ onMailUser }}" placeholder="nku@rotaryknk.org" style="height:38px;min-height:38px"></div>
+<div class="field" style="margin:0"><label>App Password (16 letters)</label><input class="input" type="password" autocomplete="new-password" value="{{ mailPass }}" sc-camel-on-change="{{ onMailPass }}" placeholder="{{ mailPassHint }}" style="height:38px;min-height:38px"></div>
+<div style="font-size:11.5px;line-height:1.5;color:color-mix(in srgb,var(--color-text) 58%,transparent);text-wrap:pretty">Saving checks the sign-in with Gmail first. The password is stored on the server only: nobody can view it again from the Tracker, admins included. To change it, enter a new one. Create an App Password in the Google account under Security → 2-Step Verification → App passwords.</div>
+<div style="display:flex;gap:8px;flex-wrap:wrap">
+<button class="btn btn-primary nkt-tap" sc-camel-on-click="{{ onMailSave }}" style="height:38px;padding:0 16px">{{ mailSaveLabel }}</button>
+<sc-if value="{{ mailCanClear }}" hint-placeholder-val="{{ false }}"><button class="btn btn-ghost nkt-tap" sc-camel-on-click="{{ onMailClear }}" style="height:38px">{{ mailClearLabel }}</button></sc-if>
+</div>
+<sc-if value="{{ mailMsg }}" hint-placeholder-val="{{ false }}"><div style="border-left:3px solid var(--color-text);padding:6px 0 6px 11px;font-size:12.5px;line-height:1.5">{{ mailMsg }}</div></sc-if>
+</div>
 <sc-if value="{{ emailLoading }}" hint-placeholder-val="{{ false }}"><div style="font-size:12.5px">Loading…</div></sc-if>
 <sc-if value="{{ emailReady }}" hint-placeholder-val="{{ true }}">
-<div class="field"><label>Email service</label><sc-raw-select class="input" value="{{ emailProvider }}" sc-camel-on-change="{{ onEmailProvider }}" style="height:38px;max-width:240px"><sc-for list="{{ emailProviders }}" as="o" hint-placeholder-count="2"><option value="{{ o.v }}">{{ o.l }}</option></sc-for></sc-raw-select></div>
-<div class="field"><label>API key</label><input class="input" type="password" autocomplete="off" value="{{ emailKey }}" sc-camel-on-change="{{ onEmailKey }}" style="height:38px;min-height:38px"></div>
-<div class="field"><label>From</label><input class="input" value="{{ emailFrom }}" sc-camel-on-change="{{ onEmailFrom }}" placeholder="North Kitsap United &lt;receipts@yourdomain.org&gt;" style="height:38px;min-height:38px"></div>
+<div class="field"><label>From name</label><input class="input" value="{{ emailFromName }}" sc-camel-on-change="{{ onEmailFromName }}" placeholder="North Kitsap United" style="height:38px;min-height:38px"></div>
 <div class="field"><label>Reply-to (optional)</label><input class="input" value="{{ emailReplyTo }}" sc-camel-on-change="{{ onEmailReplyTo }}" placeholder="nku@rotaryknk.org" style="height:38px;min-height:38px"></div>
-<div class="field"><label>Subject</label><input class="input" value="{{ emailSubject }}" sc-camel-on-change="{{ onEmailSubject }}" style="height:38px;min-height:38px"></div>
+<div class="field"><label>Receipt subject</label><input class="input" value="{{ emailSubject }}" sc-camel-on-change="{{ onEmailSubject }}" style="height:38px;min-height:38px"></div>
 <div class="field"><label>Message above the receipt</label><textarea class="input" value="{{ emailMessage }}" sc-camel-on-change="{{ onEmailMessage }}" rows="7" style="min-height:120px;resize:vertical"></textarea></div>
+<div class="field"><label>Certificate subject</label><input class="input" value="{{ emailCertSubject }}" sc-camel-on-change="{{ onEmailCertSubject }}" style="height:38px;min-height:38px"></div>
+<div class="field"><label>Message above the certificate</label><textarea class="input" value="{{ emailCertMessage }}" sc-camel-on-change="{{ onEmailCertMessage }}" rows="6" style="min-height:110px;resize:vertical"></textarea></div>
 <div style="font-size:11.5px;color:color-mix(in srgb,var(--color-text) 58%,transparent)">{name} is replaced with the donor's name.</div>
 <div style="display:flex;gap:8px;flex-wrap:wrap">
 <button class="btn btn-primary nkt-tap" sc-camel-on-click="{{ onEmailSave }}" style="height:40px;padding:0 18px">{{ emailSaveLabel }}</button>
-<button class="btn btn-secondary nkt-tap" sc-camel-on-click="{{ onEmailTest }}" style="height:40px;padding:0 16px">Save and send me a sample</button>
+<button class="btn btn-secondary nkt-tap" sc-camel-on-click="{{ onEmailTest }}" style="height:40px;padding:0 16px">Save and send me a sample receipt</button>
+<button class="btn btn-secondary nkt-tap" sc-camel-on-click="{{ onEmailTestCert }}" style="height:40px;padding:0 16px">Sample certificate</button>
 </div>
 <sc-if value="{{ emailMsg }}" hint-placeholder-val="{{ false }}"><div style="border-left:3px solid var(--color-text);padding:8px 0 8px 11px;font-size:12.5px;line-height:1.5">{{ emailMsg }}</div></sc-if>
 </sc-if>
@@ -1812,9 +1852,13 @@ Required
 <sc-if value="{{ isCertificate }}" hint-placeholder-val="{{ false }}">
 <div style="padding:22px;display:flex;flex-direction:column;align-items:center;gap:16px;animation:nktFade .18s ease">
 <div style="display:flex;gap:8px;align-self:flex-start">
+<sc-if value="{{ docCanAct }}" hint-placeholder-val="{{ true }}">
 <button class="btn btn-primary nkt-tap" sc-camel-on-click="{{ onPrintCert }}" style="height:36px;padding:0 14px">Print certificate</button>
-<button class="btn btn-secondary nkt-tap" sc-camel-on-click="{{ onCloseCert }}" style="height:36px;padding:0 14px">Back to transaction</button>
+<sc-if value="{{ docCanEmail }}" hint-placeholder-val="{{ true }}"><button class="btn btn-primary nkt-tap" sc-camel-on-click="{{ onEmailCert }}" style="height:36px;padding:0 14px">Email certificate</button></sc-if>
+</sc-if>
+<button class="btn btn-secondary nkt-tap" sc-camel-on-click="{{ onCloseCert }}" style="height:36px;padding:0 14px">Back</button>
 </div>
+<sc-if value="{{ certSentNote }}" hint-placeholder-val="{{ false }}"><div style="align-self:flex-start;font-size:11px;margin-top:-8px;color:color-mix(in srgb,var(--color-text) 60%,transparent)">{{ certSentNote }}</div></sc-if>
 <div style="align-self:flex-start;display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap">
 <sc-if value="{{ certPayMulti }}" hint-placeholder-val="{{ false }}"><div class="field" style="margin:0"><label>Payment received</label>
 <sc-raw-select class="input" value="{{ certPayVal }}" sc-camel-on-change="{{ onCertPay }}" style="height:34px;min-height:34px;min-width:220px"><sc-for list="{{ certPayOpts }}" as="o" hint-placeholder-count="2"><option value="{{ o.value }}">{{ o.label }}</option></sc-for></sc-raw-select></div></sc-if>
@@ -1855,8 +1899,11 @@ Required
 <sc-if value="{{ isReceipt }}" hint-placeholder-val="{{ false }}">
 <div style="padding:22px;display:flex;flex-direction:column;align-items:center;gap:16px;animation:nktFade .18s ease">
 <div style="display:flex;gap:8px;align-self:flex-start;align-items:center;flex-wrap:wrap">
+<sc-if value="{{ docCanAct }}" hint-placeholder-val="{{ true }}">
 <button class="btn btn-primary nkt-tap" sc-camel-on-click="{{ onPrintReceipt }}" style="height:36px;padding:0 14px">{{ rcptPrintLabel }}</button>
-<button class="btn btn-secondary nkt-tap" sc-camel-on-click="{{ onCloseCert }}" style="height:36px;padding:0 14px">Back to transaction</button>
+<sc-if value="{{ docCanEmail }}" hint-placeholder-val="{{ true }}"><button class="btn btn-primary nkt-tap" sc-camel-on-click="{{ onEmailReceipt }}" style="height:36px;padding:0 14px">{{ rcptEmailLabel }}</button></sc-if>
+</sc-if>
+<button class="btn btn-secondary nkt-tap" sc-camel-on-click="{{ onCloseCert }}" style="height:36px;padding:0 14px">Back</button>
 <span style="font-size:11px;color:color-mix(in srgb,var(--color-text) 60%,transparent)">{{ rcptPrintedNote }}</span>
 </div>
 <div style="align-self:flex-start;display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap">
@@ -3646,6 +3693,13 @@ Required
 </span>
 <span style="flex:none;font-family:var(--font-heading);font-weight:800;font-size:13px;padding-left:10px">{{ i.value }}</span>
 </button>
+<sc-if value="{{ i.hasDocs }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;padding:0 20px 10px;border-bottom:1px solid var(--color-divider)">
+<button class="nkt-tap" sc-camel-on-click="{{ i.onCert }}" style="cursor:pointer;height:28px;padding:0 10px;font-size:11.5px;font-family:var(--font-body);white-space:nowrap;border:1px solid var(--color-text);background:transparent;color:var(--color-text)">{{ i.certLabel }}</button>
+<button class="nkt-tap" sc-camel-on-click="{{ i.onReceipt }}" style="cursor:pointer;height:28px;padding:0 10px;font-size:11.5px;font-family:var(--font-body);white-space:nowrap;border:1px solid var(--color-text);background:transparent;color:var(--color-text)">{{ i.receiptLabel }}</button>
+<span style="font-size:10.5px;color:color-mix(in srgb,var(--color-text) 55%,transparent)">{{ i.docNote }}</span>
+</div>
+</sc-if>
 </sc-for>
 <sc-if value="{{ g.empty }}" hint-placeholder-val="{{ false }}">
 <div style="padding:12px 20px 16px;font-size:12px;color:color-mix(in srgb,var(--color-text) 48%,transparent)">{{ g.emptyText }}</div>
@@ -6119,7 +6173,7 @@ body{margin:0;font-family:Archivo,system-ui,sans-serif;color:#201e1d;-webkit-pri
       rcptGoodsIn:this.state.receiptGoods||"", rcptShowGoods:!b.pledge, rcptGoodsLocked:!can,
       onRcptGoods:e=>{ if(can) this.setState({receiptGoods:e.target.value}); },
       rcptPrintLabel:b.pledge?"Print pledge receipt":"Print tax receipt",
-      rcptPrintedNote:this.receiptPrintedText(t),
+      rcptPrintedNote:this.receiptPrintedText(t)+(this.docSentText(t,"receipt")?" · "+this.docSentText(t,"receipt"):""),
       onPrintReceipt:()=>{ this.printReceipts([b],{title:b.pledge?"Pledge receipt":"Tax receipt"}); this.markReceiptPrinted([t.id]); }};
   }
   openThanksList(){ this.setState({thanksList:{show:"Needs a thank-you",status:"All",from:"",to:"",sel:{}}}); }
@@ -8440,7 +8494,7 @@ tr{page-break-inside:avoid;break-inside:avoid}
           recTier?[{title:recTier.name,sub:"Reached at "+this.money(Number(recTier.min)||0)+" received · "+(recDue?"certificate not printed yet":"certificate printed "+((rec.tierCerts||{})[recTier.id]||"")),value:""}]:[],
           recNext?[{title:"Next: "+recNext.name,sub:this.money(Math.max(0,(Number(recNext.min)||0)-this.donorReceived(rec.id)))+" to go",value:this.money(Number(recNext.min)||0)}]:[]),
           this.hideAmounts?"Tiers need $$ access.":"Tiers are set in Admin → Donor tiers."),
-        Object.assign(grp("Donations",(tx.length+evLines.length)+" entries",tx.map(t=>this.donationItem(t))
+        Object.assign(grp("Donations",(tx.length+evLines.length)+" entries",tx.map(t=>this.withDocs(this.donationItem(t),t))
           .concat(evLines.map(l=>({title:(l.ev.date||"")+" · event gift",sub:"Received · "+l.ev.name,value:this.money(l.amount),open:()=>this.open("events",l.ev.id)}))),"No transactions recorded for this donor."),
           {action:this.canEditSec("transactions")?{label:"+ Add a donation",on:()=>this.startDonationFor(rec.id)}:null}),
         this.canSee("events")&&(()=>{
@@ -10023,20 +10077,6 @@ tr{page-break-inside:avoid;break-inside:avoid}
     const f=on?{thankedAt:this.today(),thankedBy:(this.state.me||{}).email||""}:{thankedAt:"",thankedBy:""};
     this.wsPatch("transactions",t.id,f).catch(e=>this.wsFail(e));
   }
-  async wdSendReceipt(t){
-    const d=this.donor(t.donorId)||{};
-    if(!String(d.email||"").trim()) return this.setState({wsErr:(d.name||"This donor")+" has no email address on file."});
-    this.setState(s=>({wdSending:Object.assign({},s.wdSending,{[t.id]:true}),wsErr:"",wsMsg:""}));
-    try{
-      const tok=this._fb&&this._fb.idToken?await this._fb.idToken():null;
-      const r=await fetch("/api/receipt",{method:"POST",headers:{"Content-Type":"application/json",Authorization:"Bearer "+(tok||"")},body:JSON.stringify({txId:t.id})});
-      const j=await r.json().catch(()=>({}));
-      if(!r.ok||!j.ok) throw new Error(j.error||("The receipt service answered "+r.status+"."));
-      this.setStateLocal(s=>({data:Object.assign({},s.data,{transactions:s.data.transactions.map(x=>x.id===t.id?Object.assign({},x,{receiptSentAt:j.sentAt||this.today(),receiptSentTo:j.to||d.email}):x)})}));
-      this.setState({wsMsg:"Receipt emailed to "+(j.to||d.email)+"."});
-    }catch(e){ this.setState({wsErr:e.message||String(e)}); }
-    this.setState(s=>({wdSending:Object.assign({},s.wdSending,{[t.id]:false})}));
-  }
 
   // ---- Grants workspace ----
   wgRows(){
@@ -10237,7 +10277,7 @@ tr{page-break-inside:avoid;break-inside:avoid}
             wdESaveLabel:s.wsBusy?"Saving…":"Save changes", onWdESave:()=>{ if(!s.wsBusy) this.wdESave(); },
             onWdECancel:()=>this.setState({wdE:null,wsErr:""})}; })(),
         wdList:rows.slice(0,lim).map(t=>{
-          const d=this.donor(t.donorId)||{}, can=this.needsThanks(t), sending=!!(s.wdSending||{})[t.id], rcv=this.statusIs(t.status,"Received")||this.statusIs(t.status,"Pledged");
+          const d=this.donor(t.donorId)||{}, can=this.needsThanks(t), rcv=this.statusIs(t.status,"Received")||this.statusIs(t.status,"Pledged");
           const tone=this.txTone(t), pe=this.isPledgeEntry(t), pl=t.pledgeId?this.d().transactions.find(x=>x.id===t.pledgeId):null, canEdit=this.wsCanEdit("wsdonations");
           return {name:d.name||"—",
             sub:[String(t.completedAt||t.date||"").slice(0,10),t.method,this.hasSchedule(t)?"Installments":"",t.title,pl?"applied to pledge"+(pl.title?" "+pl.title:""):""].filter(Boolean).join(" · "),
@@ -10248,10 +10288,14 @@ tr{page-break-inside:avoid;break-inside:avoid}
             canThank:can, thanked:!!t.thankedAt, thankLabel:t.thankedAt?"✓ Thanked "+String(t.thankedAt).slice(5).replace("-","/"):"Thank you sent",
             thankSt:"cursor:pointer;height:30px;padding:0 10px;font-size:12px;font-family:var(--font-body);white-space:nowrap;border:1px solid "+(t.thankedAt?GREEN:"var(--color-text)")+";background:"+(t.thankedAt?GREEN:"transparent")+";color:"+(t.thankedAt?"#fff":"var(--color-text)"),
             onThank:()=>this.wdThank(t),
-            canReceipt:rcv, receiptSent:!!t.receiptSentAt,
-            receiptLabel:sending?"Sending…":(t.receiptSentAt?"Resend receipt":"Email receipt"),
-            receiptNote:t.receiptSentAt?"Receipt sent "+String(t.receiptSentAt).slice(0,10)+(t.receiptSentTo?" to "+t.receiptSentTo:""):(d.email?"":"No email on file"),
-            onReceipt:()=>{ if(!sending) this.wdSendReceipt(t); }};
+            canReceipt:rcv&&canEdit&&!this.isGrantAward(t), receiptSent:!!t.receiptSentAt,
+            receiptLabel:t.receiptSentAt?"Resend receipt":"Email receipt",
+            certLabel:t.certSentAt?"Resend certificate":"Email certificate",
+            receiptNote:[t.receiptSentAt?"Receipt sent "+String(t.receiptSentAt).slice(0,10)+(t.receiptSentTo?" to "+t.receiptSentTo:""):"",
+              t.certSentAt?"Certificate sent "+String(t.certSentAt).slice(0,10)+(t.certSentTo?" to "+t.certSentTo:""):"",
+              rcv&&canEdit&&!d.email?"No email on file":""].filter(Boolean).join(" · "),
+            onReceipt:()=>this.docMailOpen(t,"receipt"),
+            onCert:()=>this.docMailOpen(t,"certificate")};
         })
       });
     }
@@ -10333,40 +10377,150 @@ tr{page-break-inside:avoid;break-inside:avoid}
       .catch(e=>this.setStateLocal({emailLoaded:true,emailCfg:this.emailDefaults(),emailMsg:"Couldn't read the email settings: "+(e.code||e.message)}))
       .then(()=>{ this._emailLoading=false; });
   }
-  emailDefaults(){ return {provider:"resend",apiKey:"",from:"",replyTo:"",subject:"Your donation receipt from North Kitsap United",
-    message:"Dear {name},\n\nThank you for your generous gift to North Kitsap United. Your receipt is below; please keep it for your tax records.\n\nWith gratitude,\nNorth Kitsap United"}; }
+  emailDefaults(){ return {fromName:"North Kitsap United",replyTo:"",subject:"Your donation receipt from North Kitsap United",
+    message:"Dear {name},\n\nThank you for your generous gift to North Kitsap United. Your receipt is below, and a printable copy is attached; please keep it for your tax records.\n\nWith gratitude,\nNorth Kitsap United",
+    certSubject:"A certificate of appreciation from North Kitsap United",
+    certMessage:"Dear {name},\n\nThank you for your generous gift to North Kitsap United. Please accept the attached certificate with our gratitude.\n\nWith appreciation,\nNorth Kitsap United"}; }
+  mailStatusPatch(r,j){
+    if(!r.ok||!j.ok) return {emailStatus:{ok:false,text:"Couldn't check the Gmail setup: "+(j.error||r.status)}};
+    const p={emailStatus:j.configured?{ok:true,source:j.source,text:"Gmail is connected. Mail is sent from "+j.account+(j.source==="netlify"?" (set in Netlify).":".")}:{ok:false,text:"Gmail isn't connected yet. Enter the Gmail address and its App Password below."}};
+    if(j.account&&!this.state.mailUserEdited) p.mailUser=j.account;
+    return p;
+  }
+  async mailCall(body,okMsg){
+    this.setStateLocal({mailBusy:true,mailMsg:""});
+    try{
+      const tok=await this._fb.idToken();
+      const r=await fetch("/api/receipt",{method:"POST",headers:{"Content-Type":"application/json",Authorization:"Bearer "+(tok||"")},body:JSON.stringify(body)});
+      const j=await r.json().catch(()=>({}));
+      if(!r.ok||!j.ok) throw new Error(j.error||("The email service answered "+r.status+"."));
+      this.setStateLocal(Object.assign(this.mailStatusPatch(r,j),{mailBusy:false,mailPass:"",mailMsg:okMsg}));
+    }catch(e){ this.setStateLocal({mailBusy:false,mailMsg:"Not saved: "+(e.message||e)}); }
+  }
+  emailStatusLoad(){
+    if(this._emailStatusLoading||!this._fb||!this._fb.idToken) return;
+    this._emailStatusLoading=true;
+    (async()=>{ try{
+      const tok=await this._fb.idToken();
+      const r=await fetch("/api/receipt",{method:"POST",headers:{"Content-Type":"application/json",Authorization:"Bearer "+(tok||"")},body:JSON.stringify({status:true})});
+      const j=await r.json().catch(()=>({}));
+      this.setStateLocal(this.mailStatusPatch(r,j));
+    }catch(e){ this.setStateLocal({emailStatus:{ok:false,text:"Couldn't check the Gmail setup: "+(e.message||e)}}); } })();
+  }
   emailVals(){
     const s=this.state, on=s.adminTab==="email"&&this.isAdminUser;
     if(on&&!s.emailLoaded) setTimeout(()=>this.emailLoad(),0);
     const c=s.emailCfg||this.emailDefaults(), set=k=>e=>{ const v=e.target.value; this.setStateLocal(st=>({emailCfg:Object.assign({},st.emailCfg||this.emailDefaults(),{[k]:v}),emailMsg:""})); };
-    const save=async(test)=>{
+    if(on&&!s.emailStatus) setTimeout(()=>this.emailStatusLoad(),0);
+    const save=async(test,kind)=>{
       this.setStateLocal({emailBusy:true,emailMsg:""});
       try{
-        await this._fb.saveEmailConfig(Object.assign({},c,{updatedBy:(s.me||{}).email||"",updatedAt:new Date().toISOString()}));
+        const clean=Object.assign({},c); delete clean.apiKey; delete clean.provider; delete clean.from;
+        await this._fb.saveEmailConfig(Object.assign(clean,{apiKey:"",provider:"gmail",updatedBy:(s.me||{}).email||"",updatedAt:new Date().toISOString()}));
         if(test){
           const tok=await this._fb.idToken();
-          const r=await fetch("/api/receipt",{method:"POST",headers:{"Content-Type":"application/json",Authorization:"Bearer "+(tok||"")},body:JSON.stringify({test:true})});
+          const r=await fetch("/api/receipt",{method:"POST",headers:{"Content-Type":"application/json",Authorization:"Bearer "+(tok||"")},body:JSON.stringify({test:true,kind:kind||"receipt"})});
           const j=await r.json().catch(()=>({}));
-          if(!r.ok||!j.ok) throw new Error(j.error||("The receipt service answered "+r.status+"."));
-          this.setStateLocal({emailBusy:false,emailMsg:"Saved. A sample receipt was sent to "+j.to+"."});
+          if(!r.ok||!j.ok) throw new Error(j.error||("The email service answered "+r.status+"."));
+          this.setStateLocal({emailBusy:false,emailMsg:"Saved. A sample "+(kind==="certificate"?"certificate":"receipt")+" was sent to "+[].concat(j.to).join(", ")+"."});
         } else this.setStateLocal({emailBusy:false,emailMsg:"Saved."});
       }catch(e){ this.setStateLocal({emailBusy:false,emailMsg:"Not done: "+(e.message||e.code||e)}); }
     };
     return {
       adminIsEmail:on, emailLoading:on&&!s.emailLoaded, emailReady:on&&!!s.emailLoaded,
-      emailProvider:c.provider||"resend", emailProviders:[{v:"resend",l:"Resend"},{v:"sendgrid",l:"SendGrid"}], onEmailProvider:set("provider"),
-      emailKey:c.apiKey||"", onEmailKey:set("apiKey"),
-      emailFrom:c.from||"", onEmailFrom:set("from"),
+      emailStatus:(s.emailStatus||{}).text||"Checking the Gmail connection…",
+      mailUser:s.mailUser||"", onMailUser:e=>this.setStateLocal({mailUser:e.target.value,mailUserEdited:true,mailMsg:""}),
+      mailPass:s.mailPass||"", onMailPass:e=>this.setStateLocal({mailPass:e.target.value,mailMsg:""}),
+      mailPassHint:s.emailStatus&&s.emailStatus.ok&&s.emailStatus.source==="app"?"Saved. Enter a new one to replace it":"xxxx xxxx xxxx xxxx",
+      mailSaveLabel:s.mailBusy?"Checking with Gmail…":"Save Gmail sign-in",
+      onMailSave:()=>{ if(s.mailBusy) return; const u=String(s.mailUser||"").trim(), pw=String(s.mailPass||"").replace(/\s+/g,"");
+        if(!u||!pw) return this.setStateLocal({mailMsg:"Enter both the Gmail address and its App Password."});
+        this.mailCall({setMail:{user:u,password:pw}},"Saved. Gmail accepted the sign-in."); },
+      mailCanClear:!!(s.emailStatus&&s.emailStatus.source==="app"),
+      mailClearLabel:s.mailClearArmed?"Click again to remove":"Remove saved sign-in",
+      onMailClear:()=>{ if(s.mailBusy) return; if(!s.mailClearArmed) return this.setStateLocal({mailClearArmed:true}); this.setStateLocal({mailClearArmed:false}); this.mailCall({clearMail:true},"Removed the saved Gmail sign-in."); },
+      mailMsg:s.mailMsg||"",
+      emailStatusStyle:"padding:8px 0 8px 11px;font-size:12.5px;line-height:1.5;border-left:3px solid "+(s.emailStatus?(s.emailStatus.ok?"#2e6b3e;color:#1b4127":"#b3261e;color:#b3261e"):"var(--color-divider)"),
+      emailFromName:c.fromName!=null?c.fromName:((/^(.*)<[^>]+>\s*$/.exec(c.from||"")||[])[1]||"").trim().replace(/^"|"$/g,""), onEmailFromName:set("fromName"),
+      emailCertSubject:c.certSubject||"", onEmailCertSubject:set("certSubject"),
+      emailCertMessage:c.certMessage||"", onEmailCertMessage:set("certMessage"),
+      onEmailTestCert:()=>save(true,"certificate"),
       emailReplyTo:c.replyTo||"", onEmailReplyTo:set("replyTo"),
       emailSubject:c.subject||"", onEmailSubject:set("subject"),
       emailMessage:c.message||"", onEmailMessage:set("message"),
       emailMsg:s.emailMsg||"", emailBusy:!!s.emailBusy,
       emailSaveLabel:s.emailBusy?"Saving…":"Save", onEmailSave:()=>save(false),
-      onEmailTest:()=>save(true)
+      onEmailTest:()=>save(true,"receipt")
     };
   }
 
-  renderVals(){ return Object.assign(this.mainVals(),this.wsVals(),this.emailVals()); }
+  renderVals(){ return Object.assign(this.mainVals(),this.wsVals(),this.emailVals(),this.docMailVals()); }
+
+  // ---- Email a tax receipt or certificate (Gmail, through /api/receipt) ----
+  // Opens a small form that starts with the donor's email on file; more
+  // addresses can be added. The server builds the document itself, so a
+  // workspace user without $$ access never sees the amount. Edit access only.
+  canDocs(){ return this.canEditSec("transactions")||this.wsCanEdit("wsdonations"); }
+  docEligible(t){ return !!t&&!this.isGrantAward(t)&&(this.statusIs(t.status,"Received")||this.statusIs(t.status,"Pledged")); }
+  docMailOpen(t,kind,opts){
+    if(!t||!this.canDocs()) return;
+    const em=String((this.donor(t.donorId)||{}).email||"").trim();
+    this.setStateLocal({docMail:{txId:t.id,kind:kind==="certificate"?"certificate":"receipt",to:[em],opts:opts||{},busy:false,err:"",done:""}});
+  }
+  docMailSet(patch){ this.setStateLocal(s=>({docMail:s.docMail?Object.assign({},s.docMail,patch):null})); }
+  async docMailSend(){
+    const m=this.state.docMail; if(!m||m.busy) return;
+    const to=[]; m.to.forEach(v=>String(v||"").split(/[,;\s]+/).forEach(x=>{ x=x.trim().toLowerCase(); if(x&&to.indexOf(x)<0) to.push(x); }));
+    if(!to.length) return this.docMailSet({err:"Enter at least one email address."});
+    const bad=to.filter(x=>!/^[^@\s,;<>]+@[^@\s,;<>]+\.[^@\s,;<>]+$/.test(x));
+    if(bad.length) return this.docMailSet({err:"Check "+(bad.length===1?"this address":"these addresses")+": "+bad.join(", ")});
+    if(to.length>10) return this.docMailSet({err:"Send to at most 10 addresses at a time."});
+    this.docMailSet({busy:true,err:"",done:""});
+    try{
+      const tok=this._fb&&this._fb.idToken?await this._fb.idToken():null;
+      const r=await fetch("/api/receipt",{method:"POST",headers:{"Content-Type":"application/json",Authorization:"Bearer "+(tok||"")},body:JSON.stringify(Object.assign({},m.opts||{},{txId:m.txId,kind:m.kind,to}))});
+      const j=await r.json().catch(()=>({}));
+      if(!r.ok||!j.ok) throw new Error(j.error||("The email service answered "+r.status+"."));
+      const at=j.sentAt||new Date().toISOString(), list=[].concat(j.to||to).join(", ");
+      const f=m.kind==="certificate"?{certSentAt:at,certSentTo:list}:{receiptSentAt:at,receiptSentTo:list};
+      this.setStateLocal(s=>({data:Object.assign({},s.data,{transactions:s.data.transactions.map(x=>x.id===m.txId?Object.assign({},x,f):x)})}));
+      this.docMailSet({busy:false,done:(m.kind==="certificate"?"Certificate":"Receipt")+" emailed to "+list+"."});
+    }catch(e){ this.docMailSet({busy:false,err:e.message||String(e)}); }
+  }
+  docSentText(t,kind){
+    const at=t&&(kind==="certificate"?t.certSentAt:t.receiptSentAt), to=t&&(kind==="certificate"?t.certSentTo:t.receiptSentTo);
+    return at?"emailed "+String(at).slice(0,10)+(to?" to "+to:""):"";
+  }
+  // Certificate and receipt buttons under a donation on a donor's page.
+  withDocs(item,t){
+    if(!this.canEditSec("transactions")||!this.docEligible(t)) return item;
+    const pl=this.statusIs(t.status,"Pledged"), c=this.docSentText(t,"certificate"), r=this.docSentText(t,"receipt");
+    return Object.assign({},item,{hasDocs:true,rowStyle:"padding:9px 20px 6px;border-bottom:0",
+      certLabel:pl?"Pledge Certificate":"Donation Certificate", receiptLabel:pl?"Pledge Receipt":"Tax Receipt",
+      docNote:[c?"Certificate "+c:"",r?"Receipt "+r:""].filter(Boolean).join(" · "),
+      onCert:()=>this.setState({certTxId:t.id,certAmt:null,certKind:null}),
+      onReceipt:()=>this.setState({certTxId:t.id,certAmt:null,certKind:"receipt",receiptGoods:""})});
+  }
+  docMailVals(){
+    const m=this.state.docMail;
+    if(!m) return {docMailOpen:false,docMailRows:[]};
+    const t=this.d().transactions.find(x=>x.id===m.txId)||{}, d=this.donor(t.donorId)||{}, pl=this.statusIs(t.status,"Pledged");
+    const word=m.kind==="certificate"?(pl?"pledge certificate":"donation certificate"):(pl?"pledge receipt":"tax receipt");
+    return {docMailOpen:true, docMailPad:this.mobile?"0":"60px 16px",
+      docMailTitle:"Email "+word,
+      docMailSub:(d.name||"Donor")+(String(d.email||"").trim()?"":" · no email on file, enter one below"),
+      docMailRows:m.to.map((v,i)=>({value:v, placeholder:i===0?"Donor's email":"Another email address",
+        onChange:e=>{ const val=e.target.value; this.setStateLocal(s=>{ if(!s.docMail) return null; const to=s.docMail.to.slice(); to[i]=val; return {docMail:Object.assign({},s.docMail,{to,err:"",done:""})}; }); },
+        canRemove:m.to.length>1, onRemove:()=>this.setStateLocal(s=>({docMail:Object.assign({},s.docMail,{to:s.docMail.to.filter((_,k)=>k!==i),done:""})}))})),
+      onDocMailAdd:()=>this.setStateLocal(s=>({docMail:Object.assign({},s.docMail,{to:s.docMail.to.concat(""),done:""})})),
+      docMailCanAdd:m.to.length<10,
+      docMailErr:m.err||"", docMailDone:m.done||"", docMailNotDone:!m.done,
+      docMailNote:this.docSentText(t,m.kind),
+      docMailSendLabel:m.busy?"Sending…":"Send",
+      onDocMailSend:()=>this.docMailSend(),
+      docMailCloseLabel:m.done?"Close":"Cancel",
+      onDocMailClose:()=>this.setStateLocal({docMail:null})};
+  }
 
   mainVals(){
     const s=this.state, sec=s.section, mobile=this.mobile;
@@ -10630,6 +10784,11 @@ tr{page-break-inside:avoid;break-inside:avoid}
           certLead:this.certLeadText(certTx&&certTx.method,pl),
           certAmount:certTx?F.full(amt):"", certAmtIn:this.fmtMoneyIn(ov!=null?ov:String(Math.round(def*100)/100)),
           certAmtLocked:!admin, onCertAmt:e=>{ if(admin) this.setState({certAmt:e.target.value}); },
+          docCanAct:this.canEditSec("transactions"), docCanEmail:this.canEditSec("transactions")&&this.docEligible(certTx),
+          certSentNote:certTx&&this.docSentText(certTx,"certificate")?"Certificate "+this.docSentText(certTx,"certificate"):"",
+          onEmailCert:()=>{ if(certTx) this.docMailOpen(certTx,"certificate",{amount:admin&&ov!=null&&ov!==""?amt:undefined,pledgeLine:pOn}); },
+          rcptEmailLabel:pl?"Email pledge receipt":"Email tax receipt",
+          onEmailReceipt:()=>{ if(certTx) this.docMailOpen(certTx,"receipt",{amount:admin&&ov!=null&&ov!==""?amt:undefined,goods:pl?0:this.num(s.receiptGoods),pledgeLine:pOn}); },
           onPrintCert:()=>{ if(certTx){ this.printEventCerts([{name:(this.donor(certTx.donorId)||{}).name||"Donor",contact:this.certContact(certTx.donorId),method:certTx.method,amount:amt,note}],pl?"pledge":"at",{noEvent:true,title:pl?"Pledge certificate":"Donation certificate"}); this.markCertPrinted([certTx.id]); } },
           certAmtHelp:admin?(pl?"Pledged amount from the record. Change it here for this printout only; the record stays as is.":"From the record. Change it here for this printout only (for example, an estimated value for in-kind goods). The record stays as is."):"From the record. An admin can change the amount for a printout."}; })(),
       onCloseCert:()=>this.setState({certTxId:null,certAmt:null,certPledgeOn:true,certKind:null,receiptGoods:""}),
@@ -10719,22 +10878,22 @@ tr{page-break-inside:avoid;break-inside:avoid}
       showDuplicate:isDetail&&sec==="transactions"&&canEditHere&&
         (this.statusIs((this.currentRecord()||{}).status,"Pledged")||this.statusIs((this.currentRecord()||{}).status,"Received")),
       onDuplicate:()=>this.startDuplicate(),
-      showCertificate:isDetail&&sec==="transactions",
+      showCertificate:isDetail&&sec==="transactions"&&this.canEditSec("transactions"),
       ...(()=>{ const r=isDetail&&sec==="transactions"?this.currentRecord():null, pays=r&&!r.pledgeId?this.pledgePayments(r):[], last=pays[pays.length-1];
-        return {showPayCert:!!last, payCertNote:last?(pays.length+" payment"+(pays.length===1?"":"s")+" received · "+this.certPrintedText(last).replace("Certificate never printed","latest never printed")):"",
+        return {showPayCert:!!last&&this.canEditSec("transactions"), payCertNote:last?(pays.length+" payment"+(pays.length===1?"":"s")+" received · "+this.certPrintedText(last).replace("Certificate never printed","latest never printed")):"",
           onPayCertificate:()=>{ if(last) this.setState({certTxId:last.id,certAmt:null,certKind:null}); },
-          showPayReceipt:!!last, payReceiptNote:last?this.receiptPrintedText(last).replace("Receipt never printed","latest never printed"):"",
+          showPayReceipt:!!last&&this.canEditSec("transactions"), payReceiptNote:last?this.receiptPrintedText(last).replace("Receipt never printed","latest never printed"):"",
           onPayReceipt:()=>{ if(last) this.setState({certTxId:last.id,certAmt:null,certKind:"receipt",receiptGoods:""}); }}; })(),
       ...(()=>{ const r=isDetail&&sec==="transactions"?this.currentRecord():null, on=!!(r&&r.thankedAt);
-        return {showReceipt:!!r, receiptBtnLabel:r&&this.statusIs(r.status,"Pledged")?"Pledge Receipt":"Tax Receipt",
-          receiptPrintedNote:r?this.receiptPrintedText(r):"",
+        return {showReceipt:!!r&&this.canEditSec("transactions"), receiptBtnLabel:r&&this.statusIs(r.status,"Pledged")?"Pledge Receipt":"Tax Receipt",
+          receiptPrintedNote:r?this.receiptPrintedText(r)+(this.docSentText(r,"receipt")?" · "+this.docSentText(r,"receipt"):""):"",
           onReceipt:()=>{ if(r) this.setState({certTxId:r.id,certAmt:null,certKind:"receipt",receiptGoods:""}); },
           showThanksBtn:!!r&&canEditHere,
           thanksBtnLabel:on?"Thank you sent \u2713":"Thank you sent",
           thanksBtnNote:on?("Marked "+r.thankedAt+(r.thankedBy?" · "+r.thankedBy:"")+" · click to undo"):(r&&this.needsThanks(r)?"Thank-you not sent yet":"Click once a thank-you goes out"),
           thanksBtnStyle:"height:36px;padding:0 14px;cursor:pointer;font-family:var(--font-heading);font-weight:800;font-size:13px;border:2px solid "+(on?GREEN:"var(--color-text)")+";background:"+(on?GREEN:"transparent")+";color:"+(on?"#ffffff":"var(--color-text)"),
           onThanksBtn:()=>{ if(r) this.setThanked([r.id],!on); }}; })(),
-      certPrintedNote:isDetail&&sec==="transactions"?this.certPrintedText(this.currentRecord()):"",
+      certPrintedNote:isDetail&&sec==="transactions"?this.certPrintedText(this.currentRecord())+(this.docSentText(this.currentRecord(),"certificate")?" · "+this.docSentText(this.currentRecord(),"certificate"):""):"",
       showBulkCert:sec==="transactions"&&!isForm&&!s.certTxId&&!this.hideAmounts,
       bulkCertBtn:mobile?"Certificates":"Print out Certificates",
       onBulkCert:()=>this.setState({bulkCert:{kind:"cert",status:"Received",printed:"Never printed",from:"",to:"",sel:{},amt:{}}}),

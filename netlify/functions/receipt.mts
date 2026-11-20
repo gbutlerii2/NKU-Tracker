@@ -1,20 +1,36 @@
-// /api/receipt: emails a donation's tax receipt to the donor.
-//   POST {"txId": "..."}  sends the receipt for that donation and stamps it
-//                         (receiptSentAt / receiptSentTo / receiptSentBy)
-//   POST {"test": true}   admins only: sends a sample receipt to the caller
+// /api/receipt: emails a donation's tax receipt or donation certificate.
+//   POST {"txId", "kind": "receipt"|"certificate", "to"?: [emails],
+//         "amount"?, "goods"?, "pledgeLine"?: bool}
+//        Sends the document for that donation (HTML in the message plus a
+//        printable PDF) and stamps the donation: receiptSentAt / receiptSentTo
+//        / receiptSentBy, or certSentAt / certSentTo / certSentBy.
+//        "to" defaults to the donor's email on file. "amount" (an override
+//        shown in the app's preview) is honored only for admins and full-site
+//        Donations editors with $$ access; "goods" only for full-site editors.
+//   POST {"test": true, "kind"?}  admins only: sends a sample to the caller
+//   POST {"status": true}         admins only: is Gmail set up, and as whom
+//   POST {"setMail": {"user", "password"}}  admins only: checks the Gmail
+//        sign-in and saves it server-side (secrets/mail); never returned
+//   POST {"clearMail": true}      admins only: removes the saved sign-in
 //
 // Callers send their Tracker sign-in as "Authorization: Bearer <Firebase ID
-// token>". The receipt, with its amount, is built here on the server, so the
-// person sending it (Donations workspace) never sees the dollar figure.
-// Settings (email service, API key, From, subject, message) live in the
-// admin-only Firestore doc private/email, edited in Admin → Email.
+// token>". The document, with its amount, is built here on the server, so a
+// Donations workspace user without $$ access never sees the dollar figure.
+// Sending needs Edit-level access: admin, full-site Donations "write", or the
+// Donations workspace at "Enter and edit".
+// Mail goes out through Gmail SMTP (see _lib/mail.mts for where the sign-in lives).
+// Wording (From name, reply-to, subjects, messages) lives in the admin-only
+// Firestore doc private/email, edited in Admin → Email.
 import type { Config } from "@netlify/functions";
 import { adminAuth, firestore } from "./_lib/firebase.mts";
 import { failure, json } from "./_lib/http.mts";
+import { MailError, clearMailCreds, isEmail, mailCreds, saveMailCreds, sendMail, verifyMailCreds } from "./_lib/mail.mts";
+import { type Certificate, type Receipt, certificateHtml, certificatePdf, receiptHtml, receiptPdf, today } from "./_lib/donor-docs.mts";
 
 const BOOTSTRAP_ADMINS = ["gerry@gb2solutions.net", "gerandkar@gmail.com"]; // mirror of firestore.rules
+const MAX_TO = 10;
 
-type Who = { email: string; admin: boolean; canSend: boolean };
+type Who = { email: string; admin: boolean; canSend: boolean; fullSite: boolean; money: boolean };
 
 async function caller(req: Request): Promise<Who | Response> {
   const m = /^Bearer\s+(.+)$/i.exec(req.headers.get("authorization") || "");
@@ -27,109 +43,88 @@ async function caller(req: Request): Promise<Who | Response> {
   if (!email || tok.firebase?.sign_in_second_factor !== "phone") {
     return json(req, { ok: false, error: "Finish signing in with your texted code first." }, 403);
   }
-  if (BOOTSTRAP_ADMINS.includes(email)) return { email, admin: true, canSend: true };
+  if (BOOTSTRAP_ADMINS.includes(email)) return { email, admin: true, canSend: true, fullSite: true, money: true };
   const u = (await firestore().collection("users").doc(email).get()).data();
   if (!u || u.active === false) return json(req, { ok: false, error: "Your account doesn't have access." }, 403);
   const p = u.perms || {};
   const admin = p.admin === "write";
-  return { email, admin, canSend: admin || p.wsdonations === "write" || p.wsdonations === "edit" || p.transactions === "write" };
+  const fullSite = admin || p.transactions === "write";
+  return { email, admin, fullSite, money: admin || p.money === true, canSend: fullSite || p.wsdonations === "edit" };
 }
 
-const esc = (v: unknown) => String(v ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]!);
-const cash = (n: number) => "$" + (Math.round((Number(n) || 0) * 100) / 100).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-const today = () => new Date().toISOString().slice(0, 10);
 const isStatus = (v: unknown, name: string) => {
   const n = (x: unknown) => { const s = String(x ?? "").trim().toLowerCase(); return s === "completed" ? "received" : s; };
   return n(v) === n(name);
 };
+const num = (v: unknown) => { const n = Number(String(v ?? "").replace(/[^0-9.\-]/g, "")); return isFinite(n) ? n : 0; };
+const isOrg = (d: any) => /organi[sz]ation|foundation|business|company|corporat|trust|government|faith|church|civic|club|school|estate/.test(String(d?.type || "").trim().toLowerCase());
+const whole = (n: number) => "$" + Math.round(n).toLocaleString("en-US");
+const when = (x: any) => String(x?.completedAt || x?.date || "");
 
-type Receipt = { no: string; name: string; contact: string; address: string; date: string; desc: string; method: string; amount: number; pledge: boolean };
+type Tx = { id: string; t: any; amount: number; plan: any };
 
-// Mirrors receiptItem / receiptStatement in the app (deploy/source/app.html).
-function buildReceipt(id: string, t: any, money: any, d: any): Receipt {
-  const pledge = isStatus(t.status, "Pledged");
-  const plan = money?.plan;
-  const amount = pledge && plan && Number(plan.total) > 0 ? Number(plan.total) : Number(money?.amount) || 0;
-  const org = /organization|foundation|trust|business/i.test(String(d?.type || ""));
+async function loadTx(db: FirebaseFirestore.Firestore, id: string): Promise<Tx | null> {
+  const ref = db.collection("transactions").doc(id);
+  const [ts, ms] = await Promise.all([ref.get(), ref.collection("secure").doc("v").get()]);
+  if (!ts.exists) return null;
+  const t = ts.data()!, m = ms.data() || {};
+  return { id, t, amount: Number(m.amount ?? t.amount) || 0, plan: m.plan ?? t.plan ?? null };
+}
+async function payments(db: FirebaseFirestore.Firestore, pledgeId: string): Promise<Tx[]> {
+  const qs = await db.collection("transactions").where("pledgeId", "==", pledgeId).get();
+  const all = await Promise.all(qs.docs.map((d) => loadTx(db, d.id)));
+  return all.filter((x): x is Tx => !!x && isStatus(x.t.status, "Received"));
+}
+
+// Mirrors certDefault / certPledgeLine / receiptItem in the app.
+async function describe(db: FirebaseFirestore.Firestore, x: Tx, d: any) {
+  const t = x.t, pl = isStatus(t.status, "Pledged");
+  const def = pl ? x.amount : (x.plan ? (await payments(db, x.id)).reduce((n, p) => n + p.amount, 0) : x.amount);
+  let note = "";
+  if (t.pledgeId && isStatus(t.status, "Received")) {
+    const p = await loadTx(db, String(t.pledgeId));
+    if (p) {
+      const pays = await payments(db, p.id);
+      const total = p.plan && Number(p.plan.total) ? Number(p.plan.total) : p.amount + pays.reduce((n, q) => n + q.amount, 0);
+      const k = when(t);
+      const rec = pays.filter((q) => q.id === x.id || when(q.t) <= k).reduce((n, q) => n + q.amount, 0);
+      if (total > 0) note = whole(rec) + " received of " + whole(total) + " total pledged";
+    }
+  }
   return {
-    no: "NKU-" + id.toUpperCase(),
+    pledge: pl, def, note,
     name: d?.name || "Donor",
-    contact: org && d?.contactOnCert ? String(d.contactName || "").trim() : "",
+    contact: isOrg(d) && d?.contactOnCert ? String(d.contactName || "").trim() : "",
     address: String(d?.address || "").trim(),
-    date: String((pledge ? t.date : (t.completedAt || t.date)) || "").slice(0, 10) || "—",
-    desc: (t.pledgeId ? "Pledge payment" : (pledge || plan ? "Pledge" : "Donation")) + (t.grantName || t.title ? " — " + (t.grantName || t.title) : ""),
-    method: t.method || "",
-    amount,
-    pledge,
+    date: String((pl ? t.date : (t.completedAt || t.date)) || "").slice(0, 10) || "—",
+    desc: (t.pledgeId ? "Pledge payment" : (pl || x.plan ? "Pledge" : "Donation")) + (t.grantName || t.title ? " — " + (t.grantName || t.title) : ""),
+    method: String(t.method || ""),
   };
 }
 
-function statement(b: Receipt): string {
-  if (b.pledge) return "This acknowledges a pledge. It is not a receipt for a tax-deductible payment; a receipt is issued as each payment is received.";
-  const noncash = /in-kind|stock/i.test(b.method || "");
-  return "No goods or services were provided in exchange for this contribution." + (noncash ? " For a non-cash gift the value shown is as recorded; it is not an appraisal." : "");
+function fromName(cfg: any): string {
+  if (cfg.fromName) return String(cfg.fromName);
+  const m = /^(.*)<[^>]+>\s*$/.exec(String(cfg.from || ""));
+  return (m ? m[1] : "").trim().replace(/^"|"$/g, "") || "North Kitsap United";
 }
+const fill = (s: unknown, name: string) => String(s || "").replace(/\{name\}/g, name);
+const RECEIPT_SUBJECT = "Your donation receipt from North Kitsap United";
+const CERT_SUBJECT = "A certificate of appreciation from North Kitsap United";
+const CERT_MESSAGE = "Dear {name},\n\nThank you for your generous gift to North Kitsap United. Please accept the attached certificate with our gratitude.\n\nWith appreciation,\nNorth Kitsap United";
 
-function receiptHtml(b: Receipt, message: string): string {
-  const G = "#1b4127", L = "#a9c5b1";
-  const td = `style="padding:10px;border-bottom:1px solid ${L};vertical-align:top"`;
-  const th = `style="text-align:left;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#fff;background:${G};padding:7px 10px;font-weight:600"`;
-  const msg = message ? `<div style="white-space:pre-wrap;margin:0 0 22px">${esc(message)}</div>` : "";
-  return `<!DOCTYPE html><html><body style="margin:0;background:#f4f2ec;font-family:Arial,Helvetica,sans-serif;color:#201e1d">
-<div style="max-width:640px;margin:0 auto;padding:24px 16px">
-${msg}
-<div style="background:#fff;padding:28px 28px 22px;border-top:4px solid ${G};font-size:14px;line-height:1.5">
-<table width="100%" style="border-collapse:collapse"><tr>
-<td><img src="https://rotaryknk.org/images/nku/NKU-800x378.png" alt="North Kitsap United" width="150" style="display:block;height:auto"></td>
-<td style="text-align:right;font-size:12px;line-height:1.55;color:#4a473f"><b style="color:#201e1d">Kingston-North Kitsap Rotary Foundation</b><br>PO Box 832<br>Kingston, WA 98346<br>EIN 20-2960627</td>
-</tr></table>
-<div style="font-size:24px;font-weight:800;color:#14301d;margin-top:22px">${b.pledge ? "Pledge Receipt" : "Donation Receipt"}</div>
-<div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:${G}">${b.pledge ? "Acknowledgment of a pledge" : "Official receipt for income tax purposes"}</div>
-<table width="100%" style="border-collapse:collapse;margin-top:16px"><tr>
-<td style="border:1px solid ${L};padding:8px 12px"><div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#6b675e">Receipt no.</div><b>${esc(b.no)}</b></td>
-<td style="border:1px solid ${L};padding:8px 12px"><div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#6b675e">Date issued</div><b>${esc(today())}</b></td>
-</tr></table>
-<div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#6b675e;margin-top:20px">Received from</div>
-<div style="font-size:18px;font-weight:800">${esc(b.name)}</div>
-${b.contact ? `<div style="color:#4a473f">${esc(b.contact)}</div>` : ""}${b.address ? `<div style="color:#4a473f">${esc(b.address).replace(/\n/g, "<br>")}</div>` : ""}
-<table width="100%" style="border-collapse:collapse;margin-top:20px">
-<tr><th ${th}>${b.pledge ? "Date pledged" : "Date received"}</th><th ${th}>Description</th><th ${th}>Method</th><th ${th} align="right">Amount</th></tr>
-<tr><td ${td}>${esc(b.date)}</td><td ${td}>${esc(b.desc)}</td><td ${td}>${esc(b.method || "—")}</td><td ${td} align="right">${esc(cash(b.amount))}</td></tr>
-<tr><td colspan="3" style="padding:10px;font-weight:800;border-bottom:2px solid ${G}">${b.pledge ? "Total pledged" : "Total received"}</td><td align="right" style="padding:10px;font-weight:800;border-bottom:2px solid ${G}">${esc(cash(b.amount))}</td></tr>
-</table>
-<div style="margin-top:18px;padding:12px 14px;background:#f6f2e7;border-left:3px solid ${G}">${esc(statement(b))}</div>
-<div style="margin-top:16px">Thank you for your generous support of North Kitsap United.</div>
-<div style="margin-top:20px;padding-top:10px;border-top:1px solid ${L};font-size:11px;color:#6b675e;text-align:center">Please keep this receipt for your tax records. Kingston-North Kitsap Rotary Foundation is a 501(c)(3) tax-exempt organization, EIN 20-2960627.</div>
-</div></div></body></html>`;
-}
-
-async function send(cfg: any, to: string, subject: string, html: string): Promise<void> {
-  const key = String(cfg.apiKey || "").trim(), from = String(cfg.from || "").trim(), replyTo = String(cfg.replyTo || "").trim();
-  if (!key || !from) throw new UserError("Receipt email isn't set up yet. An admin can add it in Admin → Email.");
-  let r: Response;
-  if (cfg.provider === "sendgrid") {
-    const m = /^(.*)<([^>]+)>\s*$/.exec(from);
-    const fromObj = m ? { email: m[2].trim(), name: m[1].trim().replace(/^"|"$/g, "") } : { email: from };
-    r = await fetch("https://api.sendgrid.com/v3/mail/send", {
-      method: "POST",
-      headers: { Authorization: "Bearer " + key, "Content-Type": "application/json" },
-      body: JSON.stringify({ personalizations: [{ to: [{ email: to }] }], from: fromObj, ...(replyTo ? { reply_to: { email: replyTo } } : {}), subject, content: [{ type: "text/html", value: html }] }),
-    });
+async function deliver(cfg: any, kind: "receipt" | "certificate", to: string[], r: Receipt, c: Certificate, prefix = "") {
+  const common = { to, fromName: fromName(cfg), replyTo: isEmail(String(cfg.replyTo || "").trim()) ? String(cfg.replyTo).trim() : undefined };
+  const safeName = r.name.replace(/[^A-Za-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 40) || "Donor";
+  if (kind === "certificate") {
+    await sendMail({ ...common, subject: prefix + fill(cfg.certSubject || CERT_SUBJECT, c.name),
+      html: certificateHtml(c, fill(cfg.certMessage || CERT_MESSAGE, c.name)),
+      attachments: [{ filename: (c.pledge ? "Pledge-Certificate-" : "Donation-Certificate-") + safeName + ".pdf", content: await certificatePdf([c]), contentType: "application/pdf" }] });
   } else {
-    r = await fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: { Authorization: "Bearer " + key, "Content-Type": "application/json" },
-      body: JSON.stringify({ from, to: [to], subject, html, ...(replyTo ? { reply_to: replyTo } : {}) }),
-    });
-  }
-  if (!r.ok) {
-    const body = (await r.text().catch(() => "")).slice(0, 300);
-    console.error("[receipt] provider", r.status, body);
-    throw new UserError("The email service refused the message (" + r.status + "). Check Admin → Email.");
+    await sendMail({ ...common, subject: prefix + fill(cfg.subject || RECEIPT_SUBJECT, r.name),
+      html: receiptHtml(r, fill(cfg.message, r.name)),
+      attachments: [{ filename: (r.pledge ? "Pledge-Receipt-" : "Donation-Receipt-") + r.no + ".pdf", content: await receiptPdf([r]), contentType: "application/pdf" }] });
   }
 }
-
-class UserError extends Error {}
 
 export default async (req: Request) => {
   try {
@@ -138,35 +133,69 @@ export default async (req: Request) => {
     if (who instanceof Response) return who;
     const db = firestore();
     const body = await req.json().catch(() => ({}));
+    const kind: "receipt" | "certificate" = body.kind === "certificate" ? "certificate" : "receipt";
+
+    if (body.status || body.setMail || body.clearMail) {
+      if (!who.admin) return json(req, { ok: false, error: "Admins only." }, 403);
+      if (body.setMail) {
+        const user = String(body.setMail.user || "").trim().toLowerCase();
+        const pass = String(body.setMail.password || "").replace(/\s+/g, "");
+        if (!isEmail(user)) return json(req, { ok: false, error: "Enter the Gmail address that sends." }, 400);
+        if (!/^[A-Za-z0-9]{16}$/.test(pass)) return json(req, { ok: false, error: "A Google App Password is 16 letters (spaces don't matter)." }, 400);
+        await verifyMailCreds(user, pass);
+        await saveMailCreds(user, pass, who.email);
+      }
+      if (body.clearMail) await clearMailCreds();
+      const c = await mailCreds(); // the password itself never leaves the server
+      return json(req, { ok: true, configured: !!c.pass, account: c.user, source: c.source });
+    }
+
     const cfg = (await db.collection("private").doc("email").get()).data() || {};
-    const subject = String(cfg.subject || "Your donation receipt from North Kitsap United");
 
     if (body.test) {
       if (!who.admin) return json(req, { ok: false, error: "Only admins can send a sample." }, 403);
-      const b: Receipt = { no: "NKU-SAMPLE", name: "Sample Donor", contact: "", address: "123 Main St\nKingston, WA 98346", date: today(), desc: "Donation — Sample", method: "Check", amount: 100, pledge: false };
-      await send(cfg, who.email, "[Sample] " + subject, receiptHtml(b, String(cfg.message || "").replace(/\{name\}/g, b.name)));
-      return json(req, { ok: true, to: who.email });
+      const r: Receipt = { no: "NKU-SAMPLE", name: "Sample Donor", contact: "", address: "123 Main St\nKingston, WA 98346", date: today(), desc: "Donation — Sample", method: "Check", amount: 100, goods: 0, pledge: false, note: "" };
+      const c: Certificate = { name: "Sample Donor", contact: "", method: "Check", amount: 100, pledge: false, note: "" };
+      await deliver(cfg, kind, [who.email], r, c, "[Sample] ");
+      return json(req, { ok: true, to: [who.email] });
     }
 
-    if (!who.canSend) return json(req, { ok: false, error: "You don't have access to send receipts." }, 403);
+    if (!who.canSend) return json(req, { ok: false, error: "Emailing receipts and certificates needs Edit access to Donations." }, 403);
     const id = String(body.txId || "");
     if (!/^[A-Za-z0-9_-]{1,80}$/.test(id)) return json(req, { ok: false, error: "Which donation?" }, 400);
-    const ref = db.collection("transactions").doc(id);
-    const [ts, ms] = await Promise.all([ref.get(), ref.collection("secure").doc("v").get()]);
-    if (!ts.exists) return json(req, { ok: false, error: "That donation wasn't found." }, 404);
-    const t = ts.data()!;
-    if (String(t.method || "").trim().toLowerCase() === "grant award") return json(req, { ok: false, error: "Grant awards don't get donation receipts." }, 400);
-    if (!(isStatus(t.status, "Received") || isStatus(t.status, "Pledged"))) return json(req, { ok: false, error: "Only received or pledged donations get a receipt." }, 400);
+    const x = await loadTx(db, id);
+    if (!x) return json(req, { ok: false, error: "That donation wasn't found." }, 404);
+    const t = x.t;
+    if (String(t.method || "").trim().toLowerCase() === "grant award") return json(req, { ok: false, error: "Grant awards don't get donation receipts or certificates." }, 400);
+    if (!(isStatus(t.status, "Received") || isStatus(t.status, "Pledged"))) return json(req, { ok: false, error: "Only received or pledged donations get a receipt or certificate." }, 400);
     const d = t.donorId ? (await db.collection("donors").doc(String(t.donorId)).get()).data() : null;
-    const to = String(d?.email || "").trim();
-    if (!to || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(to)) return json(req, { ok: false, error: (d?.name || "This donor") + " has no valid email address on file." }, 400);
-    const b = buildReceipt(id, t, ms.data(), d);
-    await send(cfg, to, subject, receiptHtml(b, String(cfg.message || "").replace(/\{name\}/g, b.name)));
-    const sentAt = new Date().toISOString();
-    await ref.update({ receiptSentAt: sentAt, receiptSentTo: to, receiptSentBy: who.email });
-    return json(req, { ok: true, to, sentAt });
+
+    // Recipients: the list sent by the app, or the donor's email on file.
+    const asked: string[] = Array.isArray(body.to) ? body.to : (typeof body.to === "string" ? body.to.split(/[,;\s]+/) : []);
+    let to = asked.map((s) => String(s || "").trim().toLowerCase()).filter(Boolean);
+    if (!to.length && d?.email) to = [String(d.email).trim().toLowerCase()];
+    to = Array.from(new Set(to));
+    const bad = to.filter((s) => !isEmail(s));
+    if (bad.length) return json(req, { ok: false, error: "Not a valid email address: " + bad.join(", ") }, 400);
+    if (!to.length) return json(req, { ok: false, error: (d?.name || "This donor") + " has no email address on file. Enter one to send to." }, 400);
+    if (to.length > MAX_TO) return json(req, { ok: false, error: "Send to at most " + MAX_TO + " addresses at a time." }, 400);
+
+    const info = await describe(db, x, d);
+    const override = body.amount != null && body.amount !== "" && who.money && (who.admin || who.fullSite);
+    const amount = override ? Math.max(0, num(body.amount)) : info.def;
+    const goods = who.fullSite && !info.pledge ? Math.max(0, num(body.goods)) : 0;
+    const note = body.pledgeLine === false ? "" : info.note;
+    const r: Receipt = { no: "NKU-" + id.toUpperCase(), name: info.name, contact: info.contact, address: info.address, date: info.date, desc: info.desc, method: info.method, amount, goods, pledge: info.pledge, note };
+    const c: Certificate = { name: info.name, contact: info.contact, method: info.method, amount, pledge: info.pledge, note };
+    await deliver(cfg, kind, to, r, c);
+
+    const sentAt = new Date().toISOString(), sentTo = to.join(", ");
+    await db.collection("transactions").doc(id).update(kind === "certificate"
+      ? { certSentAt: sentAt, certSentTo: sentTo, certSentBy: who.email }
+      : { receiptSentAt: sentAt, receiptSentTo: sentTo, receiptSentBy: who.email });
+    return json(req, { ok: true, to, sentAt, kind });
   } catch (err) {
-    if (err instanceof UserError) return json(req, { ok: false, error: err.message }, 400);
+    if (err instanceof MailError) return json(req, { ok: false, error: err.message }, 400);
     return failure(req, err);
   }
 };

@@ -222,6 +222,12 @@ service cloud.firestore {
     match /private/{doc} {
       allow read, write: if isAdmin();
     }
+    // secrets/mail holds the Gmail App Password. No browser may read or write
+    // it, admins included; only the Netlify function (Admin SDK) touches it.
+    // (Firestore denies unmatched paths anyway; this states it outright.)
+    match /secrets/{doc} {
+      allow read, write: if false;
+    }
 
     // ---- roster -------------------------------------------------------------
     // Invitation only: admins create every entry. Anyone logged in may read
